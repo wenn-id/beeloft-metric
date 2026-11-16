@@ -2,8 +2,16 @@ import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import { fileURLToPath, URL } from 'node:url';
 
+const isGhPages = process.env.GITHUB_PAGES === 'true';
+
 export default defineConfig({
+  base: isGhPages ? '/beeloft-metric/' : '/',
   plugins: [vue()],
+  define: isGhPages ? { 'import.meta.env.VITE_STATIC_API': JSON.stringify('true') } : {},
+  build: {
+    outDir: isGhPages ? 'docs' : 'dist',
+    emptyOutDir: true
+  },
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))

@@ -33,12 +33,6 @@
   },
   "brands": [
     {
-      "blogId": 8137744,
-      "userId": 6401427,
-      "name": "Beeloft Studio [SAMPLE DATA]",
-      "timezone": "Asia/Jakarta",
-      "currency": "USD",
-      "isSample": true,
       "engagementRatioMode": "REACH",
       "tags": [
         "Q4-Launch",
@@ -65,6 +59,12 @@
         "adobeExpress": false,
         "lookerStudio": true
       },
+      "blogId": 8137744,
+      "userId": 6401427,
+      "name": "Beeloft Studio [SAMPLE DATA]",
+      "timezone": "Asia/Jakarta",
+      "currency": "USD",
+      "isSample": true,
       "connections": {
         "web": {
           "network": "web",
@@ -204,12 +204,6 @@
       }
     },
     {
-      "blogId": 8137743,
-      "userId": 6401427,
-      "name": "Empty brand",
-      "timezone": "Asia/Jakarta",
-      "currency": "USD",
-      "isSample": false,
       "engagementRatioMode": "REACH",
       "tags": [],
       "whiteLabel": {
@@ -232,6 +226,12 @@
         "adobeExpress": false,
         "lookerStudio": false
       },
+      "blogId": 8137743,
+      "userId": 6401427,
+      "name": "Empty brand",
+      "timezone": "Asia/Jakarta",
+      "currency": "USD",
+      "isSample": false,
       "connections": {
         "web": {
           "network": "web",
@@ -3457,6 +3457,162 @@
     }
   ],
   "attributionEvents": [
+    {
+      "id": "att-7a239e29",
+      "visitorId": "vis-0deca946-f6b",
+      "sessionId": "ses-439233ade2",
+      "type": "event",
+      "path": "/planner/list?blogId=8137744&userId=6401427",
+      "eventName": "route_view",
+      "utmSource": null,
+      "utmMedium": null,
+      "referral": null,
+      "timestamp": "2026-11-16T04:51:08.458Z"
+    },
+    {
+      "id": "att-75f9a773",
+      "visitorId": "vis-0deca946-f6b",
+      "sessionId": "ses-439233ade2",
+      "type": "event",
+      "path": "/planner/flows?blogId=8137744&userId=6401427",
+      "eventName": "route_view",
+      "utmSource": null,
+      "utmMedium": null,
+      "referral": null,
+      "timestamp": "2026-11-16T04:51:01.305Z"
+    },
+    {
+      "id": "att-2dd9ac01",
+      "visitorId": "vis-0deca946-f6b",
+      "sessionId": "ses-439233ade2",
+      "type": "event",
+      "path": "/planner/list?blogId=8137744&userId=6401427",
+      "eventName": "route_view",
+      "utmSource": null,
+      "utmMedium": null,
+      "referral": null,
+      "timestamp": "2026-11-16T04:50:58.770Z"
+    },
+    {
+      "id": "att-2e490b40",
+      "visitorId": "vis-0deca946-f6b",
+      "sessionId": "ses-439233ade2",
+      "type": "event",
+      "path": "/planner?blogId=8137744&userId=6401427",
+      "eventName": "route_view",
+      "utmSource": null,
+      "utmMedium": null,
+      "referral": null,
+      "timestamp": "2026-11-16T04:50:57.992Z"
+    },
+    {
+      "id": "att-ac5513d9",
+      "visitorId": "vis-0deca946-f6b",
+      "sessionId": "ses-439233ade2",
+      "type": "event",
+      "path": "/planner/flows?blogId=8137744&userId=6401427",
+      "eventName": "route_view",
+      "utmSource": null,
+      "utmMedium": null,
+      "referral": null,
+      "timestamp": "2026-11-16T04:50:56.541Z"
+    },
+    {
+      "id": "att-44720554",
+      "visitorId": "vis-0deca946-f6b",
+      "sessionId": "ses-ce3027abdc",
+      "type": "event",
+      "path": "/planner/autolists?blogId=8137744&userId=6401427",
+      "eventName": "route_view",
+      "utmSource": null,
+      "utmMedium": null,
+      "referral": null,
+      "timestamp": "2026-11-16T04:50:14.080Z"
+    },
+    {
+      "id": "att-92a50111",
+      "visitorId": "vis-0deca946-f6b",
+      "sessionId": "ses-439233ade2",
+      "type": "session",
+      "path": "/planner/autolists",
+      "eventName": "session_init",
+      "utmSource": "direct",
+      "utmMedium": "none",
+      "referral": "http://127.0.0.1:5173/planner/autolists?blogId=8137744&userId=6401427",
+      "timestamp": "2026-11-16T04:50:14.079Z"
+    },
+    {
+      "id": "att-66348cc4",
+      "visitorId": "vis-0deca946-f6b",
+      "sessionId": "ses-d5878452ac",
+      "type": "event",
+      "path": "/planner/autolists?blogId=8137744&userId=6401427",
+      "eventName": "route_view",
+      "utmSource": null,
+      "utmMedium": null,
+      "referral": null,
+      "timestamp": "2026-11-16T04:50:11.966Z"
+    },
+    {
+      "id": "att-cb6cecd7",
+      "visitorId": "vis-0deca946-f6b",
+      "sessionId": "ses-ce3027abdc",
+      "type": "session",
+      "path": "/planner/autolists",
+      "eventName": "session_init",
+      "utmSource": "direct",
+      "utmMedium": "none",
+      "referral": "http://127.0.0.1:5173/planner/autolists?blogId=8137744&userId=6401427",
+      "timestamp": "2026-11-16T04:50:11.965Z"
+    },
+    {
+      "id": "att-6eddcabc",
+      "visitorId": "vis-0deca946-f6b",
+      "sessionId": "ses-2f6285364e",
+      "type": "event",
+      "path": "/planner/autolists?blogId=8137744&userId=6401427",
+      "eventName": "route_view",
+      "utmSource": null,
+      "utmMedium": null,
+      "referral": null,
+      "timestamp": "2026-11-16T04:50:08.859Z"
+    },
+    {
+      "id": "att-37856216",
+      "visitorId": "vis-0deca946-f6b",
+      "sessionId": "ses-d5878452ac",
+      "type": "session",
+      "path": "/planner/autolists",
+      "eventName": "session_init",
+      "utmSource": "direct",
+      "utmMedium": "none",
+      "referral": "http://127.0.0.1:5173/planner/autolists?blogId=8137744&userId=6401427",
+      "timestamp": "2026-11-16T04:50:08.858Z"
+    },
+    {
+      "id": "att-d7f4809d",
+      "visitorId": "vis-0deca946-f6b",
+      "sessionId": "ses-bc2ed722-29c",
+      "type": "event",
+      "path": "/planner/autolists?blogId=8137744&userId=6401427",
+      "eventName": "route_view",
+      "utmSource": null,
+      "utmMedium": null,
+      "referral": null,
+      "timestamp": "2026-11-16T04:49:47.690Z"
+    },
+    {
+      "id": "att-04e77726",
+      "visitorId": "vis-0deca946-f6b",
+      "sessionId": "ses-2f6285364e",
+      "type": "session",
+      "path": "/planner/autolists",
+      "eventName": "session_init",
+      "utmSource": "direct",
+      "utmMedium": "none",
+      "referral": "http://127.0.0.1:5173/planner/autolists?blogId=8137744&userId=6401427",
+      "timestamp": "2026-11-16T04:49:47.685Z"
+    },
     {
       "id": "att-6ebbfbec",
       "visitorId": "vis-0deca946-f6b",

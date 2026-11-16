@@ -494,3 +494,31 @@ export interface BeeloftDatabase {
   attributionEvents: AttributionEvent[];
   notifications: AppNotification[];
 }
+
+export interface DataStore {
+  get(): Promise<BeeloftDatabase>;
+  persist(): Promise<void>;
+}
+
+export interface RouteRequest {
+  body?: unknown;
+  query?: unknown;
+  params?: unknown;
+}
+
+export interface RouteReply {
+  code(status: number): RouteReply;
+  setCookie(name: string, val: string, opts?: unknown): RouteReply;
+  clearCookie(name: string, opts?: unknown): RouteReply;
+  header(key: string, val: string): RouteReply;
+}
+
+export type RouteHandler = (req: RouteRequest, reply: RouteReply) => Promise<unknown> | unknown;
+
+export interface RouteRegistry {
+  get(path: string, h: RouteHandler): void;
+  post(path: string, h: RouteHandler): void;
+  put(path: string, h: RouteHandler): void;
+  patch(path: string, h: RouteHandler): void;
+  delete(path: string, h: RouteHandler): void;
+}

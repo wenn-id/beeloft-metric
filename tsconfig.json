@@ -17,5 +17,12 @@
       "@/*": ["src/*"]
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.vue"]
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "src/**/*.vue",
+    "server/types.ts",
+    "server/seed.ts",
+    "server/routes/**/*.ts"
+  ]
 }

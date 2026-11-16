@@ -1,7 +1,4 @@
-import type { FastifyInstance } from 'fastify';
-import crypto from 'node:crypto';
 import { buildConnectionMap } from '../seed.js';
-import type { JsonStore } from '../store.js';
 import type {
   AdGroup,
   AdKeyword,
@@ -9,9 +6,11 @@ import type {
   Brand,
   CampaignDashboardItem,
   CompetitorProfile,
+  DataStore,
   LibraryPostTemplate,
   NetworkKey,
   ReviewTask,
+  RouteRegistry,
   StudioBlock,
   StudioReport,
   TeamMember
@@ -22,7 +21,11 @@ function parseBlogId(raw: unknown, fallback = 8137744): number {
   return Number.isFinite(n) && n > 0 ? n : fallback;
 }
 
-export function registerExtraRoutes(app: FastifyInstance, store: JsonStore): void {
+function randomHex(bytes = 6): string {
+  return globalThis.globalThis.crypto.randomUUID().replace(/-/g, '').slice(0, bytes * 2);
+}
+
+export function registerExtraRoutes(app: RouteRegistry, store: DataStore): void {
   // ==========================================
   // 2.1 Legacy Compatibility (/api/admin/*, /api/profile/*, /api/user/*)
   // ==========================================
@@ -244,7 +247,7 @@ export function registerExtraRoutes(app: FastifyInstance, store: JsonStore): voi
     const db = await store.get();
     const handle = body.handle.trim().startsWith('@') ? body.handle.trim() : `@${body.handle.trim()}`;
     const item: CompetitorProfile = {
-      id: `comp-${crypto.randomUUID().slice(0, 6)}`,
+      id: `comp-${globalThis.crypto.randomUUID().slice(0, 6)}`,
       blogId: parseBlogId(body.blogId),
       network: body.network || 'instagram',
       handle,
@@ -290,7 +293,7 @@ export function registerExtraRoutes(app: FastifyInstance, store: JsonStore): voi
     }
     const db = await store.get();
     const item: LibraryPostTemplate = {
-      id: `lib-${crypto.randomUUID().slice(0, 6)}`,
+      id: `lib-${globalThis.crypto.randomUUID().slice(0, 6)}`,
       blogId: parseBlogId(body.blogId),
       title: body.title.trim(),
       text: body.text.trim(),
@@ -355,7 +358,7 @@ export function registerExtraRoutes(app: FastifyInstance, store: JsonStore): voi
     }
     const db = await store.get();
     const flow: AutomationFlow = {
-      id: `flw-${crypto.randomUUID().slice(0, 6)}`,
+      id: `flw-${globalThis.crypto.randomUUID().slice(0, 6)}`,
       blogId: parseBlogId(body.blogId),
       name: body.name.trim(),
       network: body.network || 'instagram',
@@ -459,9 +462,9 @@ export function registerExtraRoutes(app: FastifyInstance, store: JsonStore): voi
     }
     const db = await store.get();
     const task: ReviewTask = {
-      id: `tsk-${crypto.randomUUID().slice(0, 6)}`,
+      id: `tsk-${globalThis.crypto.randomUUID().slice(0, 6)}`,
       blogId: parseBlogId(body.blogId),
-      postId: body.postId || `pln-${crypto.randomUUID().slice(0, 5)}`,
+      postId: body.postId || `pln-${globalThis.crypto.randomUUID().slice(0, 5)}`,
       postText: body.postText.trim(),
       network: body.network || 'instagram',
       scheduledAt: body.scheduledAt || '2026-11-18T10:00',
@@ -513,7 +516,7 @@ export function registerExtraRoutes(app: FastifyInstance, store: JsonStore): voi
     }
     const db = await store.get();
     const item: AdGroup = {
-      id: `ag-${crypto.randomUUID().slice(0, 6)}`,
+      id: `ag-${globalThis.crypto.randomUUID().slice(0, 6)}`,
       blogId: parseBlogId(body.blogId),
       campaignId: body.campaignId || 'cmp-401',
       campaignName: body.campaignName || 'Active Campaign',
@@ -578,7 +581,7 @@ export function registerExtraRoutes(app: FastifyInstance, store: JsonStore): voi
     }
     const db = await store.get();
     const kw: AdKeyword = {
-      id: `kw-${crypto.randomUUID().slice(0, 6)}`,
+      id: `kw-${globalThis.crypto.randomUUID().slice(0, 6)}`,
       blogId: parseBlogId(body.blogId),
       keyword: body.keyword.trim(),
       matchType: body.matchType || 'PHRASE',
@@ -645,7 +648,7 @@ export function registerExtraRoutes(app: FastifyInstance, store: JsonStore): voi
     }
     const db = await store.get();
     const report: StudioReport = {
-      id: `stu-${crypto.randomUUID().slice(0, 6)}`,
+      id: `stu-${globalThis.crypto.randomUUID().slice(0, 6)}`,
       blogId: parseBlogId(body.blogId),
       title: body.title.trim(),
       updatedAt: new Date().toISOString(),
@@ -700,7 +703,7 @@ export function registerExtraRoutes(app: FastifyInstance, store: JsonStore): voi
     }
     const db = await store.get();
     const item: CampaignDashboardItem = {
-      id: `cd-${crypto.randomUUID().slice(0, 6)}`,
+      id: `cd-${globalThis.crypto.randomUUID().slice(0, 6)}`,
       blogId: parseBlogId(body.blogId),
       name: body.name.trim(),
       tag: body.tag.trim(),
@@ -791,7 +794,7 @@ export function registerExtraRoutes(app: FastifyInstance, store: JsonStore): voi
       return { error: 'Type REGENERATE in uppercase to confirm token rotation.' };
     }
     const db = await store.get();
-    db.user.apiToken = `bm_live_${db.user.userId}_${crypto.randomBytes(6).toString('hex')}`;
+    db.user.apiToken = `bm_live_${db.user.userId}_${randomHex(6)}`;
     await store.persist();
     return { data: { token: db.user.apiToken } };
   });
@@ -816,7 +819,7 @@ export function registerExtraRoutes(app: FastifyInstance, store: JsonStore): voi
     }
     const db = await store.get();
     const member: TeamMember = {
-      id: `tm-${crypto.randomUUID().slice(0, 6)}`,
+      id: `tm-${globalThis.crypto.randomUUID().slice(0, 6)}`,
       name: body.name.trim(),
       email: body.email.trim(),
       role: body.role || 'EDITOR',
@@ -906,7 +909,10 @@ export function registerExtraRoutes(app: FastifyInstance, store: JsonStore): voi
         buildInfo: {
           version: 'beeloft-1.0.0-parity',
           referenceBuild: '375438893013',
-          runtime: `Node ${process.version}`
+          runtime:
+            (globalThis as { process?: { version?: string } }).process?.version
+              ? 'Node ' + (globalThis as { process?: { version?: string } }).process?.version
+              : 'Browser LocalStore'
         }
       }
     };
@@ -920,7 +926,7 @@ export function registerExtraRoutes(app: FastifyInstance, store: JsonStore): voi
     }
     const db = await store.get();
     const coupon = {
-      id: `cpn-${crypto.randomUUID().slice(0, 5)}`,
+      id: `cpn-${globalThis.crypto.randomUUID().slice(0, 5)}`,
       code: body.code.trim().toUpperCase(),
       discountPct: Math.min(90, Math.max(5, Number(body.discountPct) || 20)),
       planTarget: body.planTarget || 'STARTER',

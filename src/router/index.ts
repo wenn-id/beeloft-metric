@@ -24,7 +24,7 @@ import AffiliationView from '@/views/app/AffiliationView.vue';
 import BackofficeView from '@/views/app/BackofficeView.vue';
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     // Public & Auth (Ft & Gh enums)
     { path: '/', component: LandingView },

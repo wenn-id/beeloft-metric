@@ -105,7 +105,7 @@
                 <td class="tabular-nums">{{ rep.summaryMetrics.reach.toLocaleString() }}</td>
                 <td><BmBadge tone="success">{{ rep.status }}</BmBadge></td>
                 <td>
-                  <a :href="`/api/v2/reports/${rep.id}/download`" class="bm-dl-link">
+                  <a href="#" class="bm-dl-link" @click.prevent="downloadReport(rep)">
                     Download export
                   </a>
                 </td>
@@ -508,6 +508,19 @@ async function submitCampaignTracker(): Promise<void> {
 async function toggleArchiveCamp(id: string): Promise<void> {
   await apiRequest(`/api/v2/reporting/campaigns-dashboard/${id}/archive`, { method: 'PATCH' });
   await loadReports();
+}
+
+async function downloadReport(rep: ReportArchiveItem): Promise<void> {
+  const content = await apiRequest<string>(`/api/v2/reports/${rep.id}/download`);
+  const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+  const blobUrl = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = blobUrl;
+  link.download = `${rep.id}.txt`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(blobUrl);
 }
 
 watch(() => route.path, (p) => {
