@@ -1,0 +1,146 @@
+:root {
+  /* Steep Official Color Tokens */
+  --color-ink-black: #17191c;
+  --color-paper-white: #ffffff;
+  --color-mist-gray: #f2f2f3;
+  --color-fog-white: #fafafb;
+  --color-slate-gray: #777b86;
+  --color-slate-aa: #5f636d;
+  --color-ash-gray: #979799;
+  --color-smoke-gray: #a3a6af;
+  --color-hairline: #ececec;
+  --color-blush-peach: #fbe1d1;
+  --color-sienna-brown: #5d2a1a;
+
+  /* Steep Typography */
+  --font-signifier: 'Signifier', 'Source Serif 4', Georgia, ui-serif, serif;
+  --font-sohne: 'Sohne', 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    'Segoe UI', Roboto, sans-serif;
+
+  /* Steep Scale */
+  --text-caption: 15px;
+  --text-body: 17px;
+  --text-body-lg: 20px;
+  --text-subheading: 22px;
+  --text-heading-sm: 26px;
+  --text-heading: 44px;
+  --text-heading-lg: 64px;
+  --text-display: 90px;
+
+  /* Steep Spacing */
+  --spacing-unit: 4px;
+  --spacing-4: 4px;
+  --spacing-8: 8px;
+  --spacing-12: 12px;
+  --spacing-16: 16px;
+  --spacing-20: 20px;
+  --spacing-24: 24px;
+  --spacing-32: 32px;
+  --spacing-40: 40px;
+  --spacing-64: 64px;
+  --spacing-80: 80px;
+
+  /* Steep Radii */
+  --radius-images: 12px;
+  --radius-inputs: 16px;
+  --radius-smallcards: 16px;
+  --radius-elevatedcards: 20px;
+  --radius-cards: 24px;
+  --radius-buttons: 9999px;
+
+  /* Steep Shadows (reserved only for floating artifacts and overlays) */
+  --shadow-subtle: oklab(0 0 0 / 0.05) 0px 0px 0px 1px, rgba(0, 0, 0, 0.08) 0px 4px 24px 0px;
+  --shadow-subtle-2: oklab(0 0 0 / 0.05) 0px 0px 0px 1px, rgba(0, 0, 0, 0.1) 0px 8px 40px 0px;
+  --shadow-subtle-3: rgba(4, 23, 43, 0.05) 0px 0px 0px 1px,
+    rgba(0, 0, 0, 0.1) 0px 20px 25px -5px, rgba(0, 0, 0, 0.1) 0px 8px 10px -6px;
+
+  /* Semantic Map for App Components (97% achromatic + Blush Peach / Sienna Brown) */
+  --bm-bg: var(--color-paper-white);
+  --bm-surface: var(--color-mist-gray);
+  --bm-elevated: var(--color-paper-white);
+  --bm-subtle: var(--color-fog-white);
+  --bm-divider: var(--color-hairline);
+  --bm-control-border: #686c76;
+
+  --bm-text: var(--color-ink-black);
+  --bm-text-muted: var(--color-slate-aa);
+
+  --bm-chrome-bg: var(--color-paper-white);
+  --bm-chrome-text: var(--color-ink-black);
+  --bm-chrome-muted: var(--color-slate-aa);
+  --bm-chrome-active-bg: var(--color-mist-gray);
+
+  --bm-brand: var(--color-ink-black);
+  --bm-brand-hover: #2d3036;
+  --bm-brand-text: var(--color-paper-white);
+
+  --bm-accent: var(--color-sienna-brown);
+  --bm-accent-text: var(--color-paper-white);
+  --bm-accent-soft: var(--color-blush-peach);
+  --bm-accent-soft-text: var(--color-sienna-brown);
+
+  /* Status tokens restrained strictly within the Steep palette */
+  --bm-success-bg: var(--color-paper-white);
+  --bm-success-text: var(--color-ink-black);
+  --bm-success-border: var(--color-ink-black);
+
+  --bm-warning-bg: var(--color-blush-peach);
+  --bm-warning-text: var(--color-sienna-brown);
+  --bm-warning-border: var(--color-sienna-brown);
+
+  --bm-danger-bg: var(--color-blush-peach);
+  --bm-danger-text: var(--color-sienna-brown);
+  --bm-danger-border: var(--color-sienna-brown);
+
+  --bm-chart-bar: var(--color-ink-black);
+  --bm-chart-line: var(--color-sienna-brown);
+
+  --bm-radius-sm: var(--radius-images);
+  --bm-radius-md: var(--radius-inputs);
+  --bm-radius-lg: var(--radius-cards);
+  --bm-radius-elevated: var(--radius-elevatedcards);
+  --bm-radius-pill: var(--radius-buttons);
+
+  --bm-shadow-lift: var(--shadow-subtle-3);
+}
+
+[data-theme='dark'] {
+  --bm-bg: #17191c;
+  --bm-surface: #22252a;
+  --bm-elevated: #1e2126;
+  --bm-subtle: #1c1f24;
+  --bm-divider: #31353c;
+  --bm-control-border: #b8bcc4;
+
+  --bm-text: #ffffff;
+  --bm-text-muted: #c2c6ce;
+
+  --bm-chrome-bg: #17191c;
+  --bm-chrome-text: #ffffff;
+  --bm-chrome-muted: #c2c6ce;
+  --bm-chrome-active-bg: #2a2e35;
+
+  --bm-brand: #ffffff;
+  --bm-brand-hover: #e5e7eb;
+  --bm-brand-text: #17191c;
+
+  --bm-accent: #fbe1d1;
+  --bm-accent-text: #17191c;
+  --bm-accent-soft: #fbe1d1;
+  --bm-accent-soft-text: #5d2a1a;
+
+  --bm-success-bg: #22252a;
+  --bm-success-text: #ffffff;
+  --bm-success-border: #ffffff;
+
+  --bm-warning-bg: #fbe1d1;
+  --bm-warning-text: #5d2a1a;
+  --bm-warning-border: #fbe1d1;
+
+  --bm-danger-bg: #fbe1d1;
+  --bm-danger-text: #5d2a1a;
+  --bm-danger-border: #fbe1d1;
+
+  --bm-chart-bar: #e5e7eb;
+  --bm-chart-line: #fbe1d1;
+}

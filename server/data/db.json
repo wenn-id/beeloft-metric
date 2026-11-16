@@ -1,0 +1,3719 @@
+{
+  "user": {
+    "userId": 6401427,
+    "email": "operator@beeloftmetric.local",
+    "name": "Beeloft Operator",
+    "passwordHash": "demo-local-only",
+    "registered": "2026-10-01T08:00:00Z",
+    "trialUsed": false,
+    "trialDays": 30,
+    "plan": "ENTERPRISE_CUSTOM",
+    "status": "ACTIVE",
+    "validUntil": "2027-10-01T08:00:00Z",
+    "brandLimit": 10,
+    "apiToken": "bm_live_6401427_9f2a4b8c1d0e",
+    "totpEnabled": true,
+    "approvedMcpScopes": [
+      "mcp:evolution:read",
+      "mcp:planner:write",
+      "mcp:reports:read"
+    ],
+    "features": {
+      "HIDE_HASHTAG_TRACKER": false,
+      "ENABLE_AI_TEXT": true,
+      "ENABLE_STUDIO": true,
+      "ENABLE_FLOWS": true,
+      "ENABLE_BACKOFFICE": true
+    },
+    "authorities": [
+      "ROLE_USER",
+      "ROLE_ENTERPRISE",
+      "ROLE_ADMIN"
+    ]
+  },
+  "brands": [
+    {
+      "blogId": 8137744,
+      "userId": 6401427,
+      "name": "Beeloft Studio [SAMPLE DATA]",
+      "timezone": "Asia/Jakarta",
+      "currency": "USD",
+      "isSample": true,
+      "engagementRatioMode": "REACH",
+      "tags": [
+        "Q4-Launch",
+        "Product-Demo",
+        "Evergreen"
+      ],
+      "whiteLabel": {
+        "enabled": true,
+        "logoText": "Beeloft Studio Reporting",
+        "primaryColor": "#5d2a1a",
+        "footerNote": "Prepared inside BeeloftMetric WhiteLabel Studio"
+      },
+      "aiConfig": {
+        "tone": "Clear, direct, practitioner-focused",
+        "targetAudience": "Social media managers and performance marketers",
+        "brandVoice": "Avoid hype words; lead with concrete workflow outcomes.",
+        "bannedWords": "revolutionary, unlock, seamless"
+      },
+      "integrations": {
+        "canva": true,
+        "googleDrive": true,
+        "slack": true,
+        "zapier": false,
+        "adobeExpress": false,
+        "lookerStudio": true
+      },
+      "connections": {
+        "web": {
+          "network": "web",
+          "label": "Website & Blog",
+          "category": "websites",
+          "connected": true,
+          "accountId": "web-beeloftstudioexample",
+          "accountHandle": "beeloft-studio.example",
+          "lastSync": "2026-11-16T09:00:00.000Z"
+        },
+        "instagram": {
+          "network": "instagram",
+          "label": "Instagram",
+          "category": "social",
+          "connected": true,
+          "accountId": "instagram-beeloftstudio",
+          "accountHandle": "@beeloft.studio",
+          "lastSync": "2026-11-16T09:00:00.000Z"
+        },
+        "facebook": {
+          "network": "facebook",
+          "label": "Facebook Page",
+          "category": "social",
+          "connected": false,
+          "accountId": null,
+          "accountHandle": null,
+          "lastSync": null
+        },
+        "tiktok": {
+          "network": "tiktok",
+          "label": "TikTok",
+          "category": "social",
+          "connected": true,
+          "accountId": "tiktok-beeloftstudio",
+          "accountHandle": "@beeloftstudio",
+          "lastSync": "2026-11-16T09:00:00.000Z"
+        },
+        "youtube": {
+          "network": "youtube",
+          "label": "YouTube",
+          "category": "social",
+          "connected": true,
+          "accountId": "youtube-BeeloftStudioLab",
+          "accountHandle": "Beeloft Studio Lab",
+          "lastSync": "2026-11-16T09:00:00.000Z"
+        },
+        "linkedin": {
+          "network": "linkedin",
+          "label": "LinkedIn",
+          "category": "social",
+          "connected": true,
+          "accountId": "linkedin-BeeloftDigitalCo",
+          "accountHandle": "Beeloft Digital Co.",
+          "lastSync": "2026-11-16T09:00:00.000Z"
+        },
+        "twitter": {
+          "network": "twitter",
+          "label": "X (Twitter)",
+          "category": "social",
+          "connected": false,
+          "accountId": null,
+          "accountHandle": null,
+          "lastSync": null
+        },
+        "pinterest": {
+          "network": "pinterest",
+          "label": "Pinterest",
+          "category": "social",
+          "connected": false,
+          "accountId": null,
+          "accountHandle": null,
+          "lastSync": null
+        },
+        "threads": {
+          "network": "threads",
+          "label": "Threads",
+          "category": "social",
+          "connected": false,
+          "accountId": null,
+          "accountHandle": null,
+          "lastSync": null
+        },
+        "bluesky": {
+          "network": "bluesky",
+          "label": "Bluesky",
+          "category": "social",
+          "connected": false,
+          "accountId": null,
+          "accountHandle": null,
+          "lastSync": null
+        },
+        "twitch": {
+          "network": "twitch",
+          "label": "Twitch",
+          "category": "social",
+          "connected": false,
+          "accountId": null,
+          "accountHandle": null,
+          "lastSync": null
+        },
+        "gmb": {
+          "network": "gmb",
+          "label": "Google Business Profile",
+          "category": "business",
+          "connected": false,
+          "accountId": null,
+          "accountHandle": null,
+          "lastSync": null
+        },
+        "metaAds": {
+          "network": "metaAds",
+          "label": "Meta Ads",
+          "category": "advertising",
+          "connected": true,
+          "accountId": "metaAds-act813774401",
+          "accountHandle": "act_813774401",
+          "lastSync": "2026-11-16T09:00:00.000Z"
+        },
+        "googleAds": {
+          "network": "googleAds",
+          "label": "Google Ads",
+          "category": "advertising",
+          "connected": true,
+          "accountId": "googleAds-gads813774402",
+          "accountHandle": "gads_813774402",
+          "lastSync": "2026-11-16T09:00:00.000Z"
+        },
+        "tiktokAds": {
+          "network": "tiktokAds",
+          "label": "TikTok Ads",
+          "category": "advertising",
+          "connected": false,
+          "accountId": null,
+          "accountHandle": null,
+          "lastSync": null
+        }
+      }
+    },
+    {
+      "blogId": 8137743,
+      "userId": 6401427,
+      "name": "Empty brand",
+      "timezone": "Asia/Jakarta",
+      "currency": "USD",
+      "isSample": false,
+      "engagementRatioMode": "REACH",
+      "tags": [],
+      "whiteLabel": {
+        "enabled": false,
+        "logoText": "Empty brand",
+        "primaryColor": "#17191c",
+        "footerNote": ""
+      },
+      "aiConfig": {
+        "tone": "Neutral informative",
+        "targetAudience": "General audience",
+        "brandVoice": "",
+        "bannedWords": ""
+      },
+      "integrations": {
+        "canva": false,
+        "googleDrive": false,
+        "slack": false,
+        "zapier": false,
+        "adobeExpress": false,
+        "lookerStudio": false
+      },
+      "connections": {
+        "web": {
+          "network": "web",
+          "label": "Website & Blog",
+          "category": "websites",
+          "connected": false,
+          "accountId": null,
+          "accountHandle": null,
+          "lastSync": null
+        },
+        "instagram": {
+          "network": "instagram",
+          "label": "Instagram",
+          "category": "social",
+          "connected": false,
+          "accountId": null,
+          "accountHandle": null,
+          "lastSync": null
+        },
+        "facebook": {
+          "network": "facebook",
+          "label": "Facebook Page",
+          "category": "social",
+          "connected": false,
+          "accountId": null,
+          "accountHandle": null,
+          "lastSync": null
+        },
+        "tiktok": {
+          "network": "tiktok",
+          "label": "TikTok",
+          "category": "social",
+          "connected": false,
+          "accountId": null,
+          "accountHandle": null,
+          "lastSync": null
+        },
+        "youtube": {
+          "network": "youtube",
+          "label": "YouTube",
+          "category": "social",
+          "connected": false,
+          "accountId": null,
+          "accountHandle": null,
+          "lastSync": null
+        },
+        "linkedin": {
+          "network": "linkedin",
+          "label": "LinkedIn",
+          "category": "social",
+          "connected": false,
+          "accountId": null,
+          "accountHandle": null,
+          "lastSync": null
+        },
+        "twitter": {
+          "network": "twitter",
+          "label": "X (Twitter)",
+          "category": "social",
+          "connected": false,
+          "accountId": null,
+          "accountHandle": null,
+          "lastSync": null
+        },
+        "pinterest": {
+          "network": "pinterest",
+          "label": "Pinterest",
+          "category": "social",
+          "connected": false,
+          "accountId": null,
+          "accountHandle": null,
+          "lastSync": null
+        },
+        "threads": {
+          "network": "threads",
+          "label": "Threads",
+          "category": "social",
+          "connected": false,
+          "accountId": null,
+          "accountHandle": null,
+          "lastSync": null
+        },
+        "bluesky": {
+          "network": "bluesky",
+          "label": "Bluesky",
+          "category": "social",
+          "connected": false,
+          "accountId": null,
+          "accountHandle": null,
+          "lastSync": null
+        },
+        "twitch": {
+          "network": "twitch",
+          "label": "Twitch",
+          "category": "social",
+          "connected": false,
+          "accountId": null,
+          "accountHandle": null,
+          "lastSync": null
+        },
+        "gmb": {
+          "network": "gmb",
+          "label": "Google Business Profile",
+          "category": "business",
+          "connected": false,
+          "accountId": null,
+          "accountHandle": null,
+          "lastSync": null
+        },
+        "metaAds": {
+          "network": "metaAds",
+          "label": "Meta Ads",
+          "category": "advertising",
+          "connected": false,
+          "accountId": null,
+          "accountHandle": null,
+          "lastSync": null
+        },
+        "googleAds": {
+          "network": "googleAds",
+          "label": "Google Ads",
+          "category": "advertising",
+          "connected": false,
+          "accountId": null,
+          "accountHandle": null,
+          "lastSync": null
+        },
+        "tiktokAds": {
+          "network": "tiktokAds",
+          "label": "TikTok Ads",
+          "category": "advertising",
+          "connected": false,
+          "accountId": null,
+          "accountHandle": null,
+          "lastSync": null
+        }
+      }
+    }
+  ],
+  "metricsSeries": {
+    "8137744": {
+      "web": [
+        {
+          "date": "2026-09-18",
+          "impressions": 3084,
+          "reach": 2024,
+          "followers": 0,
+          "interactions": 97,
+          "clicks": 38
+        },
+        {
+          "date": "2026-09-19",
+          "impressions": 3285,
+          "reach": 2156,
+          "followers": 17,
+          "interactions": 103,
+          "clicks": 41
+        },
+        {
+          "date": "2026-09-20",
+          "impressions": 3352,
+          "reach": 2200,
+          "followers": 34,
+          "interactions": 106,
+          "clicks": 42
+        },
+        {
+          "date": "2026-09-21",
+          "impressions": 3268,
+          "reach": 2145,
+          "followers": 42,
+          "interactions": 103,
+          "clicks": 41
+        },
+        {
+          "date": "2026-09-22",
+          "impressions": 3063,
+          "reach": 2010,
+          "followers": 59,
+          "interactions": 96,
+          "clicks": 38
+        },
+        {
+          "date": "2026-09-23",
+          "impressions": 2799,
+          "reach": 1837,
+          "followers": 76,
+          "interactions": 88,
+          "clicks": 35
+        },
+        {
+          "date": "2026-09-24",
+          "impressions": 2560,
+          "reach": 1680,
+          "followers": 84,
+          "interactions": 81,
+          "clicks": 32
+        },
+        {
+          "date": "2026-09-25",
+          "impressions": 2418,
+          "reach": 1587,
+          "followers": 101,
+          "interactions": 76,
+          "clicks": 30
+        },
+        {
+          "date": "2026-09-26",
+          "impressions": 2421,
+          "reach": 1589,
+          "followers": 118,
+          "interactions": 76,
+          "clicks": 30
+        },
+        {
+          "date": "2026-09-27",
+          "impressions": 2570,
+          "reach": 1687,
+          "followers": 126,
+          "interactions": 81,
+          "clicks": 32
+        },
+        {
+          "date": "2026-09-28",
+          "impressions": 2826,
+          "reach": 1854,
+          "followers": 143,
+          "interactions": 89,
+          "clicks": 35
+        },
+        {
+          "date": "2026-09-29",
+          "impressions": 3116,
+          "reach": 2045,
+          "followers": 160,
+          "interactions": 98,
+          "clicks": 39
+        },
+        {
+          "date": "2026-09-30",
+          "impressions": 3360,
+          "reach": 2205,
+          "followers": 168,
+          "interactions": 106,
+          "clicks": 42
+        },
+        {
+          "date": "2026-10-01",
+          "impressions": 3488,
+          "reach": 2289,
+          "followers": 185,
+          "interactions": 110,
+          "clicks": 43
+        },
+        {
+          "date": "2026-10-02",
+          "impressions": 3468,
+          "reach": 2276,
+          "followers": 202,
+          "interactions": 109,
+          "clicks": 43
+        },
+        {
+          "date": "2026-10-03",
+          "impressions": 3307,
+          "reach": 2171,
+          "followers": 210,
+          "interactions": 104,
+          "clicks": 41
+        },
+        {
+          "date": "2026-10-04",
+          "impressions": 3059,
+          "reach": 2008,
+          "followers": 227,
+          "interactions": 96,
+          "clicks": 38
+        },
+        {
+          "date": "2026-10-05",
+          "impressions": 2799,
+          "reach": 1837,
+          "followers": 244,
+          "interactions": 88,
+          "clicks": 35
+        },
+        {
+          "date": "2026-10-06",
+          "impressions": 2609,
+          "reach": 1712,
+          "followers": 252,
+          "interactions": 82,
+          "clicks": 33
+        },
+        {
+          "date": "2026-10-07",
+          "impressions": 2547,
+          "reach": 1672,
+          "followers": 269,
+          "interactions": 80,
+          "clicks": 32
+        },
+        {
+          "date": "2026-10-08",
+          "impressions": 2637,
+          "reach": 1730,
+          "followers": 286,
+          "interactions": 83,
+          "clicks": 33
+        },
+        {
+          "date": "2026-10-09",
+          "impressions": 2855,
+          "reach": 1873,
+          "followers": 294,
+          "interactions": 90,
+          "clicks": 36
+        },
+        {
+          "date": "2026-10-10",
+          "impressions": 3140,
+          "reach": 2061,
+          "followers": 311,
+          "interactions": 99,
+          "clicks": 39
+        },
+        {
+          "date": "2026-10-11",
+          "impressions": 3414,
+          "reach": 2240,
+          "followers": 328,
+          "interactions": 108,
+          "clicks": 43
+        },
+        {
+          "date": "2026-10-12",
+          "impressions": 3597,
+          "reach": 2361,
+          "followers": 336,
+          "interactions": 113,
+          "clicks": 45
+        },
+        {
+          "date": "2026-10-13",
+          "impressions": 3641,
+          "reach": 2390,
+          "followers": 353,
+          "interactions": 115,
+          "clicks": 45
+        },
+        {
+          "date": "2026-10-14",
+          "impressions": 3536,
+          "reach": 2321,
+          "followers": 370,
+          "interactions": 111,
+          "clicks": 44
+        },
+        {
+          "date": "2026-10-15",
+          "impressions": 3317,
+          "reach": 2177,
+          "followers": 378,
+          "interactions": 104,
+          "clicks": 41
+        },
+        {
+          "date": "2026-10-16",
+          "impressions": 3052,
+          "reach": 2003,
+          "followers": 395,
+          "interactions": 96,
+          "clicks": 38
+        },
+        {
+          "date": "2026-10-17",
+          "impressions": 2823,
+          "reach": 1852,
+          "followers": 412,
+          "interactions": 89,
+          "clicks": 35
+        },
+        {
+          "date": "2026-10-18",
+          "impressions": 2701,
+          "reach": 1773,
+          "followers": 420,
+          "interactions": 85,
+          "clicks": 34
+        },
+        {
+          "date": "2026-10-19",
+          "impressions": 2727,
+          "reach": 1790,
+          "followers": 437,
+          "interactions": 86,
+          "clicks": 34
+        },
+        {
+          "date": "2026-10-20",
+          "impressions": 2896,
+          "reach": 1900,
+          "followers": 454,
+          "interactions": 91,
+          "clicks": 36
+        },
+        {
+          "date": "2026-10-21",
+          "impressions": 3162,
+          "reach": 2075,
+          "followers": 462,
+          "interactions": 100,
+          "clicks": 39
+        },
+        {
+          "date": "2026-10-22",
+          "impressions": 3451,
+          "reach": 2265,
+          "followers": 479,
+          "interactions": 109,
+          "clicks": 43
+        },
+        {
+          "date": "2026-10-23",
+          "impressions": 3681,
+          "reach": 2415,
+          "followers": 496,
+          "interactions": 116,
+          "clicks": 46
+        },
+        {
+          "date": "2026-10-24",
+          "impressions": 3788,
+          "reach": 2486,
+          "followers": 504,
+          "interactions": 119,
+          "clicks": 47
+        },
+        {
+          "date": "2026-10-25",
+          "impressions": 3744,
+          "reach": 2457,
+          "followers": 521,
+          "interactions": 118,
+          "clicks": 47
+        },
+        {
+          "date": "2026-10-26",
+          "impressions": 3566,
+          "reach": 2340,
+          "followers": 538,
+          "interactions": 112,
+          "clicks": 44
+        },
+        {
+          "date": "2026-10-27",
+          "impressions": 3311,
+          "reach": 2173,
+          "followers": 546,
+          "interactions": 104,
+          "clicks": 41
+        },
+        {
+          "date": "2026-10-28",
+          "impressions": 3057,
+          "reach": 2006,
+          "followers": 563,
+          "interactions": 96,
+          "clicks": 38
+        },
+        {
+          "date": "2026-10-29",
+          "impressions": 2882,
+          "reach": 1892,
+          "followers": 580,
+          "interactions": 91,
+          "clicks": 36
+        },
+        {
+          "date": "2026-10-30",
+          "impressions": 2844,
+          "reach": 1866,
+          "followers": 588,
+          "interactions": 90,
+          "clicks": 35
+        },
+        {
+          "date": "2026-10-31",
+          "impressions": 2955,
+          "reach": 1939,
+          "followers": 605,
+          "interactions": 93,
+          "clicks": 37
+        },
+        {
+          "date": "2026-11-01",
+          "impressions": 3188,
+          "reach": 2092,
+          "followers": 622,
+          "interactions": 100,
+          "clicks": 40
+        },
+        {
+          "date": "2026-11-02",
+          "impressions": 3477,
+          "reach": 2282,
+          "followers": 630,
+          "interactions": 110,
+          "clicks": 43
+        },
+        {
+          "date": "2026-11-03",
+          "impressions": 3741,
+          "reach": 2455,
+          "followers": 647,
+          "interactions": 118,
+          "clicks": 47
+        },
+        {
+          "date": "2026-11-04",
+          "impressions": 3906,
+          "reach": 2563,
+          "followers": 664,
+          "interactions": 123,
+          "clicks": 49
+        },
+        {
+          "date": "2026-11-05",
+          "impressions": 3927,
+          "reach": 2577,
+          "followers": 672,
+          "interactions": 124,
+          "clicks": 49
+        },
+        {
+          "date": "2026-11-06",
+          "impressions": 3801,
+          "reach": 2495,
+          "followers": 689,
+          "interactions": 120,
+          "clicks": 47
+        },
+        {
+          "date": "2026-11-07",
+          "impressions": 3570,
+          "reach": 2343,
+          "followers": 706,
+          "interactions": 112,
+          "clicks": 45
+        },
+        {
+          "date": "2026-11-08",
+          "impressions": 3305,
+          "reach": 2169,
+          "followers": 714,
+          "interactions": 104,
+          "clicks": 41
+        },
+        {
+          "date": "2026-11-09",
+          "impressions": 3088,
+          "reach": 2027,
+          "followers": 731,
+          "interactions": 97,
+          "clicks": 39
+        },
+        {
+          "date": "2026-11-10",
+          "impressions": 2988,
+          "reach": 1961,
+          "followers": 748,
+          "interactions": 94,
+          "clicks": 37
+        },
+        {
+          "date": "2026-11-11",
+          "impressions": 3037,
+          "reach": 1993,
+          "followers": 756,
+          "interactions": 96,
+          "clicks": 38
+        },
+        {
+          "date": "2026-11-12",
+          "impressions": 3224,
+          "reach": 2116,
+          "followers": 773,
+          "interactions": 102,
+          "clicks": 40
+        },
+        {
+          "date": "2026-11-13",
+          "impressions": 3499,
+          "reach": 2296,
+          "followers": 790,
+          "interactions": 110,
+          "clicks": 44
+        },
+        {
+          "date": "2026-11-14",
+          "impressions": 3784,
+          "reach": 2483,
+          "followers": 798,
+          "interactions": 119,
+          "clicks": 47
+        },
+        {
+          "date": "2026-11-15",
+          "impressions": 3998,
+          "reach": 2624,
+          "followers": 815,
+          "interactions": 126,
+          "clicks": 50
+        },
+        {
+          "date": "2026-11-16",
+          "impressions": 4083,
+          "reach": 2680,
+          "followers": 832,
+          "interactions": 129,
+          "clicks": 51
+        }
+      ],
+      "instagram": [
+        {
+          "date": "2026-09-18",
+          "impressions": 8590,
+          "reach": 6238,
+          "followers": 14200,
+          "interactions": 299,
+          "clicks": 119
+        },
+        {
+          "date": "2026-09-19",
+          "impressions": 8765,
+          "reach": 6365,
+          "followers": 14217,
+          "interactions": 306,
+          "clicks": 121
+        },
+        {
+          "date": "2026-09-20",
+          "impressions": 8546,
+          "reach": 6206,
+          "followers": 14234,
+          "interactions": 298,
+          "clicks": 118
+        },
+        {
+          "date": "2026-09-21",
+          "impressions": 8006,
+          "reach": 5814,
+          "followers": 14242,
+          "interactions": 279,
+          "clicks": 110
+        },
+        {
+          "date": "2026-09-22",
+          "impressions": 7314,
+          "reach": 5312,
+          "followers": 14259,
+          "interactions": 255,
+          "clicks": 101
+        },
+        {
+          "date": "2026-09-23",
+          "impressions": 6686,
+          "reach": 4855,
+          "followers": 14276,
+          "interactions": 233,
+          "clicks": 92
+        },
+        {
+          "date": "2026-09-24",
+          "impressions": 6315,
+          "reach": 4586,
+          "followers": 14284,
+          "interactions": 220,
+          "clicks": 87
+        },
+        {
+          "date": "2026-09-25",
+          "impressions": 6321,
+          "reach": 4590,
+          "followers": 14301,
+          "interactions": 220,
+          "clicks": 87
+        },
+        {
+          "date": "2026-09-26",
+          "impressions": 6713,
+          "reach": 4875,
+          "followers": 14318,
+          "interactions": 234,
+          "clicks": 93
+        },
+        {
+          "date": "2026-09-27",
+          "impressions": 7384,
+          "reach": 5362,
+          "followers": 14326,
+          "interactions": 257,
+          "clicks": 102
+        },
+        {
+          "date": "2026-09-28",
+          "impressions": 8147,
+          "reach": 5916,
+          "followers": 14343,
+          "interactions": 284,
+          "clicks": 112
+        },
+        {
+          "date": "2026-09-29",
+          "impressions": 8786,
+          "reach": 6380,
+          "followers": 14360,
+          "interactions": 306,
+          "clicks": 121
+        },
+        {
+          "date": "2026-09-30",
+          "impressions": 9123,
+          "reach": 6625,
+          "followers": 14368,
+          "interactions": 318,
+          "clicks": 126
+        },
+        {
+          "date": "2026-10-01",
+          "impressions": 9069,
+          "reach": 6586,
+          "followers": 14385,
+          "interactions": 316,
+          "clicks": 125
+        },
+        {
+          "date": "2026-10-02",
+          "impressions": 8649,
+          "reach": 6280,
+          "followers": 14402,
+          "interactions": 301,
+          "clicks": 119
+        },
+        {
+          "date": "2026-10-03",
+          "impressions": 7996,
+          "reach": 5807,
+          "followers": 14410,
+          "interactions": 279,
+          "clicks": 110
+        },
+        {
+          "date": "2026-10-04",
+          "impressions": 7315,
+          "reach": 5312,
+          "followers": 14427,
+          "interactions": 255,
+          "clicks": 101
+        },
+        {
+          "date": "2026-10-05",
+          "impressions": 6814,
+          "reach": 4948,
+          "followers": 14444,
+          "interactions": 238,
+          "clicks": 94
+        },
+        {
+          "date": "2026-10-06",
+          "impressions": 6653,
+          "reach": 4831,
+          "followers": 14452,
+          "interactions": 232,
+          "clicks": 92
+        },
+        {
+          "date": "2026-10-07",
+          "impressions": 6888,
+          "reach": 5002,
+          "followers": 14469,
+          "interactions": 240,
+          "clicks": 95
+        },
+        {
+          "date": "2026-10-08",
+          "impressions": 7460,
+          "reach": 5417,
+          "followers": 14486,
+          "interactions": 260,
+          "clicks": 103
+        },
+        {
+          "date": "2026-10-09",
+          "impressions": 8210,
+          "reach": 5962,
+          "followers": 14494,
+          "interactions": 286,
+          "clicks": 113
+        },
+        {
+          "date": "2026-10-10",
+          "impressions": 8927,
+          "reach": 6483,
+          "followers": 14511,
+          "interactions": 311,
+          "clicks": 123
+        },
+        {
+          "date": "2026-10-11",
+          "impressions": 9409,
+          "reach": 6833,
+          "followers": 14528,
+          "interactions": 328,
+          "clicks": 130
+        },
+        {
+          "date": "2026-10-12",
+          "impressions": 9525,
+          "reach": 6917,
+          "followers": 14536,
+          "interactions": 332,
+          "clicks": 131
+        },
+        {
+          "date": "2026-10-13",
+          "impressions": 9249,
+          "reach": 6716,
+          "followers": 14553,
+          "interactions": 322,
+          "clicks": 128
+        },
+        {
+          "date": "2026-10-14",
+          "impressions": 8673,
+          "reach": 6298,
+          "followers": 14570,
+          "interactions": 302,
+          "clicks": 120
+        },
+        {
+          "date": "2026-10-15",
+          "impressions": 7977,
+          "reach": 5793,
+          "followers": 14578,
+          "interactions": 278,
+          "clicks": 110
+        },
+        {
+          "date": "2026-10-16",
+          "impressions": 7376,
+          "reach": 5356,
+          "followers": 14595,
+          "interactions": 257,
+          "clicks": 102
+        },
+        {
+          "date": "2026-10-17",
+          "impressions": 7057,
+          "reach": 5125,
+          "followers": 14612,
+          "interactions": 246,
+          "clicks": 97
+        },
+        {
+          "date": "2026-10-18",
+          "impressions": 7125,
+          "reach": 5174,
+          "followers": 14620,
+          "interactions": 248,
+          "clicks": 98
+        },
+        {
+          "date": "2026-10-19",
+          "impressions": 7568,
+          "reach": 5496,
+          "followers": 14637,
+          "interactions": 264,
+          "clicks": 104
+        },
+        {
+          "date": "2026-10-20",
+          "impressions": 8267,
+          "reach": 6003,
+          "followers": 14654,
+          "interactions": 288,
+          "clicks": 114
+        },
+        {
+          "date": "2026-10-21",
+          "impressions": 9025,
+          "reach": 6554,
+          "followers": 14662,
+          "interactions": 315,
+          "clicks": 125
+        },
+        {
+          "date": "2026-10-22",
+          "impressions": 9628,
+          "reach": 6992,
+          "followers": 14679,
+          "interactions": 336,
+          "clicks": 133
+        },
+        {
+          "date": "2026-10-23",
+          "impressions": 9909,
+          "reach": 7196,
+          "followers": 14696,
+          "interactions": 345,
+          "clicks": 137
+        },
+        {
+          "date": "2026-10-24",
+          "impressions": 9794,
+          "reach": 7112,
+          "followers": 14704,
+          "interactions": 341,
+          "clicks": 135
+        },
+        {
+          "date": "2026-10-25",
+          "impressions": 9328,
+          "reach": 6774,
+          "followers": 14721,
+          "interactions": 325,
+          "clicks": 129
+        },
+        {
+          "date": "2026-10-26",
+          "impressions": 8657,
+          "reach": 6287,
+          "followers": 14738,
+          "interactions": 302,
+          "clicks": 119
+        },
+        {
+          "date": "2026-10-27",
+          "impressions": 7990,
+          "reach": 5802,
+          "followers": 14746,
+          "interactions": 278,
+          "clicks": 110
+        },
+        {
+          "date": "2026-10-28",
+          "impressions": 7533,
+          "reach": 5470,
+          "followers": 14763,
+          "interactions": 263,
+          "clicks": 104
+        },
+        {
+          "date": "2026-10-29",
+          "impressions": 7431,
+          "reach": 5396,
+          "followers": 14780,
+          "interactions": 259,
+          "clicks": 103
+        },
+        {
+          "date": "2026-10-30",
+          "impressions": 7724,
+          "reach": 5609,
+          "followers": 14788,
+          "interactions": 269,
+          "clicks": 107
+        },
+        {
+          "date": "2026-10-31",
+          "impressions": 8335,
+          "reach": 6053,
+          "followers": 14805,
+          "interactions": 291,
+          "clicks": 115
+        },
+        {
+          "date": "2026-11-01",
+          "impressions": 9094,
+          "reach": 6604,
+          "followers": 14822,
+          "interactions": 317,
+          "clicks": 125
+        },
+        {
+          "date": "2026-11-02",
+          "impressions": 9787,
+          "reach": 7108,
+          "followers": 14830,
+          "interactions": 341,
+          "clicks": 135
+        },
+        {
+          "date": "2026-11-03",
+          "impressions": 10220,
+          "reach": 7422,
+          "followers": 14847,
+          "interactions": 356,
+          "clicks": 141
+        },
+        {
+          "date": "2026-11-04",
+          "impressions": 10275,
+          "reach": 7461,
+          "followers": 14864,
+          "interactions": 358,
+          "clicks": 142
+        },
+        {
+          "date": "2026-11-05",
+          "impressions": 9945,
+          "reach": 7222,
+          "followers": 14872,
+          "interactions": 347,
+          "clicks": 137
+        },
+        {
+          "date": "2026-11-06",
+          "impressions": 9337,
+          "reach": 6781,
+          "followers": 14889,
+          "interactions": 325,
+          "clicks": 129
+        },
+        {
+          "date": "2026-11-07",
+          "impressions": 8642,
+          "reach": 6276,
+          "followers": 14906,
+          "interactions": 301,
+          "clicks": 119
+        },
+        {
+          "date": "2026-11-08",
+          "impressions": 8073,
+          "reach": 5863,
+          "followers": 14914,
+          "interactions": 281,
+          "clicks": 111
+        },
+        {
+          "date": "2026-11-09",
+          "impressions": 7809,
+          "reach": 5671,
+          "followers": 14931,
+          "interactions": 272,
+          "clicks": 108
+        },
+        {
+          "date": "2026-11-10",
+          "impressions": 7937,
+          "reach": 5764,
+          "followers": 14948,
+          "interactions": 277,
+          "clicks": 110
+        },
+        {
+          "date": "2026-11-11",
+          "impressions": 8430,
+          "reach": 6122,
+          "followers": 14956,
+          "interactions": 294,
+          "clicks": 116
+        },
+        {
+          "date": "2026-11-12",
+          "impressions": 9151,
+          "reach": 6646,
+          "followers": 14973,
+          "interactions": 319,
+          "clicks": 126
+        },
+        {
+          "date": "2026-11-13",
+          "impressions": 9899,
+          "reach": 7189,
+          "followers": 14990,
+          "interactions": 345,
+          "clicks": 137
+        },
+        {
+          "date": "2026-11-14",
+          "impressions": 10462,
+          "reach": 7598,
+          "followers": 14998,
+          "interactions": 365,
+          "clicks": 144
+        },
+        {
+          "date": "2026-11-15",
+          "impressions": 10685,
+          "reach": 7759,
+          "followers": 15015,
+          "interactions": 372,
+          "clicks": 147
+        },
+        {
+          "date": "2026-11-16",
+          "impressions": 10511,
+          "reach": 7633,
+          "followers": 15032,
+          "interactions": 366,
+          "clicks": 145
+        }
+      ],
+      "tiktok": [
+        {
+          "date": "2026-09-18",
+          "impressions": 12617,
+          "reach": 9488,
+          "followers": 9800,
+          "interactions": 455,
+          "clicks": 180
+        },
+        {
+          "date": "2026-09-19",
+          "impressions": 11813,
+          "reach": 8884,
+          "followers": 9817,
+          "interactions": 426,
+          "clicks": 169
+        },
+        {
+          "date": "2026-09-20",
+          "impressions": 10785,
+          "reach": 8110,
+          "followers": 9834,
+          "interactions": 389,
+          "clicks": 154
+        },
+        {
+          "date": "2026-09-21",
+          "impressions": 9849,
+          "reach": 7406,
+          "followers": 9842,
+          "interactions": 355,
+          "clicks": 141
+        },
+        {
+          "date": "2026-09-22",
+          "impressions": 9297,
+          "reach": 6991,
+          "followers": 9859,
+          "interactions": 336,
+          "clicks": 133
+        },
+        {
+          "date": "2026-09-23",
+          "impressions": 9306,
+          "reach": 6998,
+          "followers": 9876,
+          "interactions": 336,
+          "clicks": 133
+        },
+        {
+          "date": "2026-09-24",
+          "impressions": 9889,
+          "reach": 7436,
+          "followers": 9884,
+          "interactions": 357,
+          "clicks": 141
+        },
+        {
+          "date": "2026-09-25",
+          "impressions": 10888,
+          "reach": 8188,
+          "followers": 9901,
+          "interactions": 393,
+          "clicks": 156
+        },
+        {
+          "date": "2026-09-26",
+          "impressions": 12023,
+          "reach": 9041,
+          "followers": 9918,
+          "interactions": 434,
+          "clicks": 172
+        },
+        {
+          "date": "2026-09-27",
+          "impressions": 12975,
+          "reach": 9757,
+          "followers": 9926,
+          "interactions": 468,
+          "clicks": 185
+        },
+        {
+          "date": "2026-09-28",
+          "impressions": 13476,
+          "reach": 10134,
+          "followers": 9943,
+          "interactions": 486,
+          "clicks": 193
+        },
+        {
+          "date": "2026-09-29",
+          "impressions": 13395,
+          "reach": 10073,
+          "followers": 9960,
+          "interactions": 484,
+          "clicks": 191
+        },
+        {
+          "date": "2026-09-30",
+          "impressions": 12770,
+          "reach": 9603,
+          "followers": 9968,
+          "interactions": 461,
+          "clicks": 182
+        },
+        {
+          "date": "2026-10-01",
+          "impressions": 11799,
+          "reach": 8873,
+          "followers": 9985,
+          "interactions": 426,
+          "clicks": 169
+        },
+        {
+          "date": "2026-10-02",
+          "impressions": 10785,
+          "reach": 8110,
+          "followers": 10002,
+          "interactions": 389,
+          "clicks": 154
+        },
+        {
+          "date": "2026-10-03",
+          "impressions": 10040,
+          "reach": 7550,
+          "followers": 10010,
+          "interactions": 362,
+          "clicks": 143
+        },
+        {
+          "date": "2026-10-04",
+          "impressions": 9800,
+          "reach": 7370,
+          "followers": 10027,
+          "interactions": 354,
+          "clicks": 140
+        },
+        {
+          "date": "2026-10-05",
+          "impressions": 10150,
+          "reach": 7632,
+          "followers": 10044,
+          "interactions": 366,
+          "clicks": 145
+        },
+        {
+          "date": "2026-10-06",
+          "impressions": 11001,
+          "reach": 8273,
+          "followers": 10052,
+          "interactions": 397,
+          "clicks": 157
+        },
+        {
+          "date": "2026-10-07",
+          "impressions": 12117,
+          "reach": 9112,
+          "followers": 10069,
+          "interactions": 437,
+          "clicks": 173
+        },
+        {
+          "date": "2026-10-08",
+          "impressions": 13184,
+          "reach": 9914,
+          "followers": 10086,
+          "interactions": 476,
+          "clicks": 188
+        },
+        {
+          "date": "2026-10-09",
+          "impressions": 13902,
+          "reach": 10454,
+          "followers": 10094,
+          "interactions": 502,
+          "clicks": 199
+        },
+        {
+          "date": "2026-10-10",
+          "impressions": 14074,
+          "reach": 10583,
+          "followers": 10111,
+          "interactions": 508,
+          "clicks": 201
+        },
+        {
+          "date": "2026-10-11",
+          "impressions": 13663,
+          "reach": 10275,
+          "followers": 10128,
+          "interactions": 493,
+          "clicks": 195
+        },
+        {
+          "date": "2026-10-12",
+          "impressions": 12806,
+          "reach": 9630,
+          "followers": 10136,
+          "interactions": 462,
+          "clicks": 183
+        },
+        {
+          "date": "2026-10-13",
+          "impressions": 11771,
+          "reach": 8852,
+          "followers": 10153,
+          "interactions": 425,
+          "clicks": 168
+        },
+        {
+          "date": "2026-10-14",
+          "impressions": 10876,
+          "reach": 8179,
+          "followers": 10170,
+          "interactions": 393,
+          "clicks": 155
+        },
+        {
+          "date": "2026-10-15",
+          "impressions": 10402,
+          "reach": 7822,
+          "followers": 10178,
+          "interactions": 375,
+          "clicks": 149
+        },
+        {
+          "date": "2026-10-16",
+          "impressions": 10502,
+          "reach": 7898,
+          "followers": 10195,
+          "interactions": 379,
+          "clicks": 150
+        },
+        {
+          "date": "2026-10-17",
+          "impressions": 11162,
+          "reach": 8394,
+          "followers": 10212,
+          "interactions": 403,
+          "clicks": 159
+        },
+        {
+          "date": "2026-10-18",
+          "impressions": 12202,
+          "reach": 9176,
+          "followers": 10220,
+          "interactions": 440,
+          "clicks": 174
+        },
+        {
+          "date": "2026-10-19",
+          "impressions": 13330,
+          "reach": 10024,
+          "followers": 10237,
+          "interactions": 481,
+          "clicks": 190
+        },
+        {
+          "date": "2026-10-20",
+          "impressions": 14227,
+          "reach": 10699,
+          "followers": 10254,
+          "interactions": 514,
+          "clicks": 203
+        },
+        {
+          "date": "2026-10-21",
+          "impressions": 14645,
+          "reach": 11013,
+          "followers": 10262,
+          "interactions": 529,
+          "clicks": 209
+        },
+        {
+          "date": "2026-10-22",
+          "impressions": 14474,
+          "reach": 10885,
+          "followers": 10279,
+          "interactions": 522,
+          "clicks": 207
+        },
+        {
+          "date": "2026-10-23",
+          "impressions": 13780,
+          "reach": 10363,
+          "followers": 10296,
+          "interactions": 497,
+          "clicks": 197
+        },
+        {
+          "date": "2026-10-24",
+          "impressions": 12782,
+          "reach": 9612,
+          "followers": 10304,
+          "interactions": 461,
+          "clicks": 183
+        },
+        {
+          "date": "2026-10-25",
+          "impressions": 11790,
+          "reach": 8866,
+          "followers": 10321,
+          "interactions": 426,
+          "clicks": 168
+        },
+        {
+          "date": "2026-10-26",
+          "impressions": 11110,
+          "reach": 8354,
+          "followers": 10338,
+          "interactions": 401,
+          "clicks": 159
+        },
+        {
+          "date": "2026-10-27",
+          "impressions": 10958,
+          "reach": 8240,
+          "followers": 10346,
+          "interactions": 396,
+          "clicks": 157
+        },
+        {
+          "date": "2026-10-28",
+          "impressions": 11393,
+          "reach": 8568,
+          "followers": 10363,
+          "interactions": 411,
+          "clicks": 163
+        },
+        {
+          "date": "2026-10-29",
+          "impressions": 12303,
+          "reach": 9252,
+          "followers": 10380,
+          "interactions": 444,
+          "clicks": 176
+        },
+        {
+          "date": "2026-10-30",
+          "impressions": 13433,
+          "reach": 10102,
+          "followers": 10388,
+          "interactions": 485,
+          "clicks": 192
+        },
+        {
+          "date": "2026-10-31",
+          "impressions": 14465,
+          "reach": 10877,
+          "followers": 10405,
+          "interactions": 522,
+          "clicks": 207
+        },
+        {
+          "date": "2026-11-01",
+          "impressions": 15109,
+          "reach": 11362,
+          "followers": 10422,
+          "interactions": 545,
+          "clicks": 216
+        },
+        {
+          "date": "2026-11-02",
+          "impressions": 15190,
+          "reach": 11423,
+          "followers": 10430,
+          "interactions": 548,
+          "clicks": 217
+        },
+        {
+          "date": "2026-11-03",
+          "impressions": 14698,
+          "reach": 11053,
+          "followers": 10447,
+          "interactions": 531,
+          "clicks": 210
+        },
+        {
+          "date": "2026-11-04",
+          "impressions": 13795,
+          "reach": 10374,
+          "followers": 10464,
+          "interactions": 498,
+          "clicks": 197
+        },
+        {
+          "date": "2026-11-05",
+          "impressions": 12760,
+          "reach": 9596,
+          "followers": 10472,
+          "interactions": 461,
+          "clicks": 182
+        },
+        {
+          "date": "2026-11-06",
+          "impressions": 11914,
+          "reach": 8959,
+          "followers": 10489,
+          "interactions": 430,
+          "clicks": 170
+        },
+        {
+          "date": "2026-11-07",
+          "impressions": 11521,
+          "reach": 8664,
+          "followers": 10506,
+          "interactions": 416,
+          "clicks": 165
+        },
+        {
+          "date": "2026-11-08",
+          "impressions": 11712,
+          "reach": 8807,
+          "followers": 10514,
+          "interactions": 423,
+          "clicks": 167
+        },
+        {
+          "date": "2026-11-09",
+          "impressions": 12445,
+          "reach": 9358,
+          "followers": 10531,
+          "interactions": 449,
+          "clicks": 178
+        },
+        {
+          "date": "2026-11-10",
+          "impressions": 13518,
+          "reach": 10166,
+          "followers": 10548,
+          "interactions": 488,
+          "clicks": 193
+        },
+        {
+          "date": "2026-11-11",
+          "impressions": 14631,
+          "reach": 11002,
+          "followers": 10556,
+          "interactions": 528,
+          "clicks": 209
+        },
+        {
+          "date": "2026-11-12",
+          "impressions": 15469,
+          "reach": 11633,
+          "followers": 10573,
+          "interactions": 558,
+          "clicks": 221
+        },
+        {
+          "date": "2026-11-13",
+          "impressions": 15800,
+          "reach": 11881,
+          "followers": 10590,
+          "interactions": 570,
+          "clicks": 226
+        },
+        {
+          "date": "2026-11-14",
+          "impressions": 15541,
+          "reach": 11687,
+          "followers": 10598,
+          "interactions": 561,
+          "clicks": 222
+        },
+        {
+          "date": "2026-11-15",
+          "impressions": 14783,
+          "reach": 11117,
+          "followers": 10615,
+          "interactions": 534,
+          "clicks": 211
+        },
+        {
+          "date": "2026-11-16",
+          "impressions": 13765,
+          "reach": 10352,
+          "followers": 10632,
+          "interactions": 497,
+          "clicks": 197
+        }
+      ],
+      "youtube": [
+        {
+          "date": "2026-09-18",
+          "impressions": 4359,
+          "reach": 3334,
+          "followers": 4150,
+          "interactions": 160,
+          "clicks": 63
+        },
+        {
+          "date": "2026-09-19",
+          "impressions": 3977,
+          "reach": 3042,
+          "followers": 4167,
+          "interactions": 146,
+          "clicks": 58
+        },
+        {
+          "date": "2026-09-20",
+          "impressions": 3752,
+          "reach": 2869,
+          "followers": 4184,
+          "interactions": 138,
+          "clicks": 55
+        },
+        {
+          "date": "2026-09-21",
+          "impressions": 3756,
+          "reach": 2872,
+          "followers": 4192,
+          "interactions": 138,
+          "clicks": 55
+        },
+        {
+          "date": "2026-09-22",
+          "impressions": 3994,
+          "reach": 3054,
+          "followers": 4209,
+          "interactions": 147,
+          "clicks": 58
+        },
+        {
+          "date": "2026-09-23",
+          "impressions": 4401,
+          "reach": 3366,
+          "followers": 4226,
+          "interactions": 162,
+          "clicks": 64
+        },
+        {
+          "date": "2026-09-24",
+          "impressions": 4865,
+          "reach": 3720,
+          "followers": 4234,
+          "interactions": 179,
+          "clicks": 71
+        },
+        {
+          "date": "2026-09-25",
+          "impressions": 5253,
+          "reach": 4017,
+          "followers": 4251,
+          "interactions": 193,
+          "clicks": 76
+        },
+        {
+          "date": "2026-09-26",
+          "impressions": 5458,
+          "reach": 4173,
+          "followers": 4268,
+          "interactions": 200,
+          "clicks": 79
+        },
+        {
+          "date": "2026-09-27",
+          "impressions": 5424,
+          "reach": 4148,
+          "followers": 4276,
+          "interactions": 199,
+          "clicks": 79
+        },
+        {
+          "date": "2026-09-28",
+          "impressions": 5169,
+          "reach": 3953,
+          "followers": 4293,
+          "interactions": 190,
+          "clicks": 75
+        },
+        {
+          "date": "2026-09-29",
+          "impressions": 4773,
+          "reach": 3650,
+          "followers": 4310,
+          "interactions": 175,
+          "clicks": 69
+        },
+        {
+          "date": "2026-09-30",
+          "impressions": 4359,
+          "reach": 3334,
+          "followers": 4318,
+          "interactions": 160,
+          "clicks": 63
+        },
+        {
+          "date": "2026-10-01",
+          "impressions": 4056,
+          "reach": 3101,
+          "followers": 4335,
+          "interactions": 149,
+          "clicks": 59
+        },
+        {
+          "date": "2026-10-02",
+          "impressions": 3958,
+          "reach": 3026,
+          "followers": 4352,
+          "interactions": 145,
+          "clicks": 57
+        },
+        {
+          "date": "2026-10-03",
+          "impressions": 4100,
+          "reach": 3135,
+          "followers": 4360,
+          "interactions": 150,
+          "clicks": 60
+        },
+        {
+          "date": "2026-10-04",
+          "impressions": 4447,
+          "reach": 3401,
+          "followers": 4377,
+          "interactions": 163,
+          "clicks": 65
+        },
+        {
+          "date": "2026-10-05",
+          "impressions": 4903,
+          "reach": 3749,
+          "followers": 4394,
+          "interactions": 180,
+          "clicks": 71
+        },
+        {
+          "date": "2026-10-06",
+          "impressions": 5338,
+          "reach": 4082,
+          "followers": 4402,
+          "interactions": 196,
+          "clicks": 78
+        },
+        {
+          "date": "2026-10-07",
+          "impressions": 5631,
+          "reach": 4306,
+          "followers": 4419,
+          "interactions": 207,
+          "clicks": 82
+        },
+        {
+          "date": "2026-10-08",
+          "impressions": 5701,
+          "reach": 4360,
+          "followers": 4436,
+          "interactions": 209,
+          "clicks": 83
+        },
+        {
+          "date": "2026-10-09",
+          "impressions": 5534,
+          "reach": 4232,
+          "followers": 4444,
+          "interactions": 203,
+          "clicks": 80
+        },
+        {
+          "date": "2026-10-10",
+          "impressions": 5184,
+          "reach": 3964,
+          "followers": 4461,
+          "interactions": 190,
+          "clicks": 75
+        },
+        {
+          "date": "2026-10-11",
+          "impressions": 4762,
+          "reach": 3641,
+          "followers": 4478,
+          "interactions": 175,
+          "clicks": 69
+        },
+        {
+          "date": "2026-10-12",
+          "impressions": 4397,
+          "reach": 3362,
+          "followers": 4486,
+          "interactions": 161,
+          "clicks": 64
+        },
+        {
+          "date": "2026-10-13",
+          "impressions": 4203,
+          "reach": 3214,
+          "followers": 4503,
+          "interactions": 154,
+          "clicks": 61
+        },
+        {
+          "date": "2026-10-14",
+          "impressions": 4244,
+          "reach": 3246,
+          "followers": 4520,
+          "interactions": 156,
+          "clicks": 62
+        },
+        {
+          "date": "2026-10-15",
+          "impressions": 4513,
+          "reach": 3451,
+          "followers": 4528,
+          "interactions": 166,
+          "clicks": 66
+        },
+        {
+          "date": "2026-10-16",
+          "impressions": 4938,
+          "reach": 3776,
+          "followers": 4545,
+          "interactions": 181,
+          "clicks": 72
+        },
+        {
+          "date": "2026-10-17",
+          "impressions": 5398,
+          "reach": 4128,
+          "followers": 4562,
+          "interactions": 198,
+          "clicks": 78
+        },
+        {
+          "date": "2026-10-18",
+          "impressions": 5764,
+          "reach": 4408,
+          "followers": 4570,
+          "interactions": 212,
+          "clicks": 84
+        },
+        {
+          "date": "2026-10-19",
+          "impressions": 5934,
+          "reach": 4538,
+          "followers": 4587,
+          "interactions": 218,
+          "clicks": 86
+        },
+        {
+          "date": "2026-10-20",
+          "impressions": 5865,
+          "reach": 4485,
+          "followers": 4604,
+          "interactions": 215,
+          "clicks": 85
+        },
+        {
+          "date": "2026-10-21",
+          "impressions": 5582,
+          "reach": 4268,
+          "followers": 4612,
+          "interactions": 205,
+          "clicks": 81
+        },
+        {
+          "date": "2026-10-22",
+          "impressions": 5174,
+          "reach": 3957,
+          "followers": 4629,
+          "interactions": 190,
+          "clicks": 75
+        },
+        {
+          "date": "2026-10-23",
+          "impressions": 4769,
+          "reach": 3647,
+          "followers": 4646,
+          "interactions": 175,
+          "clicks": 69
+        },
+        {
+          "date": "2026-10-24",
+          "impressions": 4492,
+          "reach": 3435,
+          "followers": 4654,
+          "interactions": 165,
+          "clicks": 65
+        },
+        {
+          "date": "2026-10-25",
+          "impressions": 4430,
+          "reach": 3388,
+          "followers": 4671,
+          "interactions": 163,
+          "clicks": 64
+        },
+        {
+          "date": "2026-10-26",
+          "impressions": 4608,
+          "reach": 3524,
+          "followers": 4688,
+          "interactions": 169,
+          "clicks": 67
+        },
+        {
+          "date": "2026-10-27",
+          "impressions": 4979,
+          "reach": 3807,
+          "followers": 4696,
+          "interactions": 183,
+          "clicks": 72
+        },
+        {
+          "date": "2026-10-28",
+          "impressions": 5440,
+          "reach": 4160,
+          "followers": 4713,
+          "interactions": 200,
+          "clicks": 79
+        },
+        {
+          "date": "2026-10-29",
+          "impressions": 5861,
+          "reach": 4482,
+          "followers": 4730,
+          "interactions": 215,
+          "clicks": 85
+        },
+        {
+          "date": "2026-10-30",
+          "impressions": 6123,
+          "reach": 4683,
+          "followers": 4738,
+          "interactions": 225,
+          "clicks": 89
+        },
+        {
+          "date": "2026-10-31",
+          "impressions": 6157,
+          "reach": 4708,
+          "followers": 4755,
+          "interactions": 226,
+          "clicks": 89
+        },
+        {
+          "date": "2026-11-01",
+          "impressions": 5956,
+          "reach": 4555,
+          "followers": 4772,
+          "interactions": 219,
+          "clicks": 87
+        },
+        {
+          "date": "2026-11-02",
+          "impressions": 5588,
+          "reach": 4273,
+          "followers": 4780,
+          "interactions": 205,
+          "clicks": 81
+        },
+        {
+          "date": "2026-11-03",
+          "impressions": 5165,
+          "reach": 3950,
+          "followers": 4797,
+          "interactions": 190,
+          "clicks": 75
+        },
+        {
+          "date": "2026-11-04",
+          "impressions": 4820,
+          "reach": 3686,
+          "followers": 4814,
+          "interactions": 177,
+          "clicks": 70
+        },
+        {
+          "date": "2026-11-05",
+          "impressions": 4660,
+          "reach": 3563,
+          "followers": 4822,
+          "interactions": 171,
+          "clicks": 68
+        },
+        {
+          "date": "2026-11-06",
+          "impressions": 4738,
+          "reach": 3623,
+          "followers": 4839,
+          "interactions": 174,
+          "clicks": 69
+        },
+        {
+          "date": "2026-11-07",
+          "impressions": 5037,
+          "reach": 3852,
+          "followers": 4856,
+          "interactions": 185,
+          "clicks": 73
+        },
+        {
+          "date": "2026-11-08",
+          "impressions": 5475,
+          "reach": 4186,
+          "followers": 4864,
+          "interactions": 201,
+          "clicks": 80
+        },
+        {
+          "date": "2026-11-09",
+          "impressions": 5929,
+          "reach": 4534,
+          "followers": 4881,
+          "interactions": 218,
+          "clicks": 86
+        },
+        {
+          "date": "2026-11-10",
+          "impressions": 6270,
+          "reach": 4795,
+          "followers": 4898,
+          "interactions": 230,
+          "clicks": 91
+        },
+        {
+          "date": "2026-11-11",
+          "impressions": 6406,
+          "reach": 4898,
+          "followers": 4906,
+          "interactions": 235,
+          "clicks": 93
+        },
+        {
+          "date": "2026-11-12",
+          "impressions": 6300,
+          "reach": 4818,
+          "followers": 4923,
+          "interactions": 231,
+          "clicks": 92
+        },
+        {
+          "date": "2026-11-13",
+          "impressions": 5991,
+          "reach": 4581,
+          "followers": 4940,
+          "interactions": 220,
+          "clicks": 87
+        },
+        {
+          "date": "2026-11-14",
+          "impressions": 5575,
+          "reach": 4264,
+          "followers": 4948,
+          "interactions": 205,
+          "clicks": 81
+        },
+        {
+          "date": "2026-11-15",
+          "impressions": 5182,
+          "reach": 3963,
+          "followers": 4965,
+          "interactions": 190,
+          "clicks": 75
+        },
+        {
+          "date": "2026-11-16",
+          "impressions": 4933,
+          "reach": 3773,
+          "followers": 4982,
+          "interactions": 181,
+          "clicks": 72
+        }
+      ],
+      "linkedin": [
+        {
+          "date": "2026-09-18",
+          "impressions": 1965,
+          "reach": 1419,
+          "followers": 2890,
+          "interactions": 68,
+          "clicks": 27
+        },
+        {
+          "date": "2026-09-19",
+          "impressions": 1967,
+          "reach": 1421,
+          "followers": 2907,
+          "interactions": 68,
+          "clicks": 27
+        },
+        {
+          "date": "2026-09-20",
+          "impressions": 2093,
+          "reach": 1511,
+          "followers": 2924,
+          "interactions": 73,
+          "clicks": 29
+        },
+        {
+          "date": "2026-09-21",
+          "impressions": 2309,
+          "reach": 1667,
+          "followers": 2932,
+          "interactions": 80,
+          "clicks": 32
+        },
+        {
+          "date": "2026-09-22",
+          "impressions": 2554,
+          "reach": 1844,
+          "followers": 2949,
+          "interactions": 89,
+          "clicks": 35
+        },
+        {
+          "date": "2026-09-23",
+          "impressions": 2759,
+          "reach": 1993,
+          "followers": 2966,
+          "interactions": 96,
+          "clicks": 38
+        },
+        {
+          "date": "2026-09-24",
+          "impressions": 2868,
+          "reach": 2071,
+          "followers": 2974,
+          "interactions": 99,
+          "clicks": 39
+        },
+        {
+          "date": "2026-09-25",
+          "impressions": 2850,
+          "reach": 2058,
+          "followers": 2991,
+          "interactions": 99,
+          "clicks": 39
+        },
+        {
+          "date": "2026-09-26",
+          "impressions": 2715,
+          "reach": 1961,
+          "followers": 3008,
+          "interactions": 94,
+          "clicks": 37
+        },
+        {
+          "date": "2026-09-27",
+          "impressions": 2505,
+          "reach": 1810,
+          "followers": 3016,
+          "interactions": 87,
+          "clicks": 34
+        },
+        {
+          "date": "2026-09-28",
+          "impressions": 2286,
+          "reach": 1651,
+          "followers": 3033,
+          "interactions": 79,
+          "clicks": 31
+        },
+        {
+          "date": "2026-09-29",
+          "impressions": 2126,
+          "reach": 1535,
+          "followers": 3050,
+          "interactions": 74,
+          "clicks": 29
+        },
+        {
+          "date": "2026-09-30",
+          "impressions": 2074,
+          "reach": 1498,
+          "followers": 3058,
+          "interactions": 72,
+          "clicks": 28
+        },
+        {
+          "date": "2026-10-01",
+          "impressions": 2149,
+          "reach": 1552,
+          "followers": 3075,
+          "interactions": 74,
+          "clicks": 29
+        },
+        {
+          "date": "2026-10-02",
+          "impressions": 2333,
+          "reach": 1685,
+          "followers": 3092,
+          "interactions": 81,
+          "clicks": 32
+        },
+        {
+          "date": "2026-10-03",
+          "impressions": 2574,
+          "reach": 1859,
+          "followers": 3100,
+          "interactions": 89,
+          "clicks": 35
+        },
+        {
+          "date": "2026-10-04",
+          "impressions": 2805,
+          "reach": 2026,
+          "followers": 3117,
+          "interactions": 97,
+          "clicks": 38
+        },
+        {
+          "date": "2026-10-05",
+          "impressions": 2960,
+          "reach": 2138,
+          "followers": 3134,
+          "interactions": 103,
+          "clicks": 41
+        },
+        {
+          "date": "2026-10-06",
+          "impressions": 2997,
+          "reach": 2164,
+          "followers": 3142,
+          "interactions": 104,
+          "clicks": 41
+        },
+        {
+          "date": "2026-10-07",
+          "impressions": 2908,
+          "reach": 2100,
+          "followers": 3159,
+          "interactions": 101,
+          "clicks": 40
+        },
+        {
+          "date": "2026-10-08",
+          "impressions": 2723,
+          "reach": 1967,
+          "followers": 3176,
+          "interactions": 94,
+          "clicks": 37
+        },
+        {
+          "date": "2026-10-09",
+          "impressions": 2499,
+          "reach": 1805,
+          "followers": 3184,
+          "interactions": 87,
+          "clicks": 34
+        },
+        {
+          "date": "2026-10-10",
+          "impressions": 2306,
+          "reach": 1666,
+          "followers": 3201,
+          "interactions": 80,
+          "clicks": 32
+        },
+        {
+          "date": "2026-10-11",
+          "impressions": 2204,
+          "reach": 1592,
+          "followers": 3218,
+          "interactions": 76,
+          "clicks": 30
+        },
+        {
+          "date": "2026-10-12",
+          "impressions": 2225,
+          "reach": 1607,
+          "followers": 3226,
+          "interactions": 77,
+          "clicks": 31
+        },
+        {
+          "date": "2026-10-13",
+          "impressions": 2368,
+          "reach": 1710,
+          "followers": 3243,
+          "interactions": 82,
+          "clicks": 32
+        },
+        {
+          "date": "2026-10-14",
+          "impressions": 2592,
+          "reach": 1872,
+          "followers": 3260,
+          "interactions": 90,
+          "clicks": 36
+        },
+        {
+          "date": "2026-10-15",
+          "impressions": 2836,
+          "reach": 2048,
+          "followers": 3268,
+          "interactions": 98,
+          "clicks": 39
+        },
+        {
+          "date": "2026-10-16",
+          "impressions": 3030,
+          "reach": 2188,
+          "followers": 3285,
+          "interactions": 105,
+          "clicks": 42
+        },
+        {
+          "date": "2026-10-17",
+          "impressions": 3120,
+          "reach": 2253,
+          "followers": 3302,
+          "interactions": 108,
+          "clicks": 43
+        },
+        {
+          "date": "2026-10-18",
+          "impressions": 3083,
+          "reach": 2227,
+          "followers": 3310,
+          "interactions": 107,
+          "clicks": 42
+        },
+        {
+          "date": "2026-10-19",
+          "impressions": 2933,
+          "reach": 2119,
+          "followers": 3327,
+          "interactions": 102,
+          "clicks": 40
+        },
+        {
+          "date": "2026-10-20",
+          "impressions": 2718,
+          "reach": 1963,
+          "followers": 3344,
+          "interactions": 94,
+          "clicks": 37
+        },
+        {
+          "date": "2026-10-21",
+          "impressions": 2503,
+          "reach": 1808,
+          "followers": 3352,
+          "interactions": 87,
+          "clicks": 34
+        },
+        {
+          "date": "2026-10-22",
+          "impressions": 2356,
+          "reach": 1702,
+          "followers": 3369,
+          "interactions": 82,
+          "clicks": 32
+        },
+        {
+          "date": "2026-10-23",
+          "impressions": 2324,
+          "reach": 1678,
+          "followers": 3386,
+          "interactions": 81,
+          "clicks": 32
+        },
+        {
+          "date": "2026-10-24",
+          "impressions": 2418,
+          "reach": 1746,
+          "followers": 3394,
+          "interactions": 84,
+          "clicks": 33
+        },
+        {
+          "date": "2026-10-25",
+          "impressions": 2614,
+          "reach": 1888,
+          "followers": 3411,
+          "interactions": 91,
+          "clicks": 36
+        },
+        {
+          "date": "2026-10-26",
+          "impressions": 2858,
+          "reach": 2064,
+          "followers": 3428,
+          "interactions": 99,
+          "clicks": 39
+        },
+        {
+          "date": "2026-10-27",
+          "impressions": 3081,
+          "reach": 2225,
+          "followers": 3436,
+          "interactions": 107,
+          "clicks": 42
+        },
+        {
+          "date": "2026-10-28",
+          "impressions": 3220,
+          "reach": 2326,
+          "followers": 3453,
+          "interactions": 112,
+          "clicks": 44
+        },
+        {
+          "date": "2026-10-29",
+          "impressions": 3238,
+          "reach": 2338,
+          "followers": 3470,
+          "interactions": 112,
+          "clicks": 44
+        },
+        {
+          "date": "2026-10-30",
+          "impressions": 3132,
+          "reach": 2262,
+          "followers": 3478,
+          "interactions": 109,
+          "clicks": 43
+        },
+        {
+          "date": "2026-10-31",
+          "impressions": 2937,
+          "reach": 2121,
+          "followers": 3495,
+          "interactions": 102,
+          "clicks": 40
+        },
+        {
+          "date": "2026-11-01",
+          "impressions": 2713,
+          "reach": 1959,
+          "followers": 3512,
+          "interactions": 94,
+          "clicks": 37
+        },
+        {
+          "date": "2026-11-02",
+          "impressions": 2530,
+          "reach": 1827,
+          "followers": 3520,
+          "interactions": 88,
+          "clicks": 35
+        },
+        {
+          "date": "2026-11-03",
+          "impressions": 2445,
+          "reach": 1766,
+          "followers": 3537,
+          "interactions": 85,
+          "clicks": 34
+        },
+        {
+          "date": "2026-11-04",
+          "impressions": 2487,
+          "reach": 1796,
+          "followers": 3554,
+          "interactions": 86,
+          "clicks": 34
+        },
+        {
+          "date": "2026-11-05",
+          "impressions": 2645,
+          "reach": 1910,
+          "followers": 3562,
+          "interactions": 92,
+          "clicks": 36
+        },
+        {
+          "date": "2026-11-06",
+          "impressions": 2877,
+          "reach": 2078,
+          "followers": 3579,
+          "interactions": 100,
+          "clicks": 39
+        },
+        {
+          "date": "2026-11-07",
+          "impressions": 3117,
+          "reach": 2251,
+          "followers": 3596,
+          "interactions": 108,
+          "clicks": 43
+        },
+        {
+          "date": "2026-11-08",
+          "impressions": 3298,
+          "reach": 2382,
+          "followers": 3604,
+          "interactions": 114,
+          "clicks": 45
+        },
+        {
+          "date": "2026-11-09",
+          "impressions": 3370,
+          "reach": 2434,
+          "followers": 3621,
+          "interactions": 117,
+          "clicks": 46
+        },
+        {
+          "date": "2026-11-10",
+          "impressions": 3314,
+          "reach": 2393,
+          "followers": 3638,
+          "interactions": 115,
+          "clicks": 45
+        },
+        {
+          "date": "2026-11-11",
+          "impressions": 3150,
+          "reach": 2275,
+          "followers": 3646,
+          "interactions": 109,
+          "clicks": 43
+        },
+        {
+          "date": "2026-11-12",
+          "impressions": 2930,
+          "reach": 2116,
+          "followers": 3663,
+          "interactions": 102,
+          "clicks": 40
+        },
+        {
+          "date": "2026-11-13",
+          "impressions": 2722,
+          "reach": 1966,
+          "followers": 3680,
+          "interactions": 94,
+          "clicks": 37
+        },
+        {
+          "date": "2026-11-14",
+          "impressions": 2590,
+          "reach": 1871,
+          "followers": 3688,
+          "interactions": 90,
+          "clicks": 36
+        },
+        {
+          "date": "2026-11-15",
+          "impressions": 2577,
+          "reach": 1861,
+          "followers": 3705,
+          "interactions": 89,
+          "clicks": 35
+        },
+        {
+          "date": "2026-11-16",
+          "impressions": 2689,
+          "reach": 1942,
+          "followers": 3722,
+          "interactions": 93,
+          "clicks": 37
+        }
+      ]
+    }
+  },
+  "topPosts": [
+    {
+      "id": "post-101",
+      "blogId": 8137744,
+      "network": "instagram",
+      "title": "Product release checklist for Q4 social campaigns [SAMPLE DATA]",
+      "publishedAt": "2026-11-12T10:30:00Z",
+      "format": "Carousel",
+      "impressions": 18420,
+      "reach": 13910,
+      "engagementRate": 5.4,
+      "clicks": 412
+    },
+    {
+      "id": "post-102",
+      "blogId": 8137744,
+      "network": "tiktok",
+      "title": "Behind the scenes: scheduling a full week in 15 minutes [SAMPLE DATA]",
+      "publishedAt": "2026-11-10T14:00:00Z",
+      "format": "Short Video",
+      "impressions": 34200,
+      "reach": 28900,
+      "engagementRate": 6.8,
+      "clicks": 618
+    },
+    {
+      "id": "post-103",
+      "blogId": 8137744,
+      "network": "linkedin",
+      "title": "How we measure paid ROAS alongside organic reach [SAMPLE DATA]",
+      "publishedAt": "2026-11-08T08:15:00Z",
+      "format": "Document",
+      "impressions": 7450,
+      "reach": 5210,
+      "engagementRate": 4.1,
+      "clicks": 289
+    },
+    {
+      "id": "post-104",
+      "blogId": 8137744,
+      "network": "youtube",
+      "title": "Monthly reporting walkthrough for client stakeholders [SAMPLE DATA]",
+      "publishedAt": "2026-11-05T11:00:00Z",
+      "format": "Video",
+      "impressions": 11200,
+      "reach": 8430,
+      "engagementRate": 4.9,
+      "clicks": 374
+    }
+  ],
+  "hashtags": [
+    {
+      "id": "ht-1",
+      "blogId": 8137744,
+      "hashtag": "#beeloftworkflow",
+      "network": "instagram",
+      "postsCount": 42,
+      "impressions": 58400,
+      "trackedAt": "2026-11-15T07:00:00Z"
+    },
+    {
+      "id": "ht-2",
+      "blogId": 8137744,
+      "hashtag": "#contentops",
+      "network": "tiktok",
+      "postsCount": 28,
+      "impressions": 41900,
+      "trackedAt": "2026-11-14T16:30:00Z"
+    }
+  ],
+  "competitors": [
+    {
+      "id": "comp-1",
+      "blogId": 8137744,
+      "network": "instagram",
+      "handle": "@socialbenchmark.lab",
+      "name": "Social Benchmark Lab [SAMPLE DATA]",
+      "followers": 24800,
+      "postsCount": 31,
+      "likesPerPost": 620,
+      "engagementRate": 4.3
+    },
+    {
+      "id": "comp-2",
+      "blogId": 8137744,
+      "network": "tiktok",
+      "handle": "@creativemetrics.id",
+      "name": "Creative Metrics ID [SAMPLE DATA]",
+      "followers": 19200,
+      "postsCount": 24,
+      "likesPerPost": 910,
+      "engagementRate": 5.7
+    }
+  ],
+  "systemTemplates": [
+    {
+      "id": "tpl-monthly",
+      "name": "Monthly Channel Summary",
+      "description": "Follower growth, impressions, and top performing content across connected profiles.",
+      "kind": "system",
+      "sections": [
+        "Brand Summary KPIs",
+        "Instagram Overview",
+        "TikTok Overview",
+        "Top 5 Posts"
+      ]
+    },
+    {
+      "id": "tpl-executive",
+      "name": "Executive Paid + Organic Overview",
+      "description": "Combines organic community metrics with Meta Ads and Google Ads ROAS performance.",
+      "kind": "system",
+      "sections": [
+        "Executive KPIs",
+        "Meta Ads Performance",
+        "Google Ads Keywords"
+      ]
+    },
+    {
+      "id": "tpl-social",
+      "name": "Social Media Deck",
+      "description": "Visual comparison of Reels, Carousels, Shorts, and posting frequency.",
+      "kind": "system",
+      "sections": [
+        "Posting Cadence",
+        "Format Breakdown",
+        "Engagement Comparison"
+      ]
+    }
+  ],
+  "customTemplates": [
+    {
+      "id": "tpl-custom-1",
+      "name": "Beeloft Weekly Sprint Report [SAMPLE DATA]",
+      "description": "Internal weekly review focusing on SmartLink clicks and Inbox resolution speed.",
+      "kind": "custom",
+      "sections": [
+        "Weekly Deltas",
+        "SmartLink Conversions",
+        "Inbox SLAs"
+      ]
+    }
+  ],
+  "reportsHistory": [
+    {
+      "id": "rep-201",
+      "blogId": 8137744,
+      "title": "October 2026 Monthly Summary [SAMPLE DATA]",
+      "templateId": "tpl-monthly",
+      "format": "PDF",
+      "dateFrom": "2026-10-01",
+      "dateTo": "2026-10-31",
+      "createdAt": "2026-11-01T09:15:00Z",
+      "status": "READY",
+      "summaryMetrics": {
+        "impressions": 184300,
+        "reach": 132400,
+        "followersDelta": 612,
+        "postsPublished": 24
+      }
+    }
+  ],
+  "studioReports": [
+    {
+      "id": "stu-1",
+      "blogId": 8137744,
+      "title": "Q4 Cross-Channel Studio Deck [SAMPLE DATA]",
+      "updatedAt": "2026-11-15T12:00:00Z",
+      "publicEnabled": true,
+      "blocks": [
+        {
+          "id": "blk-1",
+          "type": "KPI_GRID",
+          "title": "30-Day Core Growth KPIs"
+        },
+        {
+          "id": "blk-2",
+          "type": "LINE_CHART",
+          "title": "Organic Reach Trend"
+        },
+        {
+          "id": "blk-3",
+          "type": "TOP_POSTS",
+          "title": "Top Content Ranking"
+        },
+        {
+          "id": "blk-4",
+          "type": "TEXT_BLOCK",
+          "title": "Analyst Summary",
+          "content": "Short-form video drove 62% of referral clicks into SmartLink campaigns."
+        }
+      ]
+    }
+  ],
+  "campaignsDashboard": [
+    {
+      "id": "cd-1",
+      "blogId": 8137744,
+      "name": "Q4 Product Release Sprint [SAMPLE DATA]",
+      "tag": "Q4-Launch",
+      "startDate": "2026-10-20",
+      "endDate": "2026-11-30",
+      "postsCount": 14,
+      "impressions": 124500,
+      "clicks": 3120,
+      "archived": false
+    }
+  ],
+  "inboxThreads": [
+    {
+      "id": "thr-1",
+      "blogId": 8137744,
+      "network": "instagram",
+      "channelType": "DM",
+      "contactName": "Rina P. [SAMPLE DATA]",
+      "contactHandle": "@rina.crafts",
+      "status": "UNREAD",
+      "updatedAt": "2026-11-16T08:42:00Z",
+      "messages": [
+        {
+          "id": "msg-1",
+          "sender": "contact",
+          "authorName": "Rina P.",
+          "text": "Halo tim, apakah jadwal posting TikTok bisa otomatis dengan komentar pertama?",
+          "sentAt": "2026-11-16T08:42:00Z"
+        }
+      ]
+    },
+    {
+      "id": "thr-2",
+      "blogId": 8137744,
+      "network": "youtube",
+      "channelType": "COMMENT",
+      "contactName": "Doni K. [SAMPLE DATA]",
+      "contactHandle": "@doni.kreatif",
+      "status": "PENDING",
+      "updatedAt": "2026-11-15T19:10:00Z",
+      "messages": [
+        {
+          "id": "msg-2",
+          "sender": "contact",
+          "authorName": "Doni K.",
+          "text": "Template laporan PDF bulanan sangat membantu saat meeting klien.",
+          "sentAt": "2026-11-15T18:55:00Z"
+        },
+        {
+          "id": "msg-3",
+          "sender": "operator",
+          "authorName": "Beeloft Operator",
+          "text": "Terima kasih Doni, versi PPTX editable juga tersedia di tab Reports.",
+          "sentAt": "2026-11-15T19:10:00Z"
+        }
+      ]
+    }
+  ],
+  "plannerPosts": [
+    {
+      "id": "pln-301",
+      "blogId": 8137744,
+      "scheduledAt": "2026-11-16T12:00",
+      "text": "Jadwal siaran ulang demo SmartLinks dan pelacakan UTM hari ini. [SAMPLE DATA]",
+      "firstComment": "Link detail tersedia di bio SmartLink.",
+      "media": [],
+      "networks": [
+        "instagram",
+        "linkedin"
+      ],
+      "status": "SCHEDULED",
+      "notes": "Checked copy length"
+    },
+    {
+      "id": "pln-302",
+      "blogId": 8137744,
+      "scheduledAt": "2026-11-17T18:30",
+      "text": "Checklist audit mingguan untuk kampanye Meta dan Google Ads. [SAMPLE DATA]",
+      "firstComment": "",
+      "media": [],
+      "networks": [
+        "tiktok",
+        "youtube"
+      ],
+      "status": "SCHEDULED",
+      "notes": "Best time peak window"
+    },
+    {
+      "id": "pln-303",
+      "blogId": 8137744,
+      "scheduledAt": "2026-11-14T09:00",
+      "text": "Rangkuman performa konten minggu ke-2 November telah tersedia di studio laporan. [SAMPLE DATA]",
+      "firstComment": "",
+      "media": [],
+      "networks": [
+        "instagram",
+        "tiktok"
+      ],
+      "status": "PUBLISHED",
+      "notes": "Published cleanly"
+    }
+  ],
+  "deletedPosts": [
+    {
+      "id": "pln-299",
+      "blogId": 8137744,
+      "scheduledAt": "2026-11-19T11:00",
+      "text": "Archived draft reminder for October recap. [SAMPLE DATA]",
+      "firstComment": "",
+      "media": [],
+      "networks": [
+        "linkedin"
+      ],
+      "status": "DRAFT",
+      "notes": "Moved to trash during cleanup",
+      "deletedAt": "2026-11-15T16:00:00Z"
+    }
+  ],
+  "libraryPosts": [
+    {
+      "id": "lib-1",
+      "blogId": 8137744,
+      "title": "Weekly Case Study Prompt",
+      "text": "How our content operations team tracks organic reach next to paid attribution in one sheet.",
+      "networks": [
+        "linkedin",
+        "twitter"
+      ],
+      "tags": [
+        "Evergreen"
+      ],
+      "createdAt": "2026-11-02T10:00:00Z"
+    }
+  ],
+  "flows": [
+    {
+      "id": "flw-1",
+      "blogId": 8137744,
+      "name": "Checklist Comment-to-DM [SAMPLE DATA]",
+      "network": "instagram",
+      "commentTrigger": "withKeywords",
+      "keywords": [
+        "CHECKLIST",
+        "TEMPLATE",
+        "PDF"
+      ],
+      "publicReplies": [
+        "Sent the checklist link directly to your DM."
+      ],
+      "dmText": "Here is the Q4 campaign checklist link from our latest post.",
+      "followUpText": "Let us know if you need the PPTX export version.",
+      "buttonText": "Open Checklist",
+      "buttonUrl": "https://beeloftmetric.local/bio/beeloft-studio",
+      "status": "ACTIVE",
+      "executionsCount": 19,
+      "executions": [
+        {
+          "id": "exe-1",
+          "triggeredBy": "@rina.crafts commented \"TEMPLATE\"",
+          "actionTaken": "Sent public reply + DM with button",
+          "status": "SUCCESS",
+          "timestamp": "2026-11-16T08:15:00Z"
+        }
+      ]
+    }
+  ],
+  "flowTemplates": [
+    {
+      "id": "ftpl-1",
+      "name": "Comment-to-DM Lead Magnet",
+      "description": "Replies publicly to keyword comments and delivers your asset link in direct messages.",
+      "network": "instagram",
+      "commentTrigger": "withKeywords",
+      "keywords": [
+        "GUIDE",
+        "LINK"
+      ],
+      "publicReplies": [
+        "Just sent the link to your messages."
+      ],
+      "dmText": "Thanks for commenting. Open the guide using the button below.",
+      "buttonText": "Download Guide"
+    },
+    {
+      "id": "ftpl-2",
+      "name": "Support Keyword Triage",
+      "description": "Routes pricing or billing inquiries to your support booking page automatically.",
+      "network": "instagram",
+      "commentTrigger": "withKeywords",
+      "keywords": [
+        "PRICE",
+        "HARGA",
+        "SUPPORT"
+      ],
+      "publicReplies": [
+        "Check your DM for plan details."
+      ],
+      "dmText": "You can compare all workspace tiers on our pricing page.",
+      "buttonText": "View Pricing"
+    }
+  ],
+  "reviewTasks": [
+    {
+      "id": "tsk-1",
+      "blogId": 8137744,
+      "postId": "pln-301",
+      "postText": "Jadwal siaran ulang demo SmartLinks dan pelacakan UTM hari ini. [SAMPLE DATA]",
+      "network": "instagram",
+      "scheduledAt": "2026-11-16T12:00",
+      "requesterEmail": "editor@beeloftmetric.local",
+      "assigneeEmail": "operator@beeloftmetric.local",
+      "direction": "received",
+      "status": "PENDING",
+      "reviewerNote": "",
+      "createdAt": "2026-11-15T14:20:00Z"
+    }
+  ],
+  "autolists": [
+    {
+      "id": "al-1",
+      "blogId": 8137744,
+      "name": "Evergreen Tips & Checklists [SAMPLE DATA]",
+      "active": true,
+      "networks": [
+        "linkedin",
+        "twitter"
+      ],
+      "scheduleRule": "Every Tuesday and Thursday at 10:00",
+      "postsCount": 8
+    }
+  ],
+  "smartLinks": [
+    {
+      "id": "sl-1",
+      "blogId": 8137744,
+      "slug": "beeloft-studio",
+      "title": "Beeloft Studio [SAMPLE DATA]",
+      "description": "Tautan kampanye aktif, jadwal webinar, dan template laporan publik.",
+      "theme": {
+        "backgroundColor": "#ffffff",
+        "buttonColor": "#17191c",
+        "buttonTextColor": "#ffffff"
+      },
+      "buttons": [
+        {
+          "id": "btn-1",
+          "label": "Unduh Checklist Audit Konten Q4",
+          "url": "https://beeloftmetric.local/checklist-q4",
+          "active": true,
+          "clicks": 318
+        },
+        {
+          "id": "btn-2",
+          "label": "Jadwalkan Demo Pelaporan Agensi",
+          "url": "https://beeloftmetric.local/demo",
+          "active": true,
+          "clicks": 147
+        }
+      ],
+      "views": 1290
+    }
+  ],
+  "adCampaigns": [
+    {
+      "id": "cmp-401",
+      "blogId": 8137744,
+      "platform": "metaAds",
+      "name": "Q4 Awareness Carousel [SAMPLE DATA]",
+      "objective": "Traffic & Conversions",
+      "status": "ACTIVE",
+      "dailyBudget": 45,
+      "spend": 630,
+      "impressions": 94200,
+      "clicks": 2410,
+      "conversions": 78,
+      "revenue": 2340
+    },
+    {
+      "id": "cmp-402",
+      "blogId": 8137744,
+      "platform": "googleAds",
+      "name": "Search Brand Keywords ID [SAMPLE DATA]",
+      "objective": "Search Conversions",
+      "status": "ACTIVE",
+      "dailyBudget": 35,
+      "spend": 490,
+      "impressions": 28400,
+      "clicks": 1860,
+      "conversions": 64,
+      "revenue": 2112
+    }
+  ],
+  "adGroups": [
+    {
+      "id": "ag-1",
+      "blogId": 8137744,
+      "campaignId": "cmp-401",
+      "campaignName": "Q4 Awareness Carousel [SAMPLE DATA]",
+      "platform": "metaAds",
+      "name": "Lookalike 2% Marketing Leads",
+      "bidStrategy": "Lowest Cost Cap",
+      "dailyBudget": 25,
+      "spend": 390,
+      "clicks": 1490,
+      "cpa": 7.5,
+      "status": "ACTIVE"
+    },
+    {
+      "id": "ag-2",
+      "blogId": 8137744,
+      "campaignId": "cmp-402",
+      "campaignName": "Search Brand Keywords ID [SAMPLE DATA]",
+      "platform": "googleAds",
+      "name": "Exact Intent SaaS Tools",
+      "bidStrategy": "Target CPA",
+      "dailyBudget": 35,
+      "spend": 490,
+      "clicks": 1860,
+      "cpa": 7.65,
+      "status": "ACTIVE"
+    }
+  ],
+  "adCreatives": [
+    {
+      "id": "ad-1",
+      "blogId": 8137744,
+      "adGroupName": "Lookalike 2% Marketing Leads",
+      "platform": "metaAds",
+      "headline": "Schedule and measure 10 social channels in one workspace",
+      "format": "Carousel",
+      "impressions": 58200,
+      "clicks": 1490,
+      "ctr": 2.56,
+      "conversions": 52,
+      "status": "ACTIVE"
+    }
+  ],
+  "adKeywords": [
+    {
+      "id": "kw-1",
+      "blogId": 8137744,
+      "keyword": "social media analytics tool",
+      "matchType": "EXACT",
+      "cpc": 0.42,
+      "impressions": 12400,
+      "clicks": 820,
+      "conversions": 34,
+      "qualityScore": 9
+    },
+    {
+      "id": "kw-2",
+      "blogId": 8137744,
+      "keyword": "instagram post scheduler",
+      "matchType": "PHRASE",
+      "cpc": 0.36,
+      "impressions": 9800,
+      "clicks": 610,
+      "conversions": 21,
+      "qualityScore": 8
+    }
+  ],
+  "adRecommendations": [
+    {
+      "id": "rec-1",
+      "blogId": 8137744,
+      "platform": "googleAds",
+      "title": "Shift $10/day toward exact match keyword \"social media analytics tool\"",
+      "impact": "Estimated +8 weekly conversions at current CPA",
+      "category": "Budget",
+      "applied": false
+    },
+    {
+      "id": "rec-2",
+      "blogId": 8137744,
+      "platform": "metaAds",
+      "title": "Enable automatic placement optimization on Carousel ad set",
+      "impact": "Estimated -11% cost per link click",
+      "category": "Creative",
+      "applied": false
+    }
+  ],
+  "teamMembers": [
+    {
+      "id": "tm-1",
+      "name": "Beeloft Operator",
+      "email": "operator@beeloftmetric.local",
+      "role": "OWNER",
+      "kind": "user",
+      "assignedBrands": [
+        8137744,
+        8137743
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "id": "tm-2",
+      "name": "Content Editor",
+      "email": "editor@beeloftmetric.local",
+      "role": "EDITOR",
+      "kind": "team",
+      "assignedBrands": [
+        8137744
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "id": "tm-3",
+      "name": "External Brand Reviewer",
+      "email": "reviewer@client.example",
+      "role": "CLIENT_REVIEWER",
+      "kind": "client",
+      "assignedBrands": [
+        8137744
+      ],
+      "status": "INVITED"
+    }
+  ],
+  "agencySettings": {
+    "id": "org-1",
+    "organizationName": "Beeloft Digital Workspace",
+    "customDomain": "metrics.beeloftmetric.local",
+    "defaultLocale": "en",
+    "smtpHost": "smtp.beeloftmetric.local",
+    "smtpPort": 587,
+    "smtpUser": "mailer@beeloftmetric.local",
+    "senderEmail": "reports@beeloftmetric.local",
+    "lastTestStatus": null
+  },
+  "affiliation": {
+    "referralCode": "BEELOFT-PARTNER-640",
+    "referralUrl": "http://127.0.0.1:5173/register?ref=BEELOFT-PARTNER-640",
+    "payoutEmail": "payouts@beeloftmetric.local",
+    "commissionRatePct": 25,
+    "clicks": 342,
+    "signups": 48,
+    "paidConversions": 12,
+    "pendingCommissionUsd": 180,
+    "paidCommissionUsd": 540,
+    "payouts": [
+      {
+        "id": "pay-1",
+        "date": "2026-10-15",
+        "amountUsd": 270,
+        "status": "PAID"
+      },
+      {
+        "id": "pay-2",
+        "date": "2026-11-01",
+        "amountUsd": 270,
+        "status": "PAID"
+      }
+    ]
+  },
+  "coupons": [
+    {
+      "id": "cpn-1",
+      "code": "BEELOFTQ4",
+      "discountPct": 25,
+      "planTarget": "STARTER",
+      "redemptions": 14,
+      "maxRedemptions": 100,
+      "active": true
+    }
+  ],
+  "invoices": [
+    {
+      "id": "inv-901",
+      "date": "2026-11-01",
+      "customerEmail": "operator@beeloftmetric.local",
+      "plan": "ENTERPRISE_CUSTOM",
+      "amountUsd": 149,
+      "status": "PAID"
+    }
+  ],
+  "attributionEvents": [
+    {
+      "id": "att-6ebbfbec",
+      "visitorId": "vis-0deca946-f6b",
+      "sessionId": "ses-bc2ed722-29c",
+      "type": "event",
+      "path": "/planner/autolists?blogId=8137744&userId=6401427",
+      "eventName": "route_view",
+      "utmSource": null,
+      "utmMedium": null,
+      "referral": null,
+      "timestamp": "2026-11-16T04:25:50.658Z"
+    },
+    {
+      "id": "att-42041ed7",
+      "visitorId": "vis-0deca946-f6b",
+      "sessionId": "ses-bc2ed722-29c",
+      "type": "event",
+      "path": "/planner/list?blogId=8137744&userId=6401427",
+      "eventName": "route_view",
+      "utmSource": null,
+      "utmMedium": null,
+      "referral": null,
+      "timestamp": "2026-11-16T04:25:50.219Z"
+    },
+    {
+      "id": "att-be5b6381",
+      "visitorId": "vis-0deca946-f6b",
+      "sessionId": "ses-bc2ed722-29c",
+      "type": "event",
+      "path": "/planner?blogId=8137744&userId=6401427",
+      "eventName": "route_view",
+      "utmSource": null,
+      "utmMedium": null,
+      "referral": null,
+      "timestamp": "2026-11-16T04:25:49.545Z"
+    },
+    {
+      "id": "att-c9df8204",
+      "visitorId": "vis-0deca946-f6b",
+      "sessionId": "ses-bc2ed722-29c",
+      "type": "event",
+      "path": "/planner/list?blogId=8137744&userId=6401427",
+      "eventName": "route_view",
+      "utmSource": null,
+      "utmMedium": null,
+      "referral": null,
+      "timestamp": "2026-11-16T04:25:48.995Z"
+    },
+    {
+      "id": "att-c87f3115",
+      "visitorId": "vis-0deca946-f6b",
+      "sessionId": "ses-bc2ed722-29c",
+      "type": "event",
+      "path": "/planner/autolists?blogId=8137744&userId=6401427",
+      "eventName": "route_view",
+      "utmSource": null,
+      "utmMedium": null,
+      "referral": null,
+      "timestamp": "2026-11-16T04:25:48.130Z"
+    },
+    {
+      "id": "att-bcfdad6c",
+      "visitorId": "vis-0deca946-f6b",
+      "sessionId": "ses-bc2ed722-29c",
+      "type": "event",
+      "path": "/planner/list?blogId=8137744&userId=6401427",
+      "eventName": "route_view",
+      "utmSource": null,
+      "utmMedium": null,
+      "referral": null,
+      "timestamp": "2026-11-16T04:25:46.365Z"
+    },
+    {
+      "id": "att-c47796a7",
+      "visitorId": "vis-0deca946-f6b",
+      "sessionId": "ses-bc2ed722-29c",
+      "type": "event",
+      "path": "/planner?blogId=8137744&userId=6401427",
+      "eventName": "route_view",
+      "utmSource": null,
+      "utmMedium": null,
+      "referral": null,
+      "timestamp": "2026-11-16T04:24:52.606Z"
+    },
+    {
+      "id": "att-a957d850",
+      "visitorId": "vis-0deca946-f6b",
+      "sessionId": "ses-febd4f75-471",
+      "type": "event",
+      "path": "/evolution/brandSummary?blogId=8137744&userId=6401427",
+      "eventName": "route_view",
+      "utmSource": null,
+      "utmMedium": null,
+      "referral": null,
+      "timestamp": "2026-11-16T04:23:48.172Z"
+    },
+    {
+      "id": "att-13e01f71",
+      "visitorId": "vis-0deca946-f6b",
+      "sessionId": "ses-bc2ed722-29c",
+      "type": "session",
+      "path": "/evolution/brandSummary",
+      "eventName": "session_init",
+      "utmSource": "direct",
+      "utmMedium": "none",
+      "referral": null,
+      "timestamp": "2026-11-16T04:23:48.171Z"
+    },
+    {
+      "id": "att-da0783d6",
+      "visitorId": "vis-0deca946-f6b",
+      "sessionId": "ses-9a24f1a2-ec6",
+      "type": "event",
+      "path": "/planner/flows?blogId=8137744",
+      "eventName": "route_view",
+      "utmSource": null,
+      "utmMedium": null,
+      "referral": null,
+      "timestamp": "2026-11-16T04:23:46.948Z"
+    },
+    {
+      "id": "att-908f020f",
+      "visitorId": "vis-0deca946-f6b",
+      "sessionId": "ses-febd4f75-471",
+      "type": "session",
+      "path": "/planner/flows",
+      "eventName": "session_init",
+      "utmSource": "direct",
+      "utmMedium": "none",
+      "referral": null,
+      "timestamp": "2026-11-16T04:23:46.948Z"
+    },
+    {
+      "id": "att-0bd364db",
+      "visitorId": "vis-0deca946-f6b",
+      "sessionId": "ses-3a903deb-4d1",
+      "type": "event",
+      "path": "/pricing",
+      "eventName": "route_view",
+      "utmSource": null,
+      "utmMedium": null,
+      "referral": null,
+      "timestamp": "2026-11-16T04:23:45.907Z"
+    },
+    {
+      "id": "att-c66e0941",
+      "visitorId": "vis-0deca946-f6b",
+      "sessionId": "ses-9a24f1a2-ec6",
+      "type": "session",
+      "path": "/pricing",
+      "eventName": "session_init",
+      "utmSource": "direct",
+      "utmMedium": "none",
+      "referral": null,
+      "timestamp": "2026-11-16T04:23:45.906Z"
+    },
+    {
+      "id": "att-9f15e8bf",
+      "visitorId": "vis-0deca946-f6b",
+      "sessionId": "ses-73c20477-463",
+      "type": "event",
+      "path": "/evolution/brandSummary?blogId=8137744&userId=6401427",
+      "eventName": "route_view",
+      "utmSource": null,
+      "utmMedium": null,
+      "referral": null,
+      "timestamp": "2026-11-16T04:23:41.425Z"
+    },
+    {
+      "id": "att-1b1ae039",
+      "visitorId": "vis-0deca946-f6b",
+      "sessionId": "ses-3a903deb-4d1",
+      "type": "session",
+      "path": "/evolution/brandSummary",
+      "eventName": "session_init",
+      "utmSource": "direct",
+      "utmMedium": "none",
+      "referral": null,
+      "timestamp": "2026-11-16T04:23:41.425Z"
+    },
+    {
+      "id": "att-3292cd92",
+      "visitorId": "vis-0deca946-f6b",
+      "sessionId": "ses-b2e47b42-0fc",
+      "type": "event",
+      "path": "/",
+      "eventName": "route_view",
+      "utmSource": null,
+      "utmMedium": null,
+      "referral": null,
+      "timestamp": "2026-11-16T04:22:23.612Z"
+    },
+    {
+      "id": "att-5276c68e",
+      "visitorId": "vis-0deca946-f6b",
+      "sessionId": "ses-73c20477-463",
+      "type": "session",
+      "path": "/",
+      "eventName": "session_init",
+      "utmSource": "direct",
+      "utmMedium": "none",
+      "referral": null,
+      "timestamp": "2026-11-16T04:22:23.607Z"
+    },
+    {
+      "id": "att-8159fae1",
+      "visitorId": "vis-0deca946-f6b",
+      "sessionId": "ses-3320c194-d2d",
+      "type": "event",
+      "path": "/evolution/metaAds?blogId=8137744&userId=6401427",
+      "eventName": "route_view",
+      "utmSource": null,
+      "utmMedium": null,
+      "referral": null,
+      "timestamp": "2026-11-16T04:21:57.554Z"
+    },
+    {
+      "id": "att-578aa893",
+      "visitorId": "vis-0deca946-f6b",
+      "sessionId": "ses-b2e47b42-0fc",
+      "type": "session",
+      "path": "/evolution/metaAds",
+      "eventName": "session_init",
+      "utmSource": "direct",
+      "utmMedium": "none",
+      "referral": "http://127.0.0.1:5173/evolution/metaAds?blogId=8137744&userId=6401427",
+      "timestamp": "2026-11-16T04:21:57.553Z"
+    },
+    {
+      "id": "att-1",
+      "visitorId": "vis-seed-001",
+      "sessionId": "ses-seed-001",
+      "type": "session",
+      "path": "/",
+      "eventName": "page_view",
+      "utmSource": "direct",
+      "utmMedium": "none",
+      "referral": null,
+      "timestamp": "2026-11-16T08:00:00Z"
+    }
+  ],
+  "notifications": [
+    {
+      "id": "not-1",
+      "title": "Attribution engine v1 aktif",
+      "body": "Endpoint /s/session, /s, dan /p kini merekam peristiwa navigasi ke penyimpanan lokal.",
+      "category": "update",
+      "createdAt": "2026-11-16T07:30:00Z",
+      "read": false
+    },
+    {
+      "id": "not-2",
+      "title": "Sinkronisasi koneksi Beeloft Studio",
+      "body": "Data sampel terakhir diperbarui pada 16 Nov 2026 untuk kanal Instagram, TikTok, dan Ads.",
+      "category": "unread",
+      "createdAt": "2026-11-16T08:15:00Z",
+      "read": false
+    }
+  ]
+}
