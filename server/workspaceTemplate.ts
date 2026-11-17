@@ -1,6 +1,16 @@
 import { buildConnectionMap } from './seed.js';
 import { randomToken } from './security/crypto.js';
-import type { BeeloftDatabase, Brand, FlowTemplate, ReportTemplate, UserProfile } from './types.js';
+import type {
+  BeeloftDatabase,
+  Brand,
+  FlowTemplate,
+  ReportTemplate,
+  UserAccountRow,
+  UserProfile
+} from './types.js';
+
+export const NEW_USER_TRIAL_DAYS = 7;
+export const NEW_USER_TRIAL_PLAN: UserProfile['plan'] = 'STARTER';
 
 export interface PlanQuotaSpec {
   id: UserProfile['plan'];
@@ -148,13 +158,23 @@ export function createCleanUserWorkspace(params: {
   name: string;
   apiToken: string;
   plan?: UserProfile['plan'];
+  startTrial?: boolean;
   isAdmin?: boolean;
   emailVerified?: boolean;
   origin?: string;
 }): BeeloftDatabase {
-  const now = new Date().toISOString();
-  const validUntil = new Date(Date.now() + 365 * 86400000).toISOString();
-  const plan = params.plan || 'FREE';
+  const nowMs = Date.now();
+  const now = new Date(nowMs).toISOString();
+  const useTrial = !params.isAdmin && params.startTrial !== false;
+  const plan: UserProfile['plan'] = params.isAdmin
+    ? 'ENTERPRISE_CUSTOM'
+    : useTrial
+      ? NEW_USER_TRIAL_PLAN
+      : params.plan || 'FREE';
+  const trialEndsAt = useTrial
+    ? new Date(nowMs + NEW_USER_TRIAL_DAYS * 86400000).toISOString()
+    : null;
+  const validUntil = trialEndsAt ?? new Date(nowMs + 365 * 86400000).toISOString();
   const quota = PLAN_QUOTAS[plan];
   const baseOrigin = (params.origin || 'https://beeloftmetric.biz.id').replace(/\/+$/, '');
   const brandName = `${params.name.trim() || 'My'} Workspace`;
@@ -178,8 +198,11 @@ export function createCleanUserWorkspace(params: {
       name: params.name.trim(),
       passwordHash: 'redacted',
       registered: now,
-      trialUsed: false,
-      trialDays: 14,
+      trialUsed: useTrial,
+      trialDays: NEW_USER_TRIAL_DAYS,
+      trialActive: useTrial,
+      trialEndsAt,
+      trialDaysRemaining: useTrial ? NEW_USER_TRIAL_DAYS : 0,
       plan,
       status: 'ACTIVE',
       emailVerified: Boolean(params.emailVerified),
@@ -262,12 +285,50 @@ export function createCleanUserWorkspace(params: {
     notifications: [
       {
         id: `ntf-welcome-${params.userId}`,
-        title: 'Workspace ready on BeeloftMetric',
-        body: 'Connect your website tracker or social channels in Brand Connections to start recording live telemetry.',
+        title: useTrial ? '7-day Starter free trial active' : 'Workspace ready on BeeloftMetric',
+        body: useTrial
+          ? `Your 7-day Starter free trial is active until ${trialEndsAt!.slice(0, 10)} (up to 5 brands, 2,000 monthly posts, and report exports).`
+          : 'Connect your website tracker or social channels in Brand Connections to start recording live telemetry.',
         category: 'update',
         createdAt: now,
         read: false
       }
     ]
   };
+}
+
+export function evaluateUserTrialStatus(user: UserAccountRow, nowMs = Date.now()): boolean {
+  const u = user.workspace.user;
+  if (!u.trialActive || !u.trialEndsAt) {
+    u.trialDaysRemaining = 0;
+    return false;
+  }
+
+  const endMs = Date.parse(u.trialEndsAt);
+  if (!Number.isFinite(endMs)) {
+    u.trialActive = false;
+    u.trialDaysRemaining = 0;
+    return true;
+  }
+
+  if (nowMs >= endMs) {
+    user.plan = 'FREE';
+    u.plan = 'FREE';
+    u.trialActive = false;
+    u.trialDaysRemaining = 0;
+    u.brandLimit = PLAN_QUOTAS.FREE.brandLimit;
+    user.workspace.notifications.unshift({
+      id: `ntf-trial-ended-${user.userId}-${nowMs}`,
+      title: '7-day free trial ended',
+      body: 'Your 7-day Starter free trial has ended and your workspace is now on the Free plan. Upgrade anytime in Subscription & Plan.',
+      category: 'unread',
+      createdAt: new Date(nowMs).toISOString(),
+      read: false
+    });
+    user.workspace.notifications = user.workspace.notifications.slice(0, 50);
+    return true;
+  }
+
+  u.trialDaysRemaining = Math.max(1, Math.ceil((endMs - nowMs) / 86400000));
+  return false;
 }

@@ -1,10 +1,12 @@
 import { publishPostToConnectedNetworks } from '../services/oauthAndSocial.js';
+import { evaluateUserTrialStatus } from '../workspaceTemplate.js';
 import type { EdgeEnv, PlatformRepository } from '../types.js';
 
 export interface SchedulerRunSummary {
   checkedUsers: number;
   publishedCount: number;
   failedCount: number;
+  expiredTrialsCount: number;
   executedAt: string;
 }
 
@@ -18,12 +20,17 @@ export async function runScheduledJobs(
 
   let publishedCount = 0;
   let failedCount = 0;
+  let expiredTrialsCount = 0;
 
   for (const summary of users) {
     const user = await repo.getUserById(summary.userId);
     if (!user || user.status !== 'ACTIVE') continue;
 
     let mutated = false;
+    if (evaluateUserTrialStatus(user)) {
+      mutated = true;
+      expiredTrialsCount += 1;
+    }
     for (const post of user.workspace.plannerPosts) {
       if (post.status === 'SCHEDULED' && post.scheduledAt.slice(0, 16) <= nowMinute) {
         const res = await publishPostToConnectedNetworks({
@@ -66,6 +73,7 @@ export async function runScheduledJobs(
     checkedUsers: users.length,
     publishedCount,
     failedCount,
+    expiredTrialsCount,
     executedAt: nowIso
   };
 }

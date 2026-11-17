@@ -6,8 +6,8 @@
       <div class="bm-pricing-head">
         <h1>Plan Comparison Matrix</h1>
         <p>
-          Select how many brands you manage to match your subscription tier, with instant Midtrans
-          (IDR) or Stripe (USD) checkout inside your workspace.
+          Every new account starts with a 7-day Starter free trial. Compare limits across all four
+          tiers and upgrade anytime with Midtrans (IDR) or Stripe (USD).
         </p>
       </div>
 
@@ -30,7 +30,7 @@
             <span>Matching Tier</span>
             <strong>{{ matchedTier.name }} ({{ matchedTier.price }})</strong>
             <router-link :to="`/register?plan=${matchedTier.id}`" class="bm-cta-link">
-              Start on {{ matchedTier.name }}
+              Start 7-day free trial
             </router-link>
           </div>
         </div>

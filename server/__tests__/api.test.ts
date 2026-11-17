@@ -47,7 +47,7 @@ describe('BeeloftMetric Production Multi-Tenant API, Security, Real-Time & Billi
     expect(adminCookie).toContain('_bm_session=');
     const adminBlogId = regAdmin.json().primaryBlogId;
 
-    // Second public signup becomes standard USER on FREE plan
+    // Second public signup starts on a 7-day STARTER free trial with USER role
     const regUser = await app.inject({
       method: 'POST',
       url: '/api/v2/auth/register',
@@ -64,7 +64,11 @@ describe('BeeloftMetric Production Multi-Tenant API, Security, Real-Time & Billi
       headers: { cookie: userCookie }
     });
     expect(userStatus.statusCode).toBe(200);
-    expect(userStatus.json().plan).toBe('FREE');
+    expect(userStatus.json().plan).toBe('STARTER');
+    expect(userStatus.json().trialActive).toBe(true);
+    expect(userStatus.json().trialDays).toBe(7);
+    expect(userStatus.json().trialDaysRemaining).toBe(7);
+    expect(userStatus.json().brandLimit).toBe(5);
     expect(userStatus.json().role).toBe('USER');
     expect(userStatus.json().brands).toHaveLength(1);
     expect(userStatus.json().brands[0].isSample).toBe(false);
@@ -284,17 +288,49 @@ describe('BeeloftMetric Production Multi-Tenant API, Security, Real-Time & Billi
     const cookie = extractCookieHeader(reg.headers['set-cookie']);
     const blogId = reg.json().primaryBlogId as number;
 
-    // FREE plan blocks adding a 2nd brand
-    const blockedBrand = await app.inject({
+    // During active 7-day Starter trial, user CAN create additional brands (up to 5)
+    const trialSecondBrand = await app.inject({
       method: 'POST',
       url: '/api/v2/brands',
       headers: { cookie },
-      payload: { name: 'Second Brand' }
+      payload: { name: 'Trial Brand Two' }
+    });
+    expect(trialSecondBrand.statusCode).toBe(200);
+
+    // Simulate 7-day trial expiration (fast-forwarding trialEndsAt into the past)
+    const expRepo = new NodeFilePlatformRepository(dbFile);
+    const expiringUser = await expRepo.getUserByEmail('merchant@toko.id');
+    expect(expiringUser).not.toBeNull();
+    expiringUser!.workspace.user.trialEndsAt = new Date(Date.now() - 60_000).toISOString();
+    await expRepo.saveUser(expiringUser!);
+
+    await app.close();
+    const appExpired = await buildApp(new NodeFilePlatformRepository(dbFile), {
+      MIDTRANS_SERVER_KEY: midtransKey
+    });
+
+    // Next request automatically downgrades expired 7-day trial to FREE plan (limit 1)
+    const statusAfterExpiry = await appExpired.inject({
+      method: 'GET',
+      url: '/api/admin/userstatus',
+      headers: { cookie }
+    });
+    expect(statusAfterExpiry.statusCode).toBe(200);
+    expect(statusAfterExpiry.json().plan).toBe('FREE');
+    expect(statusAfterExpiry.json().trialActive).toBe(false);
+    expect(statusAfterExpiry.json().trialDaysRemaining).toBe(0);
+
+    // Expired trial (now FREE) blocks adding another brand
+    const blockedBrand = await appExpired.inject({
+      method: 'POST',
+      url: '/api/v2/brands',
+      headers: { cookie },
+      payload: { name: 'Blocked Post-Trial Brand' }
     });
     expect(blockedBrand.statusCode).toBe(403);
 
     // Create Comment-to-DM flow & trigger via webhook
-    await app.inject({
+    await appExpired.inject({
       method: 'POST',
       url: '/api/v2/flows',
       headers: { cookie },
@@ -309,7 +345,7 @@ describe('BeeloftMetric Production Multi-Tenant API, Security, Real-Time & Billi
       }
     });
 
-    const wh = await app.inject({
+    const wh = await appExpired.inject({
       method: 'POST',
       url: '/api/v2/webhooks/instagram',
       payload: {
@@ -325,7 +361,7 @@ describe('BeeloftMetric Production Multi-Tenant API, Security, Real-Time & Billi
 
     // Schedule a post in the past and run scheduler job
     const pastIso = new Date(Date.now() - 10 * 60 * 1000).toISOString().slice(0, 16);
-    await app.inject({
+    await appExpired.inject({
       method: 'POST',
       url: '/api/v2/planner/posts',
       headers: { cookie },
@@ -337,7 +373,7 @@ describe('BeeloftMetric Production Multi-Tenant API, Security, Real-Time & Billi
       }
     });
 
-    const cronRes = await app.inject({
+    const cronRes = await appExpired.inject({
       method: 'POST',
       url: '/api/v2/planner/run-scheduler',
       headers: { cookie }
@@ -345,7 +381,9 @@ describe('BeeloftMetric Production Multi-Tenant API, Security, Real-Time & Billi
     expect(cronRes.statusCode).toBe(200);
     expect(cronRes.json().data.publishedCount).toBe(1);
 
-    // Simulate signed Midtrans settlement webhook upgrading user to STARTER
+    await appExpired.close();
+
+    // Simulate signed Midtrans settlement webhook upgrading user to paid STARTER
     const repo = new NodeFilePlatformRepository(dbFile);
     const userRow = await repo.getUserByEmail('merchant@toko.id');
     expect(userRow).not.toBeNull();
@@ -384,16 +422,15 @@ describe('BeeloftMetric Production Multi-Tenant API, Security, Real-Time & Billi
     });
     expect(payWh.statusCode).toBe(200);
 
-    // Merchant is now STARTER and can create a 2nd brand!
+    // Merchant is now paid STARTER (trialActive: false) and can create a 3rd brand!
     const allowedBrand = await app2.inject({
       method: 'POST',
       url: '/api/v2/brands',
       headers: { cookie },
-      payload: { name: 'Second Brand Unlocked' }
+      payload: { name: 'Third Brand Unlocked' }
     });
     expect(allowedBrand.statusCode).toBe(200);
 
-    await app.close();
     await app2.close();
   });
 

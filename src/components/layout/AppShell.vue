@@ -311,7 +311,11 @@ const navItems = [
 ];
 
 const formattedPlan = computed(() => {
-  const plan = store.user?.plan || 'ENTERPRISE_CUSTOM';
+  if (store.user?.trialActive) {
+    const days = store.user.trialDaysRemaining ?? 7;
+    return `Trial (${days}d left)`;
+  }
+  const plan = store.user?.plan || 'FREE';
   if (plan === 'ENTERPRISE_CUSTOM') return 'Enterprise';
   return plan.charAt(0) + plan.slice(1).toLowerCase();
 });

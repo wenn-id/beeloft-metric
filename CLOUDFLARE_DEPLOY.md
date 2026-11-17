@@ -18,7 +18,7 @@ Apa yang dilakukan `npm run cf:deploy` secara otomatis:
 4. Membuat bucket **Cloudflare R2** `beeloft-metric-media` (jika R2 sudah diaktifkan di akun Cloudflare Anda; jika belum, upload gambar ukuran `<= 1.5 MB` tetap berjalan otomatis memakai tabel D1).
 5. Mem-build bundle produksi frontend ke `dist/` dan men-deploy Worker beserta custom domain `beeloftmetric.biz.id` serta `www.beeloftmetric.biz.id` dan jadwal Cron tiap 5 menit (`*/5 * * * *`).
 
-> **Catatan Akun Pertama (Admin)**: Akun pertama yang mendaftar di `https://beeloftmetric.biz.id/register` secara otomatis mendapatkan role `ADMIN` (akses penuh ke menu **Operator Backoffice**, pembuatan kupon diskon, dan pengelolaan feature flags). Akun publik berikutnya otomatis terisolasi pada role `USER` paket `FREE`.
+> **Catatan Akun Pertama (Admin) & Free Trial 7 Hari**: Akun pertama yang mendaftar di `https://beeloftmetric.biz.id/register` secara otomatis mendapatkan role `ADMIN` (akses penuh ke menu **Operator Backoffice**, pembuatan kupon diskon, dan pengelolaan feature flags). Setiap pengguna baru berikutnya otomatis mendapatkan **Free Trial 7 hari** pada paket `STARTER` (hingga 5 brand, 2.000 jadwal post/bulan, dan ekspor laporan), lalu otomatis beralih ke paket `FREE` tepat saat masa 7 hari berakhir jika belum upgrade berbayar.
 
 ---
 

@@ -29,6 +29,7 @@ import {
 import {
   createBrandRecord,
   createCleanUserWorkspace,
+  NEW_USER_TRIAL_PLAN,
   PLAN_QUOTAS
 } from '../workspaceTemplate.js';
 import type {
@@ -441,8 +442,8 @@ export function registerProductionCoreRoutes(
     const verificationToken = randomToken('vrf', 18);
     const origin = getRequestOrigin(req);
 
-    // New public accounts always start on FREE until paid checkout completes (unless first admin)
-    const initialPlan: UserProfile['plan'] = isAdmin ? 'ENTERPRISE_CUSTOM' : 'FREE';
+    // New public accounts start on a 7-day Starter free trial (unless first admin)
+    const initialPlan: UserProfile['plan'] = isAdmin ? 'ENTERPRISE_CUSTOM' : NEW_USER_TRIAL_PLAN;
 
     const workspace = createCleanUserWorkspace({
       userId,
@@ -451,6 +452,7 @@ export function registerProductionCoreRoutes(
       name,
       apiToken,
       plan: initialPlan,
+      startTrial: !isAdmin,
       isAdmin,
       emailVerified: false,
       origin
@@ -493,9 +495,9 @@ export function registerProductionCoreRoutes(
     const verifyUrl = `${origin}/activate-user?token=${encodeURIComponent(verificationToken)}`;
     const emailDelivery = await sendTransactionalEmail(req.env, {
       to: email,
-      subject: 'Verify your BeeloftMetric account',
-      text: `Welcome to BeeloftMetric, ${name}.\n\nVerify your email address by opening:\n${verifyUrl}`,
-      html: `<p>Welcome to <strong>BeeloftMetric</strong>, ${name}.</p><p><a href="${verifyUrl}">Verify your email address</a> to confirm account ownership.</p>`
+      subject: 'Verify your BeeloftMetric account (7-day free trial active)',
+      text: `Welcome to BeeloftMetric, ${name}.\n\nYour 7-day Starter free trial is now active.\nVerify your email address by opening:\n${verifyUrl}`,
+      html: `<p>Welcome to <strong>BeeloftMetric</strong>, ${name}. Your <strong>7-day Starter free trial</strong> is now active.</p><p><a href="${verifyUrl}">Verify your email address</a> to confirm account ownership.</p>`
     });
 
     await issueUserSession({ repo, req, reply, userId });
@@ -504,7 +506,8 @@ export function registerProductionCoreRoutes(
       ok: true,
       user: safeUser,
       primaryBlogId: blogId,
-      requestedUpgradePlan: body.plan && body.plan !== 'FREE' ? body.plan : null,
+      requestedUpgradePlan:
+        body.plan && body.plan !== 'FREE' && body.plan !== NEW_USER_TRIAL_PLAN ? body.plan : null,
       emailDelivery
     };
   });
@@ -682,7 +685,8 @@ export function registerProductionCoreRoutes(
         email: inv.email,
         name: inv.name,
         apiToken,
-        plan: 'FREE',
+        plan: NEW_USER_TRIAL_PLAN,
+        startTrial: true,
         isAdmin: false,
         emailVerified: true,
         origin: getRequestOrigin(req)
@@ -697,7 +701,7 @@ export function registerProductionCoreRoutes(
         apiToken,
         totpSecret: null,
         totpEnabled: false,
-        plan: 'FREE',
+        plan: NEW_USER_TRIAL_PLAN,
         status: 'ACTIVE',
         emailVerified: true,
         verificationToken: null,

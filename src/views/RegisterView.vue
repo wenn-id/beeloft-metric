@@ -4,10 +4,10 @@
 
     <main class="bm-auth-main">
       <div class="bm-auth-card bm-card">
-        <h1>Create your BeeloftMetric workspace</h1>
+        <h1>Start your 7-day free trial</h1>
         <p class="bm-auth-sub">
-          Set up your isolated brand workspace, connect your website tracker or social channels, and
-          manage publishing in real time.
+          Every new account unlocks 7 days of full Starter access (up to 5 brands, 2,000 scheduled
+          posts, report exports, and real-time web tracking), no credit card required upfront.
         </p>
 
         <form class="bm-auth-form" @submit.prevent="submitRegister">
@@ -58,7 +58,7 @@
           <p v-if="errorMsg" class="bm-auth-error" role="alert">{{ errorMsg }}</p>
 
           <BmButton type="submit" variant="primary" :loading="submitting">
-            Create free workspace
+            Start 7-day free trial
           </BmButton>
         </form>
 

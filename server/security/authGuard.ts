@@ -1,4 +1,5 @@
 import { randomToken, sha256Hex } from './crypto.js';
+import { evaluateUserTrialStatus } from '../workspaceTemplate.js';
 import type {
   PlatformRepository,
   RouteReply,
@@ -110,6 +111,9 @@ export async function resolveAuthenticatedUser(
     if (session) {
       const user = await repo.getUserById(session.userId);
       if (user && user.status === 'ACTIVE') {
+        if (evaluateUserTrialStatus(user)) {
+          await repo.saveUser(user);
+        }
         return user;
       }
     }
@@ -123,6 +127,9 @@ export async function resolveAuthenticatedUser(
   if (apiToken) {
     const user = await repo.getUserByApiToken(apiToken);
     if (user && user.status === 'ACTIVE') {
+      if (evaluateUserTrialStatus(user)) {
+        await repo.saveUser(user);
+      }
       return user;
     }
   }

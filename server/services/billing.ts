@@ -206,6 +206,9 @@ export async function activatePaidPlan(
   const spec = PLAN_QUOTAS[plan];
   user.plan = plan;
   user.workspace.user.plan = plan;
+  user.workspace.user.trialActive = false;
+  user.workspace.user.trialEndsAt = null;
+  user.workspace.user.trialDaysRemaining = 0;
   user.workspace.user.brandLimit = spec.brandLimit;
   user.workspace.user.validUntil = new Date(Date.now() + 31 * 86400000).toISOString();
   await repo.saveUser(user);

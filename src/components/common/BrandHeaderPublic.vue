@@ -29,7 +29,7 @@
         <template v-else>
           <router-link to="/login" class="bm-pub-link" @click="mobileOpen = false">Sign in</router-link>
           <router-link to="/register" class="bm-pub-cta" @click="mobileOpen = false">
-            Create free workspace
+            Start 7-day free trial
           </router-link>
         </template>
       </div>

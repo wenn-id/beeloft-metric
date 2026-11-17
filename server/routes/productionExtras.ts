@@ -157,6 +157,9 @@ export function registerProductionExtraRoutes(
     return {
       plan: user.plan,
       status: user.status,
+      trialActive: Boolean(user.workspace.user.trialActive),
+      trialEndsAt: user.workspace.user.trialEndsAt ?? null,
+      trialDaysRemaining: user.workspace.user.trialDaysRemaining ?? 0,
       validUntil: user.workspace.user.validUntil,
       brandLimit: PLAN_QUOTAS[user.plan].brandLimit
     };

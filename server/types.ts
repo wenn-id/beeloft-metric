@@ -74,6 +74,9 @@ export interface UserProfile {
   registered: string;
   trialUsed: boolean;
   trialDays: number;
+  trialActive?: boolean;
+  trialEndsAt?: string | null;
+  trialDaysRemaining?: number;
   plan: 'FREE' | 'STARTER' | 'ADVANCED' | 'ENTERPRISE_CUSTOM';
   status: 'ACTIVE' | 'SUSPENDED';
   emailVerified?: boolean;

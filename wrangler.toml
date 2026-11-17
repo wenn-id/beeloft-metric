@@ -23,10 +23,10 @@ crons = ["*/5 * * * *"]
 binding = "AI"
 
 # Populated automatically by `npm run cf:deploy` (or set database_id manually from Cloudflare Dashboard -> D1):
-# [[d1_databases]]
-# binding = "DB"
-# database_name = "beeloft-metric-db"
-# database_id = "REPLACE_WITH_D1_DATABASE_UUID"
+[[d1_databases]]
+binding = "DB"
+database_name = "beeloft-metric-db"
+database_id = "fd4b7da2-d61e-4f8c-ac2e-d919a04d76b2"
 
 # Enabled automatically by `npm run cf:deploy` when R2 is active on your Cloudflare account:
 # [[r2_buckets]]

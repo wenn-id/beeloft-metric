@@ -20,7 +20,7 @@
                 :to="store.isAuthenticated ? '/evolution/brandSummary' : '/register'"
                 class="bm-pill-filled bm-transition"
               >
-                {{ store.isAuthenticated ? 'Open workspace' : 'Create free workspace' }}
+                {{ store.isAuthenticated ? 'Open workspace' : 'Start 7-day free trial' }}
               </router-link>
               <router-link to="/pricing" class="bm-pill-ghost bm-transition">
                 Compare plans

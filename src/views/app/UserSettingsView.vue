@@ -46,6 +46,18 @@
 
       <!-- Tab 2: Subscription Plan & Checkout -->
       <template v-else-if="activeTab === 'plan'">
+        <section v-if="store.user?.trialActive" class="bm-peach-card bm-trial-banner" role="status">
+          <div>
+            <strong>7-Day Starter Free Trial Active ({{ store.user.trialDaysRemaining ?? 7 }} day(s) remaining)</strong>
+            <p class="bm-trial-sub">
+              Full Starter access (up to 5 brands, 2,000 monthly scheduled posts, and report exports)
+              runs until <span class="tabular-nums">{{ store.user.trialEndsAt?.slice(0, 16).replace('T', ' ') }}</span> UTC.
+              Subscribe below anytime to keep paid access active without interruption.
+            </p>
+          </div>
+          <BmBadge tone="accent">Free Trial</BmBadge>
+        </section>
+
         <section class="bm-card bm-checkout-bar">
           <div class="bm-checkout-controls">
             <div>
@@ -77,16 +89,27 @@
           >
             <div class="bm-plan-card__head">
               <h2>{{ p.label }}</h2>
-              <BmBadge v-if="store.user?.plan === p.id" tone="accent">Active plan</BmBadge>
+              <BmBadge v-if="store.user?.plan === p.id && store.user?.trialActive" tone="warning">
+                7-day trial
+              </BmBadge>
+              <BmBadge v-else-if="store.user?.plan === p.id" tone="accent">Active plan</BmBadge>
             </div>
             <p class="bm-plan-price">{{ p.price }}</p>
             <p class="bm-plan-desc">{{ p.desc }}</p>
             <BmButton
-              :variant="store.user?.plan === p.id ? 'secondary' : 'primary'"
-              :disabled="store.user?.plan === p.id || saving"
+              :variant="isPermanentActivePlan(p.id) ? 'secondary' : 'primary'"
+              :disabled="isPermanentActivePlan(p.id) || saving"
               @click="startCheckout(p.id)"
             >
-              {{ store.user?.plan === p.id ? 'Current tier' : p.id === 'FREE' ? 'Downgrade to Free' : `Checkout ${p.label}` }}
+              {{
+                isPermanentActivePlan(p.id)
+                  ? 'Current tier'
+                  : p.id === 'FREE'
+                    ? 'Switch to Free'
+                    : store.user?.plan === p.id && store.user?.trialActive
+                      ? `Subscribe to ${p.label}`
+                      : `Checkout ${p.label}`
+              }}
             </BmButton>
           </article>
         </section>
@@ -296,6 +319,12 @@ const plans = [
   }
 ] as const;
 
+function isPermanentActivePlan(planId: string): boolean {
+  if (store.user?.plan !== planId) return false;
+  if (store.user?.trialActive && planId !== 'FREE') return false;
+  return true;
+}
+
 async function syncInputs(): Promise<void> {
   nameInput.value = store.user?.name || '';
   emailInput.value = store.user?.email || '';
@@ -474,6 +503,20 @@ onMounted(syncInputs);
 
 .bm-checkout-bar {
   padding: 1.25rem;
+}
+
+.bm-trial-banner {
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.bm-trial-sub {
+  margin-top: 0.25rem;
+  font-size: 0.9375rem;
 }
 
 .bm-checkout-controls {
