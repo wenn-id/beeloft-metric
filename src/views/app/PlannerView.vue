@@ -24,13 +24,20 @@
       <!-- Calendar View -->
       <template v-else-if="activeTab === 'calendar'">
         <div class="bm-calendar-bar bm-card">
-          <div>
-            <strong>Upcoming Week Window</strong>
-            <span class="bm-cal-range">Nov 14 to Nov 20, 2026</span>
+          <div class="bm-row-actions">
+            <BmButton variant="secondary" size="sm" @click="weekOffset -= 1">Prev week</BmButton>
+            <BmButton variant="secondary" size="sm" @click="weekOffset = 0">This week</BmButton>
+            <BmButton variant="secondary" size="sm" @click="weekOffset += 1">Next week</BmButton>
+            <span class="bm-cal-range tabular-nums">{{ calendarRangeLabel }}</span>
           </div>
-          <BmButton variant="secondary" size="sm" @click="activeTab = 'best-times'">
-            Inspect Best Time to Post
-          </BmButton>
+          <div class="bm-row-actions">
+            <BmButton variant="secondary" size="sm" @click="runDueQueueNow">
+              Run due queue
+            </BmButton>
+            <BmButton variant="secondary" size="sm" @click="activeTab = 'best-times'">
+              Best Time to Post
+            </BmButton>
+          </div>
         </div>
 
         <div class="bm-calendar-grid">
@@ -426,6 +433,24 @@
           </div>
 
           <div>
+            <label for="post-media" class="bm-label">Attach image or video (Cloudflare R2 / Edge Media)</label>
+            <input
+              id="post-media"
+              type="file"
+              accept="image/png,image/jpeg,image/webp,image/gif,video/mp4,video/webm"
+              class="bm-input"
+              @change="handleMediaFileChange"
+            />
+            <p v-if="uploadingMedia" class="bm-page-sub">Uploading media asset...</p>
+            <div v-if="postForm.media.length > 0" class="bm-net-list">
+              <span v-for="(m, mIdx) in postForm.media" :key="m.url" class="bm-check-pill">
+                <span>{{ m.type }} attached</span>
+                <button type="button" class="bm-slot-del" @click="postForm.media.splice(mIdx, 1)">x</button>
+              </span>
+            </div>
+          </div>
+
+          <div>
             <label for="post-comment" class="bm-label">First comment (optional)</label>
             <input id="post-comment" v-model="postForm.firstComment" type="text" class="bm-input" placeholder="Include link or hashtags" />
           </div>
@@ -547,17 +572,23 @@ const bestTimesNetwork = ref('instagram');
 const bestTimesDays = ref<string[]>([]);
 const bestTimesMatrix = ref<number[][]>([]);
 
+const defaultScheduleIso = new Date(Date.now() + 2 * 3600 * 1000).toISOString().slice(0, 16);
+
 const composerNetworks: NetworkKey[] = ['instagram', 'tiktok', 'youtube', 'linkedin', 'twitter', 'facebook'];
 const postForm = ref({
-  scheduledAt: '2026-11-18T10:00',
+  scheduledAt: defaultScheduleIso,
   text: '',
   firstComment: '',
+  media: [] as Array<{ url: string; type: 'IMAGE' | 'VIDEO' }>,
   networks: ['instagram', 'linkedin'] as NetworkKey[],
   requestReview: false
 });
 
+const uploadingMedia = ref(false);
+const weekOffset = ref(0);
+
 const aiPrompt = ref('');
-const aiLang = ref('en');
+const aiLang = ref('id');
 const aiGenerating = ref(false);
 
 const flowForm = ref({
@@ -567,15 +598,25 @@ const flowForm = ref({
   dmText: ''
 });
 
-const calendarDays = [
-  { label: 'Sat', iso: '2026-11-14' },
-  { label: 'Sun', iso: '2026-11-15' },
-  { label: 'Mon', iso: '2026-11-16' },
-  { label: 'Tue', iso: '2026-11-17' },
-  { label: 'Wed', iso: '2026-11-18' },
-  { label: 'Thu', iso: '2026-11-19' },
-  { label: 'Fri', iso: '2026-11-20' }
-];
+const dayNamesShort = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+const calendarDays = computed(() => {
+  const base = new Date();
+  base.setUTCHours(0, 0, 0, 0);
+  const startOffset = weekOffset.value * 7 - 1;
+  return Array.from({ length: 7 }, (_, i) => {
+    const dt = new Date(base.getTime() + (startOffset + i) * 86400000);
+    return {
+      label: dayNamesShort[dt.getUTCDay()],
+      iso: dt.toISOString().slice(0, 10)
+    };
+  });
+});
+
+const calendarRangeLabel = computed(() => {
+  const list = calendarDays.value;
+  return `${list[0].iso} to ${list[list.length - 1].iso}`;
+});
 
 const filteredPosts = computed(() => {
   if (activeTab.value === 'history') {
@@ -672,6 +713,7 @@ async function submitPost(): Promise<void> {
         scheduledAt: postForm.value.scheduledAt,
         text: postForm.value.text,
         firstComment: postForm.value.firstComment,
+        media: postForm.value.media,
         networks: postForm.value.networks,
         status: postForm.value.requestReview ? 'DRAFT' : 'SCHEDULED'
       })
@@ -692,6 +734,7 @@ async function submitPost(): Promise<void> {
 
     postForm.value.text = '';
     postForm.value.firstComment = '';
+    postForm.value.media = [];
     postForm.value.requestReview = false;
     composerOpen.value = false;
     await loadPlanner();
@@ -708,6 +751,45 @@ async function markPublished(post: PlannerPost): Promise<void> {
     body: JSON.stringify({ status: 'PUBLISHED' })
   });
   await loadPlanner();
+}
+
+async function runDueQueueNow(): Promise<void> {
+  await apiRequest('/api/v2/planner/run-scheduler', { method: 'POST' });
+  await loadPlanner();
+}
+
+async function handleMediaFileChange(ev: Event): Promise<void> {
+  const input = ev.target as HTMLInputElement;
+  const file = input.files?.[0];
+  if (!file) return;
+  uploadingMedia.value = true;
+  formError.value = '';
+  try {
+    const dataBase64 = await new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result || ''));
+      reader.onerror = () => reject(new Error('Failed to read file.'));
+      reader.readAsDataURL(file);
+    });
+    const res = await apiRequest<{ data: { url: string; mimeType: string } }>('/api/v2/media/upload', {
+      method: 'POST',
+      body: JSON.stringify({
+        blogId: store.activeBlogId,
+        filename: file.name,
+        mimeType: file.type,
+        dataBase64
+      })
+    });
+    postForm.value.media.push({
+      url: res.data.url,
+      type: res.data.mimeType.startsWith('video/') ? 'VIDEO' : 'IMAGE'
+    });
+  } catch (err) {
+    formError.value = err instanceof Error ? err.message : 'Media upload failed.';
+  } finally {
+    uploadingMedia.value = false;
+    input.value = '';
+  }
 }
 
 async function deletePost(id: string): Promise<void> {

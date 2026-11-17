@@ -23,7 +23,11 @@
             <h1>{{ report.title }}</h1>
             <p class="bm-ps-sub">Last updated: {{ report.updatedAt.slice(0, 16).replace('T', ' ') }}</p>
           </div>
-          <router-link :to="`/reporting/studio?blogId=${report.blogId}`" class="bm-edit-link">
+          <router-link
+            v-if="store.isAuthenticated"
+            :to="`/reporting/studio?blogId=${report.blogId}`"
+            class="bm-edit-link"
+          >
             Edit in Reporting Studio
           </router-link>
         </div>
@@ -58,10 +62,12 @@ import BrandHeaderPublic from '@/components/common/BrandHeaderPublic.vue';
 import BmBadge from '@/components/common/designSystem/atoms/BmBadge.vue';
 import BmStateView from '@/components/common/designSystem/atoms/BmStateView.vue';
 import { apiRequest } from '@/services/api';
+import { useAppStore } from '@/stores/appStore';
 import type { StudioReport } from '@/types/api';
 
 const route = useRoute();
 const router = useRouter();
+const store = useAppStore();
 
 const loading = ref(true);
 const errorMsg = ref('');

@@ -4,20 +4,22 @@
 
     <main class="bm-auth-main">
       <div class="bm-auth-card bm-card">
-        <h1>Create your BeeloftMetric account</h1>
+        <h1>Create your BeeloftMetric workspace</h1>
         <p class="bm-auth-sub">
-          Registration saves your profile to the local store and records the session attribution event.
+          Set up your isolated brand workspace, connect your website tracker or social channels, and
+          manage publishing in real time.
         </p>
 
         <form class="bm-auth-form" @submit.prevent="submitRegister">
           <div>
-            <label for="reg-name" class="bm-label">Your name</label>
+            <label for="reg-name" class="bm-label">Full name or organization</label>
             <input
               id="reg-name"
               v-model="name"
               type="text"
               class="bm-input"
-              placeholder="Your Name"
+              placeholder="Alwan Studio"
+              autocomplete="name"
               required
             />
           </div>
@@ -29,7 +31,7 @@
               v-model="email"
               type="email"
               class="bm-input"
-              placeholder="email@example.com"
+              placeholder="name@company.com"
               autocomplete="email"
               required
             />
@@ -42,18 +44,21 @@
               v-model="password"
               type="password"
               class="bm-input"
-              placeholder="At least 6 characters"
+              placeholder="Minimum 6 characters"
               autocomplete="new-password"
               required
             />
           </div>
 
-          <p v-if="errorMsg" class="bm-auth-error" role="alert">
-            Error: {{ errorMsg }}
+          <p v-if="selectedPlan && selectedPlan !== 'FREE'" class="bm-plan-note">
+            Selected tier: <strong>{{ selectedPlan }}</strong>. Your workspace starts immediately and
+            proceeds to subscription checkout.
           </p>
 
+          <p v-if="errorMsg" class="bm-auth-error" role="alert">{{ errorMsg }}</p>
+
           <BmButton type="submit" variant="primary" :loading="submitting">
-            Create account
+            Create free workspace
           </BmButton>
         </form>
 
@@ -67,14 +72,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { computed, ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import BrandHeaderPublic from '@/components/common/BrandHeaderPublic.vue';
 import BmButton from '@/components/common/designSystem/atoms/BmButton.vue';
 import { apiRequest } from '@/services/api';
 import { trackAttributionEvent } from '@/services/attribution';
 import { useAppStore } from '@/stores/appStore';
 
+const route = useRoute();
 const router = useRouter();
 const store = useAppStore();
 
@@ -84,17 +90,39 @@ const password = ref('');
 const errorMsg = ref('');
 const submitting = ref(false);
 
+const selectedPlan = computed(() =>
+  typeof route.query.plan === 'string' ? route.query.plan.toUpperCase() : 'FREE'
+);
+const referralCode = computed(() =>
+  typeof route.query.ref === 'string' ? route.query.ref : undefined
+);
+
 async function submitRegister(): Promise<void> {
   submitting.value = true;
   errorMsg.value = '';
   try {
-    await apiRequest('/api/v2/auth/register', {
+    const res = await apiRequest<{
+      ok: boolean;
+      primaryBlogId: number;
+      requestedUpgradePlan: string | null;
+    }>('/api/v2/auth/register', {
       method: 'POST',
-      body: JSON.stringify({ name: name.value, email: email.value, password: password.value })
+      body: JSON.stringify({
+        name: name.value,
+        email: email.value,
+        password: password.value,
+        plan: selectedPlan.value,
+        referralCode: referralCode.value
+      })
     });
     await trackAttributionEvent('register_success', '/evolution/brandSummary');
     await store.bootstrap();
-    await router.push('/evolution/brandSummary?blogId=8137743&userId=6401427');
+
+    if (res.requestedUpgradePlan) {
+      await router.push(`/user-settings/plan?blogId=${res.primaryBlogId}&upgrade=${res.requestedUpgradePlan}`);
+    } else {
+      await router.push(`/evolution/brandSummary?blogId=${res.primaryBlogId}`);
+    }
   } catch (err) {
     errorMsg.value = err instanceof Error ? err.message : 'Unable to register account.';
   } finally {
@@ -120,14 +148,14 @@ async function submitRegister(): Promise<void> {
 
 .bm-auth-card {
   width: min(460px, 100%);
-  padding: 1.75rem;
+  padding: 2rem 1.75rem;
   display: flex;
   flex-direction: column;
   gap: 1rem;
 }
 
 .bm-auth-card h1 {
-  font-size: 1.5rem;
+  font-size: 1.75rem;
 }
 
 .bm-auth-sub {
@@ -141,6 +169,14 @@ async function submitRegister(): Promise<void> {
   gap: 1rem;
 }
 
+.bm-plan-note {
+  padding: 0.625rem 0.75rem;
+  border-radius: var(--bm-radius-md);
+  background: var(--color-blush-peach);
+  color: var(--color-sienna-brown);
+  font-size: 0.875rem;
+}
+
 .bm-auth-error {
   padding: 0.625rem 0.75rem;
   border-radius: var(--bm-radius-md);
@@ -148,7 +184,7 @@ async function submitRegister(): Promise<void> {
   color: var(--bm-danger-text);
   border: 1px solid var(--bm-danger-border);
   font-size: 0.875rem;
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .bm-auth-foot {
@@ -158,6 +194,6 @@ async function submitRegister(): Promise<void> {
 
 .bm-auth-foot a {
   color: var(--bm-accent);
-  font-weight: 700;
+  font-weight: 500;
 }
 </style>

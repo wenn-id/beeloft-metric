@@ -132,14 +132,17 @@
           <template v-else-if="realtime">
             <div class="bm-kpi-grid">
               <article class="bm-card bm-kpi-card">
-                <p class="bm-kpi-card__label">Active Visitors Right Now</p>
+                <div class="bm-rt-head">
+                  <p class="bm-kpi-card__label">Active Visitors Right Now</p>
+                  <BmBadge tone="success">Live 5s</BmBadge>
+                </div>
                 <p class="bm-kpi-card__value tabular-nums">{{ realtime.activeVisitors }}</p>
-                <p class="bm-kpi-card__delta">Last 5 minutes</p>
+                <p class="bm-kpi-card__delta">Unique visitors in last 5 minutes</p>
               </article>
               <article class="bm-card bm-kpi-card">
                 <p class="bm-kpi-card__label">Page Views (30m)</p>
                 <p class="bm-kpi-card__value tabular-nums">{{ realtime.pageViewsLast30m }}</p>
-                <p class="bm-kpi-card__delta">Includes local _bm sessions</p>
+                <p class="bm-kpi-card__delta">First-party tracker.js & SmartLink hits</p>
               </article>
             </div>
             <div class="bm-rt-grid">
@@ -333,14 +336,6 @@
           />
 
           <template v-else-if="summary">
-            <div v-if="summary.isSample" class="bm-peach-card bm-sample-banner" role="note">
-              <BmBadge tone="warning">SAMPLE DATA</BmBadge>
-              <span>
-                You are viewing pre-seeded [SAMPLE DATA] metrics for {{ summary.brandName }}. Switch
-                to "Empty brand" in the topbar to test an unconfigured brand.
-              </span>
-            </div>
-
             <div class="bm-kpi-grid">
               <article v-for="kpi in summary.kpis" :key="kpi.id" class="bm-artifact bm-kpi-card">
                 <p class="bm-kpi-card__label">{{ kpi.label }}</p>
@@ -453,7 +448,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import AppShell from '@/components/layout/AppShell.vue';
 import BmBadge from '@/components/common/designSystem/atoms/BmBadge.vue';
@@ -539,7 +534,7 @@ async function selectSection(sec: string): Promise<void> {
   if (sec === 'hashtag-tracker') path = '/evolution/hashtag-tracker';
   await router.push({
     path,
-    query: { blogId: String(store.activeBlogId), userId: String(store.user?.userId || 6401427) }
+    query: { blogId: String(store.activeBlogId) }
   });
 }
 
@@ -583,8 +578,7 @@ async function loadSummary(): Promise<void> {
 }
 
 async function connectWebNow(): Promise<void> {
-  await store.toggleNetworkConnection('web', 'my-site.example', true);
-  await loadSummary();
+  await router.push(`/brands/connections?blogId=${store.activeBlogId}`);
 }
 
 async function addCompetitor(): Promise<void> {
@@ -662,8 +656,20 @@ const reachPolyline = computed(() => {
     .join(' ');
 });
 
+let rtTimer: ReturnType<typeof setInterval> | null = null;
+
 watch(() => [store.activeBlogId, activeSection.value], loadSummary, { immediate: true });
-onMounted(loadSummary);
+onMounted(() => {
+  loadSummary();
+  rtTimer = setInterval(() => {
+    if (activeSection.value === 'real-time' && store.activeBlogId) {
+      loadSummary().catch(() => undefined);
+    }
+  }, 5000);
+});
+onUnmounted(() => {
+  if (rtTimer) clearInterval(rtTimer);
+});
 </script>
 
 <style scoped>

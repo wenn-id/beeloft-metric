@@ -2,11 +2,7 @@
   <header class="bm-pub-header">
     <div class="bm-pub-header__inner">
       <router-link to="/" class="bm-pub-brand">
-        <span class="bm-pub-mark" aria-hidden="true">BM</span>
-        <span class="bm-pub-name">
-          <strong>BeeloftMetric</strong>
-          <small>[LOGO PLACEHOLDER]</small>
-        </span>
+        <strong class="bm-pub-wordmark">BeeloftMetric</strong>
       </router-link>
 
       <button
@@ -19,17 +15,23 @@
       </button>
 
       <nav class="bm-pub-nav" :class="{ 'bm-pub-nav--open': mobileOpen }" aria-label="Public navigation">
-        <router-link to="/#capabilities" class="bm-pub-link" @click="mobileOpen = false">Product</router-link>
+        <router-link to="/#capabilities" class="bm-pub-link" @click="mobileOpen = false">Capabilities</router-link>
         <router-link to="/pricing" class="bm-pub-link" @click="mobileOpen = false">Pricing</router-link>
-        <router-link to="/bio/beeloft-studio" class="bm-pub-link" @click="mobileOpen = false">SmartLink</router-link>
-        <router-link to="/evolution/brandSummary?blogId=8137744" class="bm-pub-link" @click="mobileOpen = false">
-          Workspace
-        </router-link>
+        <router-link to="/legal" class="bm-pub-link" @click="mobileOpen = false">Privacy & Terms</router-link>
       </nav>
 
       <div class="bm-pub-actions" :class="{ 'bm-pub-actions--open': mobileOpen }">
-        <router-link to="/login" class="bm-pub-link" @click="mobileOpen = false">Log in</router-link>
-        <router-link to="/register" class="bm-pub-cta" @click="mobileOpen = false">Get started</router-link>
+        <template v-if="store.isAuthenticated">
+          <router-link to="/evolution/brandSummary" class="bm-pub-cta" @click="mobileOpen = false">
+            Open workspace
+          </router-link>
+        </template>
+        <template v-else>
+          <router-link to="/login" class="bm-pub-link" @click="mobileOpen = false">Sign in</router-link>
+          <router-link to="/register" class="bm-pub-cta" @click="mobileOpen = false">
+            Create free workspace
+          </router-link>
+        </template>
       </div>
     </div>
   </header>
@@ -37,7 +39,9 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import { useAppStore } from '@/stores/appStore';
 
+const store = useAppStore();
 const mobileOpen = ref(false);
 </script>
 
@@ -62,38 +66,16 @@ const mobileOpen = ref(false);
 .bm-pub-brand {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
   text-decoration: none;
   min-height: 44px;
 }
 
-.bm-pub-mark {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: var(--radius-buttons);
-  background: var(--bm-brand);
-  color: var(--bm-brand-text);
-  font-weight: 500;
-  font-size: 13px;
-}
-
-.bm-pub-name {
-  display: flex;
-  flex-direction: column;
-  line-height: 1.05;
-}
-
-.bm-pub-name strong {
-  font-weight: 500;
+.bm-pub-wordmark {
+  font-family: var(--font-signifier);
+  font-weight: 400;
+  font-size: 24px;
+  letter-spacing: -0.02em;
   color: var(--bm-text);
-}
-
-.bm-pub-name small {
-  font-size: 10px;
-  color: var(--bm-text-muted);
 }
 
 .bm-pub-nav,

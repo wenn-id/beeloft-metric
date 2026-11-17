@@ -3,237 +3,411 @@ import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { buildApp } from '../app.js';
-import { JsonStore } from '../store.js';
+import { NodeFilePlatformRepository } from '../storage/nodeFileRepository.js';
+import { generateCurrentTotpCode, sha512Hex } from '../security/crypto.js';
+import workerEntry from '../../worker/index.js';
 
-describe('BeeloftMetric Backend API & Attribution Engine', () => {
+function extractCookieHeader(setCookieHeader: string | string[] | undefined): string {
+  if (!setCookieHeader) return '';
+  const list = Array.isArray(setCookieHeader) ? setCookieHeader : [setCookieHeader];
+  return list.map((item) => item.split(';')[0]).join('; ');
+}
+
+describe('BeeloftMetric Production Multi-Tenant API, Security, Real-Time & Billing', () => {
   let tmpDir: string;
   let dbFile: string;
 
   beforeEach(async () => {
-    tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), 'beeloft-test-'));
-    dbFile = path.join(tmpDir, 'db.json');
+    tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), 'beeloft-prod-'));
+    dbFile = path.join(tmpDir, 'platform-db.json');
   });
 
   afterEach(async () => {
     await fs.rm(tmpDir, { recursive: true, force: true });
   });
 
-  it('returns true on healthcheck and expected userstatus + v2 metadata schemas', async () => {
-    const app = await buildApp(new JsonStore(dbFile));
+  it('enforces 401 on unauthenticated workspace endpoints and isolates multi-tenant accounts + RBAC', async () => {
+    const app = await buildApp(new NodeFilePlatformRepository(dbFile));
+
     const hc = await app.inject({ method: 'GET', url: '/api/admin/healthcheck' });
     expect(hc.statusCode).toBe(200);
     expect(hc.json()).toBe(true);
 
-    const status = await app.inject({ method: 'GET', url: '/api/admin/userstatus' });
-    expect(status.statusCode).toBe(200);
-    const body = status.json();
-    expect(body.userId).toBe(6401427);
-    expect(body.plan).toBe('ENTERPRISE_CUSTOM');
-    expect(body.brands.length).toBe(2);
+    const unauth = await app.inject({ method: 'GET', url: '/api/admin/userstatus' });
+    expect(unauth.statusCode).toBe(401);
 
-    const flags = await app.inject({ method: 'GET', url: '/api/v2/features/check-all' });
-    expect(flags.json().data.HIDE_HASHTAG_TRACKER).toBe(false);
-
-    const loc = await app.inject({ method: 'GET', url: '/api/v2/settings/users/location-from-ip' });
-    expect(loc.json().data.countryCode).toBe('ID');
-
-    await app.close();
-  });
-
-  it('initializes _bm attribution session cookie and records events', async () => {
-    const app = await buildApp(new JsonStore(dbFile));
-    const ses = await app.inject({
+    // First account becomes ADMIN on ENTERPRISE_CUSTOM
+    const regAdmin = await app.inject({
       method: 'POST',
-      url: '/s/session',
-      payload: { path: '/', utmSource: 'instagram', utmMedium: 'bio' }
+      url: '/api/v2/auth/register',
+      payload: { name: 'Founder Admin', email: 'founder@beeloftmetric.biz.id', password: 'StrongPassword123' }
     });
-    expect(ses.statusCode).toBe(200);
-    const sBody = ses.json();
-    expect(sBody.cookie).toMatch(/^BM1\$t\d+\$u6401427/);
-    expect(sBody.f_saved).toBe(true);
+    expect(regAdmin.statusCode).toBe(200);
+    const adminCookie = extractCookieHeader(regAdmin.headers['set-cookie']);
+    expect(adminCookie).toContain('_bm_session=');
+    const adminBlogId = regAdmin.json().primaryBlogId;
 
-    const ev = await app.inject({
+    // Second public signup becomes standard USER on FREE plan
+    const regUser = await app.inject({
       method: 'POST',
-      url: '/s',
-      payload: { visitorId: sBody.visitorId, sessionId: sBody.sessionId, path: '/planner', eventName: 'route_view' }
+      url: '/api/v2/auth/register',
+      payload: { name: 'Client Studio', email: 'client@agency.id', password: 'ClientPassword123' }
     });
-    expect(ev.statusCode).toBe(200);
-    expect(ev.json().ok).toBe(true);
+    expect(regUser.statusCode).toBe(200);
+    const userCookie = extractCookieHeader(regUser.headers['set-cookie']);
+    const userBlogId = regUser.json().primaryBlogId;
+    expect(userBlogId).not.toBe(adminBlogId);
 
-    const hist = await app.inject({ method: 'GET', url: `/s/apvid/${sBody.visitorId}` });
-    expect(hist.json().events.length).toBe(2);
-    await app.close();
-  });
-
-  it('toggles network connections on Empty brand and reflects in Evolution summary', async () => {
-    const app = await buildApp(new JsonStore(dbFile));
-
-    const before = await app.inject({
+    const userStatus = await app.inject({
       method: 'GET',
-      url: '/api/v2/evolution/summary?blogId=8137743&network=brandSummary'
+      url: '/api/admin/userstatus',
+      headers: { cookie: userCookie }
     });
-    expect(before.json().data.connected).toBe(false);
+    expect(userStatus.statusCode).toBe(200);
+    expect(userStatus.json().plan).toBe('FREE');
+    expect(userStatus.json().role).toBe('USER');
+    expect(userStatus.json().brands).toHaveLength(1);
+    expect(userStatus.json().brands[0].isSample).toBe(false);
 
-    const toggle = await app.inject({
-      method: 'POST',
-      url: '/api/v2/settings/brands/connections/instagram/toggle',
-      payload: { blogId: 8137743, handle: '@my_new_brand', connect: true }
-    });
-    expect(toggle.statusCode).toBe(200);
-    expect(toggle.json().data.connected).toBe(true);
-
-    const after = await app.inject({
+    // Non-admin user gets 403 on Backoffice
+    const forbiddenBo = await app.inject({
       method: 'GET',
-      url: '/api/v2/evolution/summary?blogId=8137743&network=brandSummary'
+      url: '/api/v2/backoffice/overview',
+      headers: { cookie: userCookie }
     });
-    expect(after.json().data.connected).toBe(true);
-    expect(after.json().data.kpis.length).toBe(4);
+    expect(forbiddenBo.statusCode).toBe(403);
+
+    // Admin user accesses Backoffice cleanly
+    const okBo = await app.inject({
+      method: 'GET',
+      url: '/api/v2/backoffice/overview',
+      headers: { cookie: adminCookie }
+    });
+    expect(okBo.statusCode).toBe(200);
+    expect(okBo.json().data.usersList).toHaveLength(2);
+
     await app.close();
   });
 
-  it('supports Planner CRUD, Inbox reply, SmartLink update & public click tracking', async () => {
-    const app = await buildApp(new JsonStore(dbFile));
+  it('verifies RFC 6238 TOTP 2FA challenge on login and X-Mc-Auth API token access', async () => {
+    const app = await buildApp(new NodeFilePlatformRepository(dbFile));
 
-    const createdPost = await app.inject({
+    const reg = await app.inject({
+      method: 'POST',
+      url: '/api/v2/auth/register',
+      payload: { name: 'Security Ops', email: 'sec@beeloftmetric.biz.id', password: 'SecPassword99!' }
+    });
+    const sessionCookie = extractCookieHeader(reg.headers['set-cookie']);
+
+    const tokRes = await app.inject({
+      method: 'GET',
+      url: '/api/v2/settings/users/tokens/current',
+      headers: { cookie: sessionCookie }
+    });
+    const apiToken = tokRes.json().data.token as string;
+    expect(apiToken).toMatch(/^bm_live_/);
+
+    // Authenticate with X-Mc-Auth header without cookies
+    const viaToken = await app.inject({
+      method: 'GET',
+      url: '/api/admin/userstatus',
+      headers: { 'x-mc-auth': apiToken }
+    });
+    expect(viaToken.statusCode).toBe(200);
+    expect(viaToken.json().email).toBe('sec@beeloftmetric.biz.id');
+
+    // Setup & enable RFC 6238 TOTP 2FA
+    const setup = await app.inject({
+      method: 'POST',
+      url: '/api/v2/settings/users/totp/setup',
+      headers: { cookie: sessionCookie }
+    });
+    const secret = setup.json().data.secret as string;
+    const liveCode = await generateCurrentTotpCode(secret);
+
+    const enable = await app.inject({
+      method: 'POST',
+      url: '/api/v2/settings/users/totp/tokens',
+      headers: { cookie: sessionCookie },
+      payload: { code: liveCode }
+    });
+    expect(enable.statusCode).toBe(200);
+    expect(enable.json().data.totpEnabled).toBe(true);
+
+    // Login without totpCode prompts requiresTwoFactor
+    const step1 = await app.inject({
+      method: 'POST',
+      url: '/api/v2/auth/login',
+      payload: { email: 'sec@beeloftmetric.biz.id', password: 'SecPassword99!' }
+    });
+    expect(step1.statusCode).toBe(200);
+    expect(step1.json().requiresTwoFactor).toBe(true);
+
+    // Login with valid totpCode succeeds
+    const step2 = await app.inject({
+      method: 'POST',
+      url: '/api/v2/auth/login',
+      payload: { email: 'sec@beeloftmetric.biz.id', password: 'SecPassword99!', totpCode: liveCode }
+    });
+    expect(step2.statusCode).toBe(200);
+    expect(step2.json().ok).toBe(true);
+
+    await app.close();
+  });
+
+  it('streams real-time tracker.js beacons, Cloudflare geolocation, R2/DB media uploads, and public SmartLinks', async () => {
+    const app = await buildApp(new NodeFilePlatformRepository(dbFile));
+
+    const reg = await app.inject({
+      method: 'POST',
+      url: '/api/v2/auth/register',
+      payload: { name: 'Growth Team', email: 'growth@beeloftmetric.biz.id', password: 'GrowthPassword123' }
+    });
+    const cookie = extractCookieHeader(reg.headers['set-cookie']);
+    const blogId = reg.json().primaryBlogId as number;
+
+    // Fetch tracker.js script
+    const scriptRes = await app.inject({ method: 'GET', url: '/tracker.js' });
+    expect(scriptRes.statusCode).toBe(200);
+    expect(scriptRes.body).toContain('/s/collect');
+
+    // Inspect trackingKey & send external website beacon with Cloudflare country header
+    const connRes = await app.inject({
+      method: 'GET',
+      url: `/api/v2/settings/brands/connections?blogId=${blogId}`,
+      headers: { cookie }
+    });
+    const trackingKey = connRes.json().trackingKey as string;
+    expect(trackingKey).toMatch(/^bm_trk_/);
+
+    const collect = await app.inject({
+      method: 'POST',
+      url: '/s/collect',
+      headers: { 'cf-ipcountry': 'ID' },
+      payload: {
+        trackingKey,
+        visitorId: 'vis-jakarta-1',
+        sessionId: 'ses-jakarta-1',
+        eventType: 'pageview',
+        eventName: 'page_view',
+        path: '/produk-baru',
+        utmSource: 'instagram'
+      }
+    });
+    expect(collect.statusCode).toBe(200);
+
+    const rt = await app.inject({
+      method: 'GET',
+      url: `/api/v2/evolution/realtime?blogId=${blogId}`,
+      headers: { cookie }
+    });
+    expect(rt.statusCode).toBe(200);
+    expect(rt.json().data.connected).toBe(true);
+    expect(rt.json().data.activeVisitors).toBe(1);
+    expect(rt.json().data.countries[0].code).toBe('ID');
+    expect(rt.json().data.countries[0].country).toBe('Indonesia');
+
+    // Upload real PNG image & retrieve binary bytes
+    const tinyPngB64 =
+      'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==';
+    const up = await app.inject({
+      method: 'POST',
+      url: '/api/v2/media/upload',
+      headers: { cookie },
+      payload: {
+        blogId,
+        filename: 'banner.png',
+        mimeType: 'image/png',
+        dataBase64: tinyPngB64
+      }
+    });
+    expect(up.statusCode).toBe(200);
+    const mediaId = up.json().data.id as string;
+
+    const getMedia = await app.inject({ method: 'GET', url: `/api/v2/media/${mediaId}` });
+    expect(getMedia.statusCode).toBe(200);
+    expect(getMedia.headers['content-type']).toBe('image/png');
+    expect(getMedia.rawPayload.length).toBeGreaterThan(20);
+
+    // Create public SmartLink and verify unauthenticated visitor views & clicks
+    const createdSl = await app.inject({
+      method: 'POST',
+      url: '/api/v2/smart-links/links',
+      headers: { cookie },
+      payload: { blogId, title: 'Beeloft Bio', slug: 'beeloft-live' }
+    });
+    expect(createdSl.statusCode).toBe(200);
+    const slId = createdSl.json().data.id as string;
+
+    await app.inject({
+      method: 'PUT',
+      url: `/api/v2/smart-links/links/${slId}`,
+      headers: { cookie },
+      payload: {
+        buttons: [{ id: 'btn-1', label: 'Shop Now', url: 'https://beeloftmetric.biz.id/pricing', active: true, clicks: 0 }]
+      }
+    });
+
+    const pubGet = await app.inject({ method: 'GET', url: '/api/v2/public/smart-links/beeloft-live' });
+    expect(pubGet.statusCode).toBe(200);
+    expect(pubGet.json().data.views).toBe(1);
+
+    const pubClick = await app.inject({
+      method: 'POST',
+      url: '/api/v2/public/smart-links/beeloft-live/click',
+      payload: { buttonId: 'btn-1' }
+    });
+    expect(pubClick.statusCode).toBe(200);
+    expect(pubClick.json().clicks).toBe(1);
+
+    await app.close();
+  });
+
+  it('executes Comment-to-DM webhook flows, Cron due post scheduler, and signed Midtrans plan upgrades', async () => {
+    const midtransKey = 'SB-Mid-server-testkey123';
+    const app = await buildApp(new NodeFilePlatformRepository(dbFile), {
+      MIDTRANS_SERVER_KEY: midtransKey
+    });
+
+    // Admin first so second user gets FREE plan
+    await app.inject({
+      method: 'POST',
+      url: '/api/v2/auth/register',
+      payload: { name: 'Root', email: 'root@beeloftmetric.biz.id', password: 'RootPassword123' }
+    });
+
+    const reg = await app.inject({
+      method: 'POST',
+      url: '/api/v2/auth/register',
+      payload: { name: 'Merchant ID', email: 'merchant@toko.id', password: 'MerchantPassword123' }
+    });
+    const cookie = extractCookieHeader(reg.headers['set-cookie']);
+    const blogId = reg.json().primaryBlogId as number;
+
+    // FREE plan blocks adding a 2nd brand
+    const blockedBrand = await app.inject({
+      method: 'POST',
+      url: '/api/v2/brands',
+      headers: { cookie },
+      payload: { name: 'Second Brand' }
+    });
+    expect(blockedBrand.statusCode).toBe(403);
+
+    // Create Comment-to-DM flow & trigger via webhook
+    await app.inject({
+      method: 'POST',
+      url: '/api/v2/flows',
+      headers: { cookie },
+      payload: {
+        blogId,
+        name: 'Catalog DM Flow',
+        network: 'instagram',
+        commentTrigger: 'withKeywords',
+        keywords: ['KATALOG'],
+        dmText: 'Ini link katalog lengkap kami:',
+        buttonUrl: 'https://beeloftmetric.biz.id/bio/katalog'
+      }
+    });
+
+    const wh = await app.inject({
+      method: 'POST',
+      url: '/api/v2/webhooks/instagram',
+      payload: {
+        blogId,
+        channelType: 'COMMENT',
+        contactName: 'Siti',
+        contactHandle: '@siti_id',
+        text: 'Kak minta info KATALOG terbaru ya'
+      }
+    });
+    expect(wh.statusCode).toBe(200);
+    expect(wh.json().triggeredFlows).toBe(1);
+
+    // Schedule a post in the past and run scheduler job
+    const pastIso = new Date(Date.now() - 10 * 60 * 1000).toISOString().slice(0, 16);
+    await app.inject({
       method: 'POST',
       url: '/api/v2/planner/posts',
+      headers: { cookie },
       payload: {
-        blogId: 8137744,
-        scheduledAt: '2026-11-18T10:00',
-        text: 'Launch note',
+        blogId,
+        scheduledAt: pastIso,
+        text: 'Promo akhir pekan resmi dibuka.',
         networks: ['instagram']
       }
     });
-    expect(createdPost.statusCode).toBe(200);
-    const postId = createdPost.json().data.id;
 
-    const del = await app.inject({ method: 'DELETE', url: `/api/v2/planner/posts/${postId}` });
-    expect(del.statusCode).toBe(200);
-
-    const reply = await app.inject({
+    const cronRes = await app.inject({
       method: 'POST',
-      url: '/api/v2/inbox/threads/thr-1/messages',
-      payload: { text: 'Sudah didukung di Planner.' }
+      url: '/api/v2/planner/run-scheduler',
+      headers: { cookie }
     });
-    expect(reply.json().data.status).toBe('PENDING');
+    expect(cronRes.statusCode).toBe(200);
+    expect(cronRes.json().data.publishedCount).toBe(1);
 
-    const click = await app.inject({
-      method: 'POST',
-      url: '/api/v2/public/smart-links/beeloft-studio/click',
-      payload: { buttonId: 'btn-1' }
+    // Simulate signed Midtrans settlement webhook upgrading user to STARTER
+    const repo = new NodeFilePlatformRepository(dbFile);
+    const userRow = await repo.getUserByEmail('merchant@toko.id');
+    expect(userRow).not.toBeNull();
+    const orderId = `BM-${userRow!.userId}-99999`;
+    await repo.savePaymentOrder({
+      orderId,
+      userId: userRow!.userId,
+      plan: 'STARTER',
+      amountIdr: 285000,
+      amountUsd: 18,
+      provider: 'midtrans',
+      providerRef: 'snap-tok',
+      checkoutUrl: 'https://app.sandbox.midtrans.com/snap/v2/vtweb/test',
+      status: 'PENDING',
+      couponCode: null,
+      createdAt: new Date().toISOString(),
+      paidAt: null
     });
-    expect(click.json().clicks).toBe(319);
+
+    // Rebuild app to reload disk state and verify Midtrans SHA-512 webhook
+    const app2 = await buildApp(new NodeFilePlatformRepository(dbFile), {
+      MIDTRANS_SERVER_KEY: midtransKey
+    });
+    const sig = await sha512Hex(`${orderId}200285000.00${midtransKey}`);
+    const payWh = await app2.inject({
+      method: 'POST',
+      url: '/api/v2/webhooks/billing/midtrans',
+      payload: {
+        order_id: orderId,
+        status_code: '200',
+        gross_amount: '285000.00',
+        transaction_status: 'settlement',
+        fraud_status: 'accept',
+        signature_key: sig
+      }
+    });
+    expect(payWh.statusCode).toBe(200);
+
+    // Merchant is now STARTER and can create a 2nd brand!
+    const allowedBrand = await app2.inject({
+      method: 'POST',
+      url: '/api/v2/brands',
+      headers: { cookie },
+      payload: { name: 'Second Brand Unlocked' }
+    });
+    expect(allowedBrand.statusCode).toBe(200);
+
     await app.close();
+    await app2.close();
   });
 
-  it('supports 1:1 Legacy, Real-Time, Competitors, Flows, AI, Tasks, Ads 5-Tab, Studio, Brand Details, Tokens, Org & Backoffice endpoints', async () => {
-    const app = await buildApp(new JsonStore(dbFile));
+  it('serves API & tracker requests directly through the Cloudflare Worker fetch handler', async () => {
+    const reqReady = new Request('https://beeloftmetric.biz.id/api/v2/system/readiness');
+    const resReady = await workerEntry.fetch(reqReady, {});
+    expect(resReady.status).toBe(200);
+    const json = (await resReady.json()) as { ok: boolean; domain: string };
+    expect(json.ok).toBe(true);
+    expect(json.domain).toBe('beeloftmetric.biz.id');
 
-    // Legacy
-    const profiles = await app.inject({ method: 'GET', url: '/api/admin/simpleProfiles' });
-    expect(profiles.statusCode).toBe(200);
-    expect(profiles.json().length).toBe(2);
-
-    const sub = await app.inject({ method: 'GET', url: '/api/profile/subscription' });
-    expect(sub.json().plan).toBe('ENTERPRISE_CUSTOM');
-
-    // Real-time & Competitors
-    const rt = await app.inject({ method: 'GET', url: '/api/v2/evolution/realtime?blogId=8137744' });
-    expect(rt.json().data.connected).toBe(true);
-    expect(rt.json().data.activeVisitors).toBeGreaterThan(0);
-
-    const compAdd = await app.inject({
-      method: 'POST',
-      url: '/api/v2/evolution/competitors',
-      payload: { blogId: 8137744, network: 'instagram', handle: '@acme_comp' }
-    });
-    expect(compAdd.statusCode).toBe(200);
-    expect(compAdd.json().data.handle).toBe('@acme_comp');
-
-    // Planner Deleted & Restore + Flows + AI
-    const post = await app.inject({
-      method: 'POST',
-      url: '/api/v2/planner/posts',
-      payload: { blogId: 8137744, scheduledAt: '2026-11-20T09:00', text: 'Soft delete check', networks: ['instagram'] }
-    });
-    const postId = post.json().data.id;
-    await app.inject({ method: 'DELETE', url: `/api/v2/planner/posts/${postId}` });
-    const delList = await app.inject({ method: 'GET', url: '/api/v2/planner/deleted?blogId=8137744' });
-    expect(delList.json().data.some((p: { id: string }) => p.id === postId)).toBe(true);
-    const restored = await app.inject({ method: 'POST', url: `/api/v2/planner/deleted/${postId}/restore` });
-    expect(restored.statusCode).toBe(200);
-
-    const flowCreate = await app.inject({
-      method: 'POST',
-      url: '/api/v2/flows',
-      payload: { blogId: 8137744, name: 'Test Flow', dmText: 'Sent asset link.' }
-    });
-    expect(flowCreate.statusCode).toBe(200);
-
-    const aiGen = await app.inject({
-      method: 'POST',
-      url: '/api/v2/integrations/ai/natural-language-scheduling',
-      payload: { blogId: 8137744, prompt: 'Announce weekly webinar', network: 'linkedin' }
-    });
-    expect(aiGen.json().data.generatedCopy).toContain('Announce weekly webinar');
-
-    // Tasks approval
-    const taskRes = await app.inject({
-      method: 'PATCH',
-      url: '/api/v2/tasks/tsk-1',
-      payload: { status: 'APPROVED', reviewerNote: 'Ready to schedule' }
-    });
-    expect(taskRes.json().data.status).toBe('APPROVED');
-
-    // Ads 5-tab suite
-    const kws = await app.inject({ method: 'GET', url: '/api/v2/advertising/keywords?blogId=8137744' });
-    expect(kws.json().data.length).toBeGreaterThanOrEqual(2);
-    const recApply = await app.inject({ method: 'POST', url: '/api/v2/advertising/recommendations/rec-1/apply' });
-    expect(recApply.json().data.applied).toBe(true);
-
-    // Reporting Studio & Brand Details
-    const studioCreate = await app.inject({
-      method: 'POST',
-      url: '/api/v2/reporting/studio/reports',
-      payload: { blogId: 8137744, title: 'Board Deck' }
-    });
-    expect(studioCreate.statusCode).toBe(200);
-
-    const brandDet = await app.inject({
-      method: 'PUT',
-      url: '/api/v2/settings/brands/8137744/details',
-      payload: { tags: ['Q4-Launch', 'Verified'] }
-    });
-    expect(brandDet.json().data.tags).toContain('Verified');
-
-    // User Token rotation (requires REGENERATE)
-    const badRot = await app.inject({
-      method: 'POST',
-      url: '/api/v2/settings/users/tokens/regenerate',
-      payload: { confirmWord: 'wrong' }
-    });
-    expect(badRot.statusCode).toBe(400);
-    const goodRot = await app.inject({
-      method: 'POST',
-      url: '/api/v2/settings/users/tokens/regenerate',
-      payload: { confirmWord: 'REGENERATE' }
-    });
-    expect(goodRot.json().data.token).toMatch(/^bm_live_6401427_/);
-
-    // Agency SMTP Test + Affiliation + Backoffice
-    const smtp = await app.inject({ method: 'POST', url: '/api/v2/agency-CK/org-1/test-mail', payload: {} });
-    expect(smtp.statusCode).toBe(200);
-    const aff = await app.inject({ method: 'GET', url: '/api/v2/affiliation' });
-    expect(aff.json().data.referralCode).toBe('BEELOFT-PARTNER-640');
-    const cpn = await app.inject({
-      method: 'POST',
-      url: '/api/v2/backoffice/coupons',
-      payload: { code: 'PARITY50', discountPct: 50 }
-    });
-    expect(cpn.json().data.code).toBe('PARITY50');
-    const flagToggle = await app.inject({ method: 'PATCH', url: '/api/v2/backoffice/feature-flags/ENABLE_STUDIO' });
-    expect(flagToggle.json().data.ENABLE_STUDIO).toBe(false);
-
-    await app.close();
+    const reqTracker = new Request('https://beeloftmetric.biz.id/tracker.js');
+    const resTracker = await workerEntry.fetch(reqTracker, {});
+    expect(resTracker.status).toBe(200);
+    expect(await resTracker.text()).toContain('https://beeloftmetric.biz.id/s/collect');
   });
 });

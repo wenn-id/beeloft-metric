@@ -248,7 +248,7 @@
           </p>
           <div class="bm-looker-box">
             <strong>Connector Endpoint:</strong>
-            <code>http://127.0.0.1:4000/api/v2/evolution/summary?blogId={{ store.activeBlogId }}</code>
+            <code>{{ apiOrigin }}/api/v2/evolution/summary?blogId={{ store.activeBlogId }}</code>
           </div>
           <div>
             <router-link :to="`/user-settings/api?blogId=${store.activeBlogId}`" class="bm-open-public">
@@ -395,12 +395,16 @@ const activeStudio = computed(
   () => studioReports.value.find((s) => s.id === selectedStudioId.value) ?? studioReports.value[0] ?? null
 );
 
+const todayStr = new Date().toISOString().slice(0, 10);
+const thirtyAgoStr = new Date(Date.now() - 30 * 86400000).toISOString().slice(0, 10);
+const apiOrigin = typeof window !== 'undefined' ? window.location.origin : 'https://beeloftmetric.biz.id';
+
 const form = ref({
-  title: 'November 2026 Performance Summary',
+  title: 'Monthly Performance Summary',
   templateId: 'tpl-monthly',
   format: 'PDF' as 'PDF' | 'PPTX',
-  dateFrom: '2026-10-18',
-  dateTo: '2026-11-16'
+  dateFrom: thirtyAgoStr,
+  dateTo: todayStr
 });
 
 const customForm = ref({ name: '', description: '' });

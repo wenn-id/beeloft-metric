@@ -6,8 +6,8 @@
       <div class="bm-pricing-head">
         <h1>Plan Comparison Matrix</h1>
         <p>
-          Select how many brands you manage to see which tier fits cleanly, then compare limits across
-          all four tiers.
+          Select how many brands you manage to match your subscription tier, with instant Midtrans
+          (IDR) or Stripe (USD) checkout inside your workspace.
         </p>
       </div>
 
@@ -57,15 +57,15 @@
               <td v-for="t in tiers" :key="t.id" class="tabular-nums">{{ t.postsLabel }}</td>
             </tr>
             <tr>
-              <td>SmartLinks & attribution logs</td>
+              <td>SmartLinks (/bio/:slug) & tracker.js</td>
               <td v-for="t in tiers" :key="t.id">{{ t.smartLinks }}</td>
             </tr>
             <tr>
-              <td>PDF and PPTX report exports</td>
+              <td>Report exports</td>
               <td v-for="t in tiers" :key="t.id">{{ t.reports }}</td>
             </tr>
             <tr>
-              <td>Ad platform integrations</td>
+              <td>OAuth2 & ad platform sync</td>
               <td v-for="t in tiers" :key="t.id">{{ t.ads }}</td>
             </tr>
           </tbody>
@@ -73,19 +73,28 @@
       </section>
 
       <section class="bm-faq">
-        <h2>Common questions</h2>
+        <h2>Product & Infrastructure Questions</h2>
         <details class="bm-card bm-faq-item">
-          <summary>Can I test BeeloftMetric with zero connected channels first?</summary>
+          <summary>How does real-time website tracking work on external domains?</summary>
           <p>
-            Yes. Every account includes an unconfigured Empty brand alongside the [SAMPLE DATA] studio
-            workspace so you can verify connection flows before adding real credentials.
+            Each brand receives a unique <code>bm_trk_...</code> tracking key in Brand Connections.
+            Adding the lightweight <code>tracker.js</code> snippet sends live pageviews, UTM campaign
+            parameters, and Cloudflare country headers directly to your brand analytics.
           </p>
         </details>
         <details class="bm-card bm-faq-item">
-          <summary>How is attribution stored in this build?</summary>
+          <summary>How is workspace data isolated and persisted?</summary>
           <p>
-            Navigation and campaign query parameters trigger POST /s/session and POST /s against the
-            local Fastify server, issuing an _bm cookie and saving records to server/data/db.json.
+            Accounts authenticate with PBKDF2-SHA256 password hashes, optional RFC 6238 TOTP 2FA, and
+            HttpOnly session cookies stored in Cloudflare D1 SQLite, with uploaded campaign media
+            served through Cloudflare R2.
+          </p>
+        </details>
+        <details class="bm-card bm-faq-item">
+          <summary>Which payment methods are supported for plan upgrades?</summary>
+          <p>
+            Paid plans support Indonesian Rupiah checkout via Midtrans Snap (QRIS, Virtual Account,
+            e-wallets, cards) as well as international USD payments via Stripe Checkout.
           </p>
         </details>
       </section>
@@ -103,45 +112,45 @@ const tiers = [
   {
     id: 'FREE',
     name: 'Free',
-    price: '$0 / mo',
+    price: 'Rp 0 / mo',
     maxBrands: 1,
     brandsLabel: '1 brand',
     postsLabel: '20 posts / mo',
-    smartLinks: 'Basic page',
-    reports: 'Unavailable',
-    ads: 'View only'
+    smartLinks: 'Public /bio/ + live clicks',
+    reports: 'Web dashboard',
+    ads: 'Web tracker + social OAuth'
   },
   {
     id: 'STARTER',
     name: 'Starter',
-    price: '$18 / mo',
+    price: 'Rp 285k ($18) / mo',
     maxBrands: 5,
     brandsLabel: 'Up to 5 brands',
     postsLabel: '2,000 posts / mo',
-    smartLinks: 'Full editor + clicks',
-    reports: 'PDF exports',
+    smartLinks: 'Custom themes + UTM',
+    reports: 'PDF / TXT exports',
     ads: 'Meta, Google, TikTok'
   },
   {
     id: 'ADVANCED',
     name: 'Advanced',
-    price: '$45 / mo',
+    price: 'Rp 715k ($45) / mo',
     maxBrands: 15,
     brandsLabel: 'Up to 15 brands',
     postsLabel: 'Unlimited',
-    smartLinks: 'Custom styling + analytics',
-    reports: 'PDF + PPTX + Templates',
+    smartLinks: 'Unlimited links + Studio',
+    reports: 'PDF + PPTX + Custom templates',
     ads: 'Full attribution + ROAS'
   },
   {
     id: 'ENTERPRISE_CUSTOM',
     name: 'Enterprise Custom',
-    price: 'Custom',
+    price: 'Rp 2.35M ($149) / mo',
     maxBrands: 50,
-    brandsLabel: '50+ brands',
+    brandsLabel: 'Up to 50 brands',
     postsLabel: 'Unlimited',
-    smartLinks: 'Unlimited + API',
-    reports: 'White-label exports',
+    smartLinks: 'Unlimited + REST API',
+    reports: 'White-label branding',
     ads: 'All platforms + team RBAC'
   }
 ];
@@ -223,7 +232,7 @@ const matchedTier = computed(() => {
 .bm-matrix-table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 640px;
+  min-width: 680px;
 }
 
 .bm-matrix-table th,
@@ -255,7 +264,7 @@ const matchedTier = computed(() => {
 }
 
 .bm-faq-item summary {
-  font-weight: 700;
+  font-weight: 500;
   min-height: 36px;
   display: flex;
   align-items: center;

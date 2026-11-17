@@ -1,0 +1,34 @@
+name = "beeloft-metric"
+main = "worker/index.ts"
+compatibility_date = "2025-11-01"
+
+routes = [
+  { pattern = "beeloftmetric.biz.id", custom_domain = true },
+  { pattern = "www.beeloftmetric.biz.id", custom_domain = true }
+]
+
+[assets]
+directory = "./dist"
+binding = "ASSETS"
+not_found_handling = "single-page-application"
+run_worker_first = ["/api/*", "/s", "/s/*", "/p", "/tracker.js"]
+
+[vars]
+PUBLIC_APP_URL = "https://beeloftmetric.biz.id"
+
+[triggers]
+crons = ["*/5 * * * *"]
+
+[ai]
+binding = "AI"
+
+# Populated automatically by `npm run cf:deploy` (or set database_id manually from Cloudflare Dashboard -> D1):
+# [[d1_databases]]
+# binding = "DB"
+# database_name = "beeloft-metric-db"
+# database_id = "REPLACE_WITH_D1_DATABASE_UUID"
+
+# Enabled automatically by `npm run cf:deploy` when R2 is active on your Cloudflare account:
+# [[r2_buckets]]
+# binding = "MEDIA_BUCKET"
+# bucket_name = "beeloft-metric-media"

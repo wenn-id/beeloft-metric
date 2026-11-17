@@ -228,14 +228,19 @@ async function loadData(): Promise<void> {
 }
 
 async function submitInvite(): Promise<void> {
-  await apiRequest('/api/v2/user-management/invite', {
+  const res = await apiRequest<{
+    inviteUrl?: string;
+    emailDelivered?: boolean;
+  }>('/api/v2/user-management/invite', {
     method: 'POST',
     body: JSON.stringify(inviteForm.value)
   });
   inviteForm.value.name = '';
   inviteForm.value.email = '';
   inviteOpen.value = false;
-  savedMsg.value = 'Collaborator added to directory.';
+  savedMsg.value = res.emailDelivered
+    ? 'Invitation email sent to collaborator.'
+    : `Invitation created. Share activation link directly: ${res.inviteUrl || ''}`;
   await loadData();
 }
 

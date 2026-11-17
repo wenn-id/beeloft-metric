@@ -55,6 +55,8 @@ export interface Brand {
   timezone: string;
   currency: string;
   isSample: boolean;
+  trackingKey?: string;
+  websiteDomain?: string;
   deleted?: boolean;
   engagementRatioMode: 'REACH' | 'FOLLOWERS';
   tags: string[];
@@ -74,6 +76,8 @@ export interface UserProfile {
   trialDays: number;
   plan: 'FREE' | 'STARTER' | 'ADVANCED' | 'ENTERPRISE_CUSTOM';
   status: 'ACTIVE' | 'SUSPENDED';
+  emailVerified?: boolean;
+  role?: 'ADMIN' | 'USER';
   validUntil: string;
   brandLimit: number;
   apiToken: string;
@@ -125,6 +129,18 @@ export interface CompetitorProfile {
   postsCount: number;
   likesPerPost: number;
   engagementRate: number;
+}
+
+export interface RealtimeOverview {
+  connected: boolean;
+  isSample?: boolean;
+  trackingKey?: string;
+  trackerUrl?: string;
+  activeVisitors: number;
+  pageViewsLast30m: number;
+  topActivePages: Array<{ path: string; visitors: number }>;
+  topReferrers: Array<{ source: string; visitors: number }>;
+  countries: Array<{ country: string; code: string; visitors: number }>;
 }
 
 export interface ReportTemplate {
@@ -500,16 +516,279 @@ export interface DataStore {
   persist(): Promise<void>;
 }
 
+export interface CookieOptions {
+  path?: string;
+  sameSite?: 'lax' | 'strict' | 'none';
+  httpOnly?: boolean;
+  secure?: boolean;
+  maxAge?: number;
+}
+
+export interface D1PreparedStatementLike {
+  bind(...values: unknown[]): D1PreparedStatementLike;
+  first<T = Record<string, unknown>>(): Promise<T | null>;
+  all<T = Record<string, unknown>>(): Promise<{ results: T[] }>;
+  run(): Promise<{ success: boolean }>;
+}
+
+export interface D1DatabaseLike {
+  prepare(query: string): D1PreparedStatementLike;
+  batch(statements: D1PreparedStatementLike[]): Promise<unknown[]>;
+  exec(query: string): Promise<unknown>;
+}
+
+export interface R2ObjectBodyLike {
+  body: ReadableStream<Uint8Array> | null;
+  arrayBuffer(): Promise<ArrayBuffer>;
+  httpMetadata?: { contentType?: string };
+  size: number;
+}
+
+export interface R2BucketLike {
+  put(
+    key: string,
+    value: ArrayBuffer | Uint8Array | string,
+    options?: { httpMetadata?: { contentType?: string } }
+  ): Promise<unknown>;
+  get(key: string): Promise<R2ObjectBodyLike | null>;
+  delete(key: string): Promise<void>;
+}
+
+export interface WorkersAiLike {
+  run(model: string, inputs: Record<string, unknown>): Promise<unknown>;
+}
+
+export interface EdgeEnv {
+  DB?: D1DatabaseLike;
+  MEDIA_BUCKET?: R2BucketLike;
+  AI?: WorkersAiLike;
+  PUBLIC_APP_URL?: string;
+  ADMIN_EMAIL?: string;
+  META_APP_ID?: string;
+  META_APP_SECRET?: string;
+  META_WEBHOOK_VERIFY_TOKEN?: string;
+  TIKTOK_CLIENT_KEY?: string;
+  TIKTOK_CLIENT_SECRET?: string;
+  GOOGLE_CLIENT_ID?: string;
+  GOOGLE_CLIENT_SECRET?: string;
+  X_CLIENT_ID?: string;
+  X_CLIENT_SECRET?: string;
+  LINKEDIN_CLIENT_ID?: string;
+  LINKEDIN_CLIENT_SECRET?: string;
+  GEMINI_API_KEY?: string;
+  OPENAI_API_KEY?: string;
+  RESEND_API_KEY?: string;
+  MAILCHANNELS_API_KEY?: string;
+  SMTP_RELAY_URL?: string;
+  EMAIL_FROM?: string;
+  MIDTRANS_SERVER_KEY?: string;
+  MIDTRANS_CLIENT_KEY?: string;
+  MIDTRANS_IS_PRODUCTION?: string;
+  STRIPE_SECRET_KEY?: string;
+  STRIPE_WEBHOOK_SECRET?: string;
+}
+
+export interface UserAccountRow {
+  userId: number;
+  email: string;
+  name: string;
+  passwordHash: string;
+  passwordSalt: string;
+  apiToken: string;
+  totpSecret: string | null;
+  totpEnabled: boolean;
+  plan: UserProfile['plan'];
+  status: UserProfile['status'];
+  emailVerified: boolean;
+  verificationToken: string | null;
+  role: 'ADMIN' | 'USER';
+  workspace: BeeloftDatabase;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface SessionRow {
+  tokenHash: string;
+  userId: number;
+  expiresAt: string;
+  ip: string | null;
+  userAgent: string | null;
+  createdAt: string;
+}
+
+export interface PasswordResetRow {
+  tokenHash: string;
+  userId: number;
+  expiresAt: string;
+  used: boolean;
+  createdAt: string;
+}
+
+export interface InvitationRow {
+  token: string;
+  ownerUserId: number;
+  email: string;
+  name: string;
+  role: TeamMember['role'];
+  kind: TeamMember['kind'];
+  assignedBrands: number[];
+  status: 'PENDING' | 'ACCEPTED';
+  createdAt: string;
+}
+
+export interface BrandIndexRow {
+  blogId: number;
+  userId: number;
+  trackingKey: string;
+  domain: string | null;
+  updatedAt: string;
+}
+
+export interface WebEventRow {
+  id: string;
+  blogId: number;
+  visitorId: string;
+  sessionId: string;
+  eventType: 'session' | 'pageview' | 'event' | 'telemetry' | 'smartlink_click';
+  path: string;
+  eventName: string;
+  utmSource: string | null;
+  utmMedium: string | null;
+  referrer: string | null;
+  countryCode: string | null;
+  countryName: string | null;
+  createdAt: string;
+}
+
+export interface OAuthStateRow {
+  state: string;
+  userId: number;
+  blogId: number;
+  network: NetworkKey;
+  codeVerifier: string | null;
+  redirectOrigin: string;
+  createdAt: string;
+}
+
+export interface OAuthCredentialRow {
+  blogId: number;
+  userId: number;
+  network: NetworkKey;
+  accessToken: string;
+  refreshToken: string | null;
+  expiresAt: string | null;
+  accountId: string | null;
+  accountHandle: string | null;
+  updatedAt: string;
+}
+
+export interface MediaAssetRow {
+  id: string;
+  userId: number;
+  blogId: number;
+  r2Key: string;
+  mimeType: string;
+  sizeBytes: number;
+  filename: string;
+  dataBase64: string | null;
+  createdAt: string;
+}
+
+export interface PaymentOrderRow {
+  orderId: string;
+  userId: number;
+  plan: UserProfile['plan'];
+  amountIdr: number;
+  amountUsd: number;
+  provider: 'midtrans' | 'stripe' | 'coupon_100';
+  providerRef: string | null;
+  checkoutUrl: string | null;
+  status: 'PENDING' | 'PAID' | 'FAILED' | 'EXPIRED';
+  couponCode: string | null;
+  createdAt: string;
+  paidAt: string | null;
+}
+
+export interface PlatformGlobalMeta {
+  coupons: CouponItem[];
+  invoices: InvoiceItem[];
+  featureFlags: Record<string, boolean>;
+  apiCallsToday: number;
+  apiCallsDate: string;
+}
+
+export interface PlatformRepository {
+  readonly driver: 'd1' | 'local-file' | 'memory';
+  ensureReady(): Promise<void>;
+  countUsers(): Promise<number>;
+  listUsers(): Promise<Array<Pick<UserAccountRow, 'userId' | 'email' | 'name' | 'plan' | 'status' | 'role' | 'createdAt'>>>;
+  getUserById(userId: number): Promise<UserAccountRow | null>;
+  getUserByEmail(email: string): Promise<UserAccountRow | null>;
+  getUserByApiToken(apiToken: string): Promise<UserAccountRow | null>;
+  getUserByVerificationToken(token: string): Promise<UserAccountRow | null>;
+  allocateIds(): Promise<{ userId: number; blogId: number }>;
+  allocateBlogId(): Promise<number>;
+  saveUser(user: UserAccountRow): Promise<void>;
+
+  createSession(session: SessionRow): Promise<void>;
+  getSession(tokenHash: string): Promise<SessionRow | null>;
+  deleteSession(tokenHash: string): Promise<void>;
+  deleteUserSessions(userId: number): Promise<void>;
+
+  createPasswordReset(reset: PasswordResetRow): Promise<void>;
+  getPasswordReset(tokenHash: string): Promise<PasswordResetRow | null>;
+  markPasswordResetUsed(tokenHash: string): Promise<void>;
+
+  createInvitation(inv: InvitationRow): Promise<void>;
+  getInvitation(token: string): Promise<InvitationRow | null>;
+  markInvitationAccepted(token: string): Promise<void>;
+
+  getBrandOwner(blogId: number): Promise<BrandIndexRow | null>;
+  getBrandByTrackingKey(trackingKey: string): Promise<BrandIndexRow | null>;
+
+  getPublicSmartLinkOwner(slug: string): Promise<{ userId: number; blogId: number; linkId: string } | null>;
+  getPublicStudioReportOwner(reportId: string): Promise<{ userId: number; blogId: number } | null>;
+
+  insertWebEvent(ev: WebEventRow): Promise<void>;
+  listWebEventsSince(blogId: number, sinceIso: string, limit?: number): Promise<WebEventRow[]>;
+  listVisitorEvents(visitorId: string, limit?: number): Promise<WebEventRow[]>;
+
+  saveOAuthState(row: OAuthStateRow): Promise<void>;
+  consumeOAuthState(state: string): Promise<OAuthStateRow | null>;
+  saveOAuthCredential(row: OAuthCredentialRow): Promise<void>;
+  getOAuthCredential(blogId: number, network: NetworkKey): Promise<OAuthCredentialRow | null>;
+  deleteOAuthCredential(blogId: number, network: NetworkKey): Promise<void>;
+
+  saveMediaAsset(row: MediaAssetRow): Promise<void>;
+  getMediaAsset(id: string): Promise<MediaAssetRow | null>;
+  listMediaAssets(blogId: number): Promise<Array<Omit<MediaAssetRow, 'dataBase64'>>>;
+
+  savePaymentOrder(row: PaymentOrderRow): Promise<void>;
+  getPaymentOrder(orderId: string): Promise<PaymentOrderRow | null>;
+  listUserPaymentOrders(userId: number): Promise<PaymentOrderRow[]>;
+
+  getGlobalMeta(): Promise<PlatformGlobalMeta>;
+  saveGlobalMeta(meta: PlatformGlobalMeta): Promise<void>;
+  incrementApiCallCounter(): Promise<number>;
+}
+
 export interface RouteRequest {
   body?: unknown;
+  rawBody?: string;
   query?: unknown;
   params?: unknown;
+  headers?: Record<string, string | undefined>;
+  cookies?: Record<string, string | undefined>;
+  ip?: string;
+  countryCode?: string;
+  origin?: string;
+  env?: EdgeEnv;
 }
 
 export interface RouteReply {
   code(status: number): RouteReply;
-  setCookie(name: string, val: string, opts?: unknown): RouteReply;
-  clearCookie(name: string, opts?: unknown): RouteReply;
+  setCookie(name: string, val: string, opts?: CookieOptions): RouteReply;
+  clearCookie(name: string, opts?: CookieOptions): RouteReply;
   header(key: string, val: string): RouteReply;
 }
 

@@ -22,29 +22,27 @@
         <h1>{{ smartLink.title }}</h1>
         <p class="bm-bio-desc">{{ smartLink.description }}</p>
 
-        <p v-if="lastClickedNotice" class="bm-bio-notice" role="status">
-          {{ lastClickedNotice }}
-        </p>
-
         <div class="bm-bio-links">
-          <button
+          <a
             v-for="btn in activeButtons"
             :key="btn.id"
-            type="button"
+            :href="btn.url"
+            target="_blank"
+            rel="noopener noreferrer"
             class="bm-bio-btn"
             :style="{
               backgroundColor: smartLink.theme.buttonColor,
               color: smartLink.theme.buttonTextColor
             }"
-            @click="handleButtonClick(btn)"
+            @click="recordButtonClick(btn)"
           >
             <span>{{ btn.label }}</span>
-            <small class="tabular-nums">{{ btn.clicks }} clicks</small>
-          </button>
+            <span aria-hidden="true">↗</span>
+          </a>
         </div>
 
         <footer class="bm-bio-foot">
-          <router-link to="/smartlink?blogId=8137744&userId=6401427">Edit in SmartLinks</router-link>
+          <router-link to="/">Powered by BeeloftMetric</router-link>
         </footer>
       </section>
     </main>
@@ -64,7 +62,6 @@ const router = useRouter();
 const loading = ref(true);
 const errorMsg = ref('');
 const smartLink = ref<SmartLink | null>(null);
-const lastClickedNotice = ref('');
 
 const activeButtons = computed(
   () => smartLink.value?.buttons.filter((b) => b.active) ?? []
@@ -74,7 +71,7 @@ async function fetchBio(): Promise<void> {
   loading.value = true;
   errorMsg.value = '';
   try {
-    const slug = String(route.params.slug || 'beeloft-studio');
+    const slug = String(route.params.slug || '');
     const res = await apiRequest<{ data: SmartLink }>(`/api/v2/public/smart-links/${slug}`);
     smartLink.value = res.data;
   } catch (err) {
@@ -84,17 +81,22 @@ async function fetchBio(): Promise<void> {
   }
 }
 
-async function handleButtonClick(btn: SmartLinkButton): Promise<void> {
+function recordButtonClick(btn: SmartLinkButton): void {
   if (!smartLink.value) return;
-  const res = await apiRequest<{ ok: boolean; clicks: number }>(
-    `/api/v2/public/smart-links/${smartLink.value.slug}/click`,
-    {
+  const endpoint = `/api/v2/public/smart-links/${encodeURIComponent(smartLink.value.slug)}/click`;
+  const payload = JSON.stringify({ buttonId: btn.id });
+  if (typeof navigator !== 'undefined' && navigator.sendBeacon) {
+    const blob = new Blob([payload], { type: 'application/json' });
+    navigator.sendBeacon(endpoint, blob);
+  } else {
+    fetch(endpoint, {
       method: 'POST',
-      body: JSON.stringify({ buttonId: btn.id })
-    }
-  );
-  btn.clicks = res.clicks;
-  lastClickedNotice.value = `Recorded click for "${btn.label}" (${btn.url}). Total: ${res.clicks}.`;
+      headers: { 'Content-Type': 'application/json' },
+      body: payload,
+      keepalive: true
+    }).catch(() => undefined);
+  }
+  btn.clicks += 1;
 }
 
 onMounted(fetchBio);
@@ -126,28 +128,17 @@ onMounted(fetchBio);
   width: 64px;
   height: 64px;
   border-radius: 50%;
-  background: var(--bm-chrome-bg);
-  color: var(--bm-chrome-text);
+  background: var(--color-blush-peach);
+  color: var(--color-sienna-brown);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 700;
+  font-weight: 500;
   font-size: 1.25rem;
 }
 
 .bm-bio-desc {
   color: var(--bm-text-muted);
-}
-
-.bm-bio-notice {
-  width: 100%;
-  padding: 0.625rem 0.75rem;
-  border-radius: var(--bm-radius-md);
-  background: var(--bm-success-bg);
-  color: var(--bm-success-text);
-  border: 1px solid var(--bm-success-border);
-  font-size: 0.8125rem;
-  text-align: left;
 }
 
 .bm-bio-links {
@@ -170,20 +161,20 @@ onMounted(fetchBio);
   align-items: center;
   gap: 0.5rem;
   text-align: left;
-}
-
-.bm-bio-btn small {
-  opacity: 0.85;
-  font-weight: 600;
+  text-decoration: none;
 }
 
 .bm-bio-foot {
-  margin-top: 0.75rem;
-  font-size: 0.875rem;
+  margin-top: 1rem;
+  font-size: 0.8125rem;
 }
 
 .bm-bio-foot a {
-  color: var(--bm-accent);
-  font-weight: 700;
+  color: var(--bm-text-muted);
+  text-decoration: none;
+}
+
+.bm-bio-foot a:hover {
+  text-decoration: underline;
 }
 </style>

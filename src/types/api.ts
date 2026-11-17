@@ -22,6 +22,8 @@ export interface BrandSummary {
   timezone: string;
   currency: string;
   isSample: boolean;
+  trackingKey?: string;
+  websiteDomain?: string;
   connectionsCount: number;
 }
 
@@ -44,6 +46,8 @@ export interface UserStatus {
   trialDays: number;
   plan: 'FREE' | 'STARTER' | 'ADVANCED' | 'ENTERPRISE_CUSTOM';
   status: 'ACTIVE' | 'SUSPENDED';
+  emailVerified?: boolean;
+  role?: 'ADMIN' | 'USER';
   validUntil: string;
   brandLimit: number;
   features: Record<string, boolean>;
@@ -248,6 +252,8 @@ export interface CompetitorProfile {
 export interface RealtimeOverview {
   connected: boolean;
   isSample?: boolean;
+  trackingKey?: string;
+  trackerUrl?: string;
   activeVisitors: number;
   pageViewsLast30m: number;
   topActivePages: Array<{ path: string; visitors: number }>;
@@ -406,6 +412,8 @@ export interface BrandDetails {
   timezone: string;
   currency: string;
   isSample: boolean;
+  trackingKey?: string;
+  websiteDomain?: string;
   engagementRatioMode: 'REACH' | 'FOLLOWERS';
   tags: string[];
   whiteLabel: {

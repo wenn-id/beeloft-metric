@@ -1,6 +1,18 @@
 import { dispatchBrowserApi } from './browserApi';
 
-function useStaticBrowserApi(): boolean {
+export class ApiError extends Error {
+  readonly status: number;
+  readonly data: Record<string, unknown> | null;
+
+  constructor(message: string, status: number, data: Record<string, unknown> | null = null) {
+    super(message);
+    this.name = 'ApiError';
+    this.status = status;
+    this.data = data;
+  }
+}
+
+function useStaticGithubPagesPreview(): boolean {
   if (import.meta.env.VITE_STATIC_API === 'true') return true;
   if (typeof window !== 'undefined' && window.location.hostname.endsWith('.github.io')) {
     return true;
@@ -12,7 +24,7 @@ export async function apiRequest<T>(
   url: string,
   options: RequestInit = {}
 ): Promise<T> {
-  if (useStaticBrowserApi()) {
+  if (useStaticGithubPagesPreview()) {
     return dispatchBrowserApi<T>(url, options);
   }
 
@@ -21,16 +33,11 @@ export async function apiRequest<T>(
     ...(options.headers as Record<string, string> | undefined)
   };
 
-  let res: Response;
-  try {
-    res = await fetch(url, {
-      credentials: 'include',
-      ...options,
-      headers
-    });
-  } catch {
-    return dispatchBrowserApi<T>(url, options);
-  }
+  const res = await fetch(url, {
+    credentials: 'include',
+    ...options,
+    headers
+  });
 
   const text = await res.text();
   let parsed: Record<string, unknown> | null = null;
@@ -39,7 +46,7 @@ export async function apiRequest<T>(
       parsed = JSON.parse(text) as Record<string, unknown>;
     } catch {
       if (!res.ok) {
-        return dispatchBrowserApi<T>(url, options);
+        throw new ApiError(`Request failed with status ${res.status}`, res.status);
       }
       return text as unknown as T;
     }
@@ -49,7 +56,7 @@ export async function apiRequest<T>(
     const message =
       (typeof parsed?.error === 'string' && parsed.error) ||
       `Request failed with status ${res.status}`;
-    throw new Error(message);
+    throw new ApiError(message, res.status, parsed);
   }
 
   return parsed as T;

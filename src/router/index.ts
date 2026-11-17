@@ -26,22 +26,23 @@ import BackofficeView from '@/views/app/BackofficeView.vue';
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    // Public & Auth (Ft & Gh enums)
-    { path: '/', component: LandingView },
-    { path: '/pricing', component: PricingView },
-    { path: '/login', component: LoginView },
-    { path: '/login/:variant', component: LoginView },
-    { path: '/register', component: RegisterView },
-    { path: '/activate-user', component: LoginView },
-    { path: '/activate-collaborator', component: LoginView },
-    { path: '/new-password', component: LoginView },
+    // Public & Auth
+    { path: '/', component: LandingView, meta: { public: true } },
+    { path: '/pricing', component: PricingView, meta: { public: true } },
+    { path: '/login', component: LoginView, meta: { public: true } },
+    { path: '/login/:variant', component: LoginView, meta: { public: true } },
+    { path: '/register', component: RegisterView, meta: { public: true } },
+    { path: '/activate-user', component: LoginView, meta: { public: true } },
+    { path: '/activate-collaborator', component: LoginView, meta: { public: true } },
+    { path: '/new-password', component: LoginView, meta: { public: true } },
     { path: '/logout', redirect: '/login' },
-    { path: '/oauth/:action', component: LoginView },
-    { path: '/legal', component: LegalView },
-    { path: '/bio/:slug', component: PublicBioView },
-    { path: '/public/smartlink/:slug', component: PublicBioView },
+    { path: '/oauth/:action', component: LoginView, meta: { public: true } },
+    { path: '/legal', component: LegalView, meta: { public: true } },
+    { path: '/bio/:slug', component: PublicBioView, meta: { public: true } },
+    { path: '/public/smartlink/:slug', component: PublicBioView, meta: { public: true } },
+    { path: '/reporting/studio/public/:id', component: StudioPublicView, meta: { public: true } },
 
-    // Analytics / Evolution (ft enum - specific routes before :network)
+    // Analytics / Evolution
     { path: '/evolution', redirect: '/evolution/brandSummary' },
     { path: '/evolution/web/real-time', component: EvolutionView },
     { path: '/evolution/competitors', component: EvolutionView },
@@ -51,30 +52,29 @@ const router = createRouter({
     { path: '/evolution/reports', redirect: '/reporting' },
     { path: '/evolution/:network', component: EvolutionView },
 
-    // Reporting, Studio (metrifacts) & Campaigns Dashboard (Si, cr, Ir enums)
-    { path: '/reporting/studio/public/:id', component: StudioPublicView },
+    // Reporting, Studio & Campaigns Dashboard
     { path: '/reporting', component: ReportingView },
     { path: '/reporting/:section', component: ReportingView },
     { path: '/reporting/:section/:sub', component: ReportingView },
     { path: '/metrifacts', redirect: '/reporting/studio' },
     { path: '/metrifacts/:pathMatch(.*)*', redirect: '/reporting/studio' },
 
-    // Inbox (Ss enum)
+    // Inbox
     { path: '/inbox', component: InboxView },
 
-    // Planner, AutoLists, Flows, Library, Trash (di / planner routes)
+    // Planner, AutoLists, Flows, Library, Trash
     { path: '/planner', component: PlannerView },
     { path: '/planner/:section', component: PlannerView },
 
-    // SmartLinks (Ff enum)
+    // SmartLinks
     { path: '/smartlink', component: SmartLinkView },
     { path: '/smartlink/:section', component: SmartLinkView },
 
-    // Advertising 5-Tab Suite (Oo enum)
+    // Advertising 5-Tab Suite
     { path: '/advertising', redirect: '/advertising/campaigns' },
     { path: '/advertising/:section', component: AdvertisingView },
 
-    // Brand Settings 6-Tab Suite (di enum)
+    // Brand Settings 6-Tab Suite
     { path: '/brands', redirect: '/brands/connections' },
     { path: '/brands/brandSettings', redirect: '/brands/configuration' },
     { path: '/brands/connections-all', redirect: '/brands/connections' },
@@ -82,44 +82,61 @@ const router = createRouter({
     { path: '/brand-connections', redirect: '/brands/connections' },
     { path: '/brands/:section', component: ConnectionsView },
 
-    // User Settings (Ln enum)
+    // User Settings
     { path: '/user-settings', redirect: '/user-settings/account' },
     { path: '/user-settings/:section', component: UserSettingsView },
 
-    // My Tasks & Review Portals (ls, Jg, Uf enums)
+    // My Tasks & Review Portals
     { path: '/my-tasks', component: TasksView },
     { path: '/my-tasks/:filter', component: TasksView },
     { path: '/review/post', component: TasksView },
     { path: '/review-portals', component: TasksView },
 
-    // Team, Users & Organization Settings (lA, Dd enums)
+    // Team, Users & Organization Settings
     { path: '/user-management', component: TeamOrgView },
     { path: '/user-management/:section', component: TeamOrgView },
     { path: '/organization-settings', component: TeamOrgView },
     { path: '/organization-settings/:section', component: TeamOrgView },
     { path: '/agencies-management/:section?', redirect: '/organization-settings' },
 
-    // Affiliation (jr enum)
+    // Affiliation
     { path: '/affiliation', component: AffiliationView },
     { path: '/affiliation/:section', component: AffiliationView },
 
-    // Operator Backoffice (en enum)
-    { path: '/backoffice', component: BackofficeView },
-    { path: '/backoffice/:section', component: BackofficeView },
+    // Operator Backoffice (Admin only)
+    { path: '/backoffice', component: BackofficeView, meta: { requiresAdmin: true } },
+    { path: '/backoffice/:section', component: BackofficeView, meta: { requiresAdmin: true } },
     { path: '/notifications', redirect: '/user-settings/notifications' },
 
     { path: '/:pathMatch(.*)*', redirect: '/' }
   ]
 });
 
-router.beforeEach((to) => {
-  const qBlog = Number(to.query.blogId);
-  if (Number.isFinite(qBlog) && qBlog > 0) {
-    const store = useAppStore();
-    if (store.activeBlogId !== qBlog) {
-      store.setActiveBrand(qBlog).catch(() => undefined);
+router.beforeEach(async (to) => {
+  const store = useAppStore();
+
+  if (!to.meta.public) {
+    const authed = await store.ensureBootstrapped();
+    if (!authed) {
+      return { path: '/login', query: { next: to.fullPath } };
+    }
+    if (to.meta.requiresAdmin && store.user?.role !== 'ADMIN') {
+      return { path: '/evolution/brandSummary' };
     }
   }
+
+  const qBlog = Number(to.query.blogId);
+  if (
+    store.isAuthenticated &&
+    Number.isFinite(qBlog) &&
+    qBlog > 0 &&
+    store.brands.some((b) => b.blogId === qBlog) &&
+    store.activeBlogId !== qBlog
+  ) {
+    store.setActiveBrand(qBlog).catch(() => undefined);
+  }
+
+  return true;
 });
 
 router.afterEach((to) => {

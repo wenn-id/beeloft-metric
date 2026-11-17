@@ -23,6 +23,15 @@
     "src/**/*.vue",
     "server/types.ts",
     "server/seed.ts",
-    "server/routes/**/*.ts"
+    "server/workspaceTemplate.ts",
+    "server/security/**/*.ts",
+    "server/storage/d1Repository.ts",
+    "server/storage/memoryRepository.ts",
+    "server/services/**/*.ts",
+    "server/jobs/**/*.ts",
+    "server/routes/**/*.ts",
+    "server/cloudflare/**/*.ts",
+    "worker/**/*.ts",
+    "functions/**/*.ts"
   ]
 }

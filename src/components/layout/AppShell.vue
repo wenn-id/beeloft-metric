@@ -6,10 +6,8 @@
       <div class="bm-topbar__inner">
         <div class="bm-topbar__left">
           <router-link :to="brandUrl('/evolution/brandSummary')" class="bm-brand-link">
-            <span class="bm-logo-mark" aria-hidden="true">BM</span>
             <span class="bm-brand-text">
-              <strong>BeeloftMetric</strong>
-              <small class="bm-logo-note">[LOGO PLACEHOLDER]</small>
+              <strong class="bm-shell-wordmark">BeeloftMetric</strong>
             </span>
           </router-link>
 
@@ -229,7 +227,12 @@
           <router-link :to="brandUrl('/affiliation/general')" class="bm-account-link" @click="userDrawerOpen = false">
             Affiliation Program
           </router-link>
-          <router-link :to="brandUrl('/backoffice/feature-flags')" class="bm-account-link" @click="userDrawerOpen = false">
+          <router-link
+            v-if="store.user?.role === 'ADMIN'"
+            :to="brandUrl('/backoffice/feature-flags')"
+            class="bm-account-link"
+            @click="userDrawerOpen = false"
+          >
             Operator Backoffice
           </router-link>
           <router-link to="/pricing" class="bm-account-link" @click="userDrawerOpen = false">
@@ -274,7 +277,6 @@
 import { computed, onMounted, onUnmounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useAppStore } from '@/stores/appStore';
-import { apiRequest } from '@/services/api';
 import BmBadge from '@/components/common/designSystem/atoms/BmBadge.vue';
 import BmButton from '@/components/common/designSystem/atoms/BmButton.vue';
 import BmModal from '@/components/common/designSystem/atoms/BmModal.vue';
@@ -322,8 +324,9 @@ const filteredNotifications = computed(() => {
 });
 
 function brandUrl(path: string): string {
-  const uid = store.user?.userId || 6401427;
-  return `${path}?blogId=${store.activeBlogId}&userId=${uid}`;
+  if (!store.activeBlogId) return path;
+  const uid = store.user?.userId;
+  return uid ? `${path}?blogId=${store.activeBlogId}&userId=${uid}` : `${path}?blogId=${store.activeBlogId}`;
 }
 
 function toggleBrandMenu(): void {
@@ -349,7 +352,7 @@ async function selectBrand(blogId: number): Promise<void> {
   await store.setActiveBrand(blogId);
   await router.replace({
     path: route.path,
-    query: { ...route.query, blogId: String(blogId), userId: String(store.user?.userId || 6401427) }
+    query: { ...route.query, blogId: String(blogId), ...(store.user?.userId ? { userId: String(store.user.userId) } : {}) }
   });
 }
 
@@ -374,7 +377,7 @@ async function submitNewBrand(): Promise<void> {
 }
 
 async function handleLogout(): Promise<void> {
-  await apiRequest('/api/v2/auth/logout', { method: 'POST' });
+  await store.logout();
   userDrawerOpen.value = false;
   await router.push('/login');
 }
@@ -444,17 +447,11 @@ onUnmounted(() => {
   flex-shrink: 0;
 }
 
-.bm-logo-mark {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: var(--radius-buttons);
-  background: var(--bm-brand);
-  color: var(--bm-brand-text);
-  font-weight: 500;
-  font-size: 0.75rem;
+.bm-shell-wordmark {
+  font-family: var(--font-signifier);
+  font-weight: 400;
+  font-size: 22px;
+  letter-spacing: -0.02em;
 }
 
 .bm-brand-text {

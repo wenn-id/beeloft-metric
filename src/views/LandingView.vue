@@ -12,68 +12,65 @@
               Social metrics that read with <em>editorial clarity</em> across every channel.
             </h1>
             <p class="bm-hero-sub">
-              BeeloftMetric unifies channel evolution, scheduling calendars, Comment-to-DM flows,
-              unified inbox triage, and first-party attribution telemetry in one calm workspace.
+              BeeloftMetric unifies channel evolution, publishing calendars, Comment-to-DM flows,
+              unified inbox triage, SmartLinks, and first-party web attribution on Cloudflare Edge.
             </p>
             <div class="bm-hero-actions">
-              <router-link to="/register" class="bm-pill-filled bm-transition">
-                Get started
-              </router-link>
               <router-link
-                to="/evolution/brandSummary?blogId=8137744&userId=6401427"
-                class="bm-pill-ghost bm-transition"
+                :to="store.isAuthenticated ? '/evolution/brandSummary' : '/register'"
+                class="bm-pill-filled bm-transition"
               >
-                Open sample workspace
+                {{ store.isAuthenticated ? 'Open workspace' : 'Create free workspace' }}
+              </router-link>
+              <router-link to="/pricing" class="bm-pill-ghost bm-transition">
+                Compare plans
               </router-link>
             </div>
           </div>
 
-          <!-- Floating Product Artifacts Collage -->
+          <!-- Floating Product Artifacts Collage (Honest Product Interface Preview) -->
           <div class="bm-collage">
-            <!-- Artifact 1: Channel Reach & Region Table -->
+            <!-- Artifact 1: Supported Channels & Sync Modes -->
             <article class="bm-artifact bm-artifact--table">
               <div class="bm-artifact__top">
                 <div>
-                  <span class="bm-ghost-tag">Channels · [SAMPLE DATA]</span>
-                  <h3>Cross-channel reach</h3>
+                  <span class="bm-ghost-tag">Supported Integrations</span>
+                  <h3>Connected channel modes</h3>
                 </div>
                 <span class="bm-avatar-wrap" aria-hidden="true">
                   <span class="bm-avatar-bubble bm-avatar--peach">BM</span>
-                  <svg class="bm-cursor-arrow" width="12" height="12" viewBox="0 0 12 12">
-                    <path d="M1 1l9 4-4 1.5L4.5 11 1 1z" fill="#17191c" />
-                  </svg>
                 </span>
               </div>
               <table class="bm-mini-table">
                 <thead>
                   <tr>
                     <th>Channel</th>
-                    <th>Status</th>
-                    <th class="bm-num-col">30d Reach</th>
+                    <th>Auth</th>
+                    <th class="bm-num-col">Sync</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="row in sampleChannelRows" :key="row.name">
+                  <tr v-for="row in channelCapabilityRows" :key="row.name">
                     <td>{{ row.name }}</td>
-                    <td class="bm-muted-cell">{{ row.handle }}</td>
-                    <td class="bm-num-col tabular-nums">{{ row.reach }}</td>
+                    <td class="bm-muted-cell">{{ row.auth }}</td>
+                    <td class="bm-num-col">{{ row.sync }}</td>
                   </tr>
                 </tbody>
               </table>
             </article>
 
-            <!-- Artifact 2: Stat Card with Gestural Sienna Line -->
+            <!-- Artifact 2: Edge Infrastructure Readiness -->
             <article class="bm-artifact bm-artifact--stat">
               <div class="bm-artifact__top">
-                <span class="bm-ghost-tag">Impressions · Last 30 days</span>
+                <span class="bm-ghost-tag">Edge Runtime Status</span>
                 <span class="bm-avatar-wrap" aria-hidden="true">
-                  <span class="bm-avatar-bubble bm-avatar--mist">OP</span>
+                  <span class="bm-avatar-bubble bm-avatar--mist">CF</span>
                 </span>
               </div>
-              <p class="bm-stat-val tabular-nums">
-                {{ liveImpressions }}
+              <p class="bm-stat-val">
+                {{ readinessLabel }}
               </p>
-              <p class="bm-stat-delta">{{ liveDelta }}</p>
+              <p class="bm-stat-delta">{{ readinessSub }}</p>
               <svg viewBox="0 0 220 56" class="bm-gestural-svg" aria-hidden="true">
                 <path
                   d="M4 46 C 36 42, 52 24, 84 28 C 116 32, 144 12, 176 18 C 194 21, 206 10, 216 8"
@@ -85,14 +82,14 @@
               </svg>
             </article>
 
-            <!-- Artifact 3: Activation / Engagement Curve -->
+            <!-- Artifact 3: Scheduler & Cron Cadence -->
             <article class="bm-artifact bm-artifact--curve">
               <div class="bm-artifact__top">
                 <div>
-                  <span class="bm-ghost-tag">Engagement · Aug to Nov</span>
-                  <p class="bm-stat-val tabular-nums">4.80%</p>
+                  <span class="bm-ghost-tag">Auto-Publisher Cron</span>
+                  <p class="bm-stat-val tabular-nums">5 min</p>
                 </div>
-                <span class="bm-radial-pill tabular-nums">36,058 acts</span>
+                <span class="bm-radial-pill">D1 + R2 Edge</span>
               </div>
               <svg viewBox="0 0 240 62" class="bm-gestural-svg" aria-hidden="true">
                 <path
@@ -103,38 +100,38 @@
                   stroke-linecap="round"
                 />
               </svg>
-              <p class="bm-stat-delta">Compared across 7 connected profiles [SAMPLE DATA]</p>
+              <p class="bm-stat-delta">Executes scheduled posts, AutoLists, and webhook flows</p>
             </article>
 
             <!-- Artifact 4: Working AI Composer Input -->
             <article class="bm-artifact bm-artifact--composer">
               <div class="bm-artifact__top">
-                <span class="bm-ghost-tag">Natural Language Scheduler · Live API</span>
+                <span class="bm-ghost-tag">Natural Language Caption Assistant · Live API</span>
               </div>
               <form class="bm-composer-box" @submit.prevent="runAiComposer">
                 <button
                   type="button"
                   class="bm-circle-ghost"
-                  aria-label="Insert channel mention preset"
-                  @click="aiPrompt = 'Announce our Q4 content audit checklist on LinkedIn'"
+                  aria-label="Insert sample prompt"
+                  @click="aiPrompt = 'Tulis pengumuman peluncuran koleksi akhir tahun untuk Instagram'"
                 >
                   @
                 </button>
                 <button
                   type="button"
                   class="bm-circle-ghost"
-                  aria-label="Show AI prompt tip"
+                  aria-label="Show AI endpoint details"
                   @click="aiInfoShown = !aiInfoShown"
                 >
                   i
                 </button>
-                <label for="hero-ai-input" class="sr-only">Ask BeeloftMetric AI</label>
+                <label for="hero-ai-input" class="sr-only">Draft a social post</label>
                 <input
                   id="hero-ai-input"
                   v-model="aiPrompt"
                   type="text"
                   class="bm-composer-input"
-                  placeholder="Ask anything... (e.g. Draft a Q4 release update)"
+                  placeholder="Write a prompt (e.g. Ringkas update fitur baru untuk LinkedIn)"
                 />
                 <button
                   type="submit"
@@ -148,8 +145,8 @@
                 </button>
               </form>
               <p v-if="aiInfoShown" class="bm-composer-reply">
-                Calls <code>POST /api/v2/integrations/ai/natural-language-scheduling</code> using the
-                active Brand AI Configuration.
+                Calls <code>POST /api/v2/integrations/ai/natural-language-scheduling</code> on the
+                edge API using Workers AI, Gemini, or OpenAI.
               </p>
               <p v-if="aiResult" class="bm-composer-reply" role="status">
                 <strong>Draft:</strong> {{ aiResult }}
@@ -163,10 +160,10 @@
       <section id="capabilities" class="bm-fog-band">
         <div class="bm-container">
           <div class="bm-band-head">
-            <h2 class="bm-section-heading">Built as an editorial workspace, backed by 1:1 APIs.</h2>
+            <h2 class="bm-section-heading">Every module isolated per workspace and backed by live edge storage.</h2>
             <p class="bm-band-sub">
-              Explore Analytics, Planning & Flows, Unified Inbox, SmartLinks, Advertising, and
-              Operator Backoffice without leaving the local repository stack.
+              Register an account to manage multiple client brands, embed real-time web tracking,
+              upload campaign media to R2, and publish across connected networks.
             </p>
           </div>
 
@@ -175,8 +172,8 @@
               <span class="bm-ghost-tag">{{ card.category }}</span>
               <h3>{{ card.title }}</h3>
               <p>{{ card.body }}</p>
-              <router-link :to="card.to" class="bm-arrow-link">
-                {{ card.cta }} →
+              <router-link :to="store.isAuthenticated ? card.authedTo : '/register'" class="bm-arrow-link">
+                {{ card.cta }}
               </router-link>
             </article>
           </div>
@@ -190,25 +187,26 @@
             <div class="bm-peach-head">
               <div>
                 <p class="bm-peach-eyebrow">First-party session telemetry</p>
-                <h2>Attribution Engine (_bm) recording locally</h2>
+                <h2>Live Attribution Engine (_bm) on beeloftmetric.biz.id</h2>
               </div>
               <button type="button" class="bm-peach-btn" @click="loadTelemetry">
-                Refresh event log
+                Refresh session log
               </button>
             </div>
 
             <p class="bm-peach-quote">
-              Every navigation and CTA click fires structured telemetry to <code>/s/session</code>
-              and <code>/s</code>, writing visitor cookies cleanly into local JSON persistence.
+              Embed <code>/tracker.js</code> on any domain to stream real visitor sessions, UTM
+              parameters, outbound clicks, and Cloudflare country headers directly into your brand
+              analytics.
             </p>
 
             <div class="bm-peach-meta">
               <div>
-                <strong>Visitor ID</strong>
+                <strong>Your Visitor ID</strong>
                 <div class="tabular-nums">{{ snapshot.visitorId || 'Initializing...' }}</div>
               </div>
               <div>
-                <strong>Cookie (_bm)</strong>
+                <strong>Session Cookie (_bm)</strong>
                 <div class="bm-code-wrap">{{ snapshot.cookie || 'Pending session init' }}</div>
               </div>
               <div>
@@ -216,7 +214,7 @@
                 <div v-if="recentEvents.length > 0" class="tabular-nums">
                   {{ recentEvents[0].eventName }} on {{ recentEvents[0].path }} ({{ recentEvents[0].timestamp.slice(11, 19) }})
                 </div>
-                <div v-else>Navigate across modules to populate recorded events.</div>
+                <div v-else>Navigate across pages to inspect your live session events.</div>
               </div>
             </div>
           </article>
@@ -228,12 +226,12 @@
       <div class="bm-container bm-footer__inner">
         <div>
           <strong class="bm-footer__brand">BeeloftMetric</strong>
-          <p class="bm-footer__copy">Local Vue 3 + Fastify social analytics and scheduling suite.</p>
+          <p class="bm-footer__copy">Multi-channel social analytics, scheduling, and attribution platform.</p>
         </div>
         <nav aria-label="Footer navigation" class="bm-footer__links">
           <router-link to="/pricing" class="bm-arrow-link">Pricing</router-link>
-          <router-link to="/evolution/brandSummary?blogId=8137743" class="bm-arrow-link">Empty brand</router-link>
-          <router-link to="/bio/beeloft-studio" class="bm-arrow-link">Sample SmartLink</router-link>
+          <router-link to="/login" class="bm-arrow-link">Sign in</router-link>
+          <router-link to="/register" class="bm-arrow-link">Create account</router-link>
           <router-link to="/legal" class="bm-arrow-link">Terms & Privacy</router-link>
         </nav>
       </div>
@@ -246,24 +244,26 @@ import { onMounted, ref } from 'vue';
 import BrandHeaderPublic from '@/components/common/BrandHeaderPublic.vue';
 import { apiRequest } from '@/services/api';
 import { getAttributionSnapshot } from '@/services/attribution';
-import type { AttributionEvent, EvolutionSummaryResponse } from '@/types/api';
+import { useAppStore } from '@/stores/appStore';
+import type { AttributionEvent } from '@/types/api';
 
+const store = useAppStore();
 const recentEvents = ref<AttributionEvent[]>([]);
 const snapshot = ref(getAttributionSnapshot());
-const liveImpressions = ref('1,021,567');
-const liveDelta = ref('+14.4% vs previous 30 days');
+const readinessLabel = ref('Operational');
+const readinessSub = ref('Cloudflare Edge API + Multi-tenant isolation');
 
 const aiPrompt = ref('');
 const aiLoading = ref(false);
 const aiInfoShown = ref(false);
 const aiResult = ref('');
 
-const sampleChannelRows = [
-  { name: 'Instagram', handle: '@beeloft.studio', reach: '198,240' },
-  { name: 'TikTok', handle: '@beeloftstudio', reach: '305,400' },
-  { name: 'YouTube', handle: 'Beeloft Studio Lab', reach: '126,720' },
-  { name: 'LinkedIn', handle: 'Beeloft Digital Co.', reach: '63,360' },
-  { name: 'Website & Blog', handle: 'beeloft-studio.example', reach: '57,413' }
+const channelCapabilityRows = [
+  { name: 'Website & Blog', auth: 'tracker.js', sync: 'Real-time' },
+  { name: 'Instagram & Facebook', auth: 'Meta OAuth2', sync: 'Graph + Webhook' },
+  { name: 'TikTok & YouTube', auth: 'OAuth2', sync: 'Metrics + Video' },
+  { name: 'X (Twitter) & LinkedIn', auth: 'OAuth2 PKCE', sync: 'Live Publish' },
+  { name: 'SmartLink (/bio/:slug)', auth: 'Built-in', sync: 'Instant Clicks' }
 ];
 
 const featureCards = [
@@ -271,25 +271,25 @@ const featureCards = [
     id: 'analytics',
     category: 'Analytics',
     title: 'Evolution, Real-Time Web & Competitors',
-    body: 'Track 30-day reach trends, active site visitors, competitor engagement rates, and historical hashtags side by side.',
-    cta: 'Explore Analytics',
-    to: '/evolution/brandSummary?blogId=8137744&userId=6401427'
+    body: 'Monitor real-time active website visitors via tracker.js, inspect Cloudflare country breakdowns, and benchmark competitor handles.',
+    cta: 'Open Analytics workspace',
+    authedTo: '/evolution/brandSummary'
   },
   {
     id: 'planning',
     category: 'Scheduling',
-    title: 'Calendar, AutoLists, Flows & AI Drafts',
-    body: 'Schedule multi-network campaigns, automate Comment-to-DM replies, and approve queued posts via My Tasks.',
-    cta: 'Open Planning',
-    to: '/planner/flows?blogId=8137744&userId=6401427'
+    title: 'Calendar, R2 Media, Flows & Cron Queue',
+    body: 'Upload campaign visuals to R2, schedule multi-network queues executed by 5-minute Cron triggers, and automate Comment-to-DM replies.',
+    cta: 'Open Planning calendar',
+    authedTo: '/planner'
   },
   {
     id: 'operations',
     category: 'Operations',
-    title: 'Reporting Studio, Ads, Inbox & SmartLinks',
-    body: 'Build shareable Studio decks, triage Unified Inbox threads, manage Meta and Google keywords, and track /bio/ clicks.',
-    cta: 'Open Reporting Studio',
-    to: '/reporting/studio?blogId=8137744&userId=6401427'
+    title: 'Reporting Studio, Inbox & Public SmartLinks',
+    body: 'Publish shareable /bio/:slug microsites across devices, triage webhook DMs in Unified Inbox, and export branded reports.',
+    cta: 'Open SmartLinks & Reports',
+    authedTo: '/smartlink'
   }
 ];
 
@@ -302,9 +302,9 @@ async function runAiComposer(): Promise<void> {
       {
         method: 'POST',
         body: JSON.stringify({
-          blogId: 8137744,
           prompt: aiPrompt.value,
-          network: 'linkedin'
+          network: 'linkedin',
+          language: 'id'
         })
       }
     );
@@ -316,17 +316,15 @@ async function runAiComposer(): Promise<void> {
 
 async function loadTelemetry(): Promise<void> {
   snapshot.value = getAttributionSnapshot();
-  const [attRes, evoRes] = await Promise.all([
-    apiRequest<{ data: AttributionEvent[] }>('/api/v2/attribution/recent').catch(() => ({ data: [] })),
-    apiRequest<{ data: EvolutionSummaryResponse }>(
-      '/api/v2/evolution/summary?blogId=8137744&network=brandSummary&days=30'
-    ).catch(() => null)
+  const vidQuery = snapshot.value.visitorId ? `?visitorId=${encodeURIComponent(snapshot.value.visitorId)}` : '';
+  const [attRes, readyRes] = await Promise.all([
+    apiRequest<{ data: AttributionEvent[] }>(`/api/v2/attribution/recent${vidQuery}`).catch(() => ({ data: [] })),
+    apiRequest<{ ok: boolean; storageDriver: string; d1Bound: boolean }>('/api/v2/system/readiness').catch(() => null)
   ]);
   recentEvents.value = attRes.data;
-  if (evoRes?.data?.kpis?.[0]) {
-    const first = evoRes.data.kpis[0];
-    liveImpressions.value = typeof first.value === 'number' ? first.value.toLocaleString() : String(first.value);
-    liveDelta.value = first.deltaText;
+  if (readyRes?.ok) {
+    readinessLabel.value = readyRes.d1Bound ? 'Cloudflare D1 Live' : 'API Online';
+    readinessSub.value = `Storage driver: ${readyRes.storageDriver}`;
   }
 }
 
@@ -502,12 +500,6 @@ onMounted(() => {
   color: var(--color-ink-black);
 }
 
-.bm-cursor-arrow {
-  position: relative;
-  margin-left: -4px;
-  margin-top: 24px;
-}
-
 .bm-mini-table {
   width: 100%;
   border-collapse: collapse;
@@ -537,7 +529,7 @@ onMounted(() => {
 .bm-stat-val {
   font-size: 24px;
   font-weight: 500;
-  color: var(--color-ink-black);
+  color: var(--bg-text, var(--bm-text));
   line-height: 1.2;
 }
 
@@ -570,7 +562,7 @@ onMounted(() => {
   border: 1px solid var(--bm-divider);
   border-radius: var(--radius-inputs);
   padding: 8px 12px;
-  background: var(--color-paper-white);
+  background: var(--bm-surface);
 }
 
 .bm-circle-ghost {
@@ -597,7 +589,7 @@ onMounted(() => {
   outline: none;
   background: transparent;
   font-size: 16px;
-  color: var(--color-ink-black);
+  color: var(--bm-text);
 }
 
 .bm-composer-input:focus-visible {
@@ -636,7 +628,7 @@ onMounted(() => {
 }
 
 .bm-section-heading {
-  font-size: clamp(32px, 4.5vw, 64px);
+  font-size: clamp(32px, 4.5vw, 56px);
   line-height: 1.2;
   letter-spacing: -0.96px;
   margin-bottom: 12px;
@@ -663,7 +655,7 @@ onMounted(() => {
 .bm-neutral-card h3 {
   font-size: 20px;
   font-weight: 500;
-  color: var(--color-ink-black);
+  color: var(--bm-text);
 }
 
 .bm-neutral-card p {

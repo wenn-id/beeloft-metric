@@ -9,6 +9,8 @@
     "dev:web": "vite",
     "build": "vue-tsc --noEmit && vite build",
     "build:pages": "vue-tsc --noEmit && vite build",
+    "cf:deploy": "node scripts/cloudflare-deploy.mjs",
+    "cf:dev": "npm run build && npx wrangler dev",
     "preview": "vite preview --port 4173",
     "test": "vitest run"
   },

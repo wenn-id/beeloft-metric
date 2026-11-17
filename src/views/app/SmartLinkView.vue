@@ -223,8 +223,8 @@ function addButton(): void {
   if (!activeLink.value) return;
   activeLink.value.buttons.push({
     id: `btn-${Date.now()}`,
-    label: 'New campaign link',
-    url: 'https://beeloftmetric.local',
+    label: 'Official Website',
+    url: window.location.origin,
     active: true,
     clicks: 0
   });

@@ -1,6 +1,10 @@
 # Dependencies & build output
 node_modules/
 dist/
+.wrangler/
+
+# Local runtime database
+server/data/platform-db.json
 
 # Environment variables
 .env
