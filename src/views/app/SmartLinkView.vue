@@ -99,30 +99,34 @@
             </div>
           </section>
 
-          <!-- Right Smartphone Preview Column -->
-          <aside class="bm-card bm-sl-preview-wrap" aria-label="Live SmartLink preview">
-            <h2>Live Mobile Preview</h2>
-            <div class="bm-phone-frame" :style="{ backgroundColor: activeLink.theme.backgroundColor }">
-              <div class="bm-phone-avatar" aria-hidden="true">
-                {{ activeLink.title.slice(0, 2).toUpperCase() }}
-              </div>
-              <h3 class="bm-phone-title">{{ activeLink.title }}</h3>
-              <p class="bm-phone-desc">{{ activeLink.description }}</p>
+          <!-- Right 3D Smartphone Preview Column -->
+          <aside class="bm-card bm-sl-preview-wrap" aria-label="Live 3D SmartLink preview">
+            <DeviceStage3D
+              label="Live 3D Mobile Preview"
+              :screen-bg="activeLink.theme.backgroundColor"
+            >
+              <div class="bm-phone-inner">
+                <div class="bm-phone-avatar" aria-hidden="true">
+                  {{ activeLink.title.slice(0, 2).toUpperCase() }}
+                </div>
+                <h3 class="bm-phone-title">{{ activeLink.title }}</h3>
+                <p class="bm-phone-desc">{{ activeLink.description }}</p>
 
-              <div class="bm-phone-buttons">
-                <div
-                  v-for="btn in activeLink.buttons.filter((b) => b.active)"
-                  :key="btn.id"
-                  class="bm-phone-btn"
-                  :style="{
-                    backgroundColor: activeLink.theme.buttonColor,
-                    color: activeLink.theme.buttonTextColor
-                  }"
-                >
-                  {{ btn.label }}
+                <div class="bm-phone-buttons">
+                  <div
+                    v-for="btn in activeLink.buttons.filter((b) => b.active)"
+                    :key="btn.id"
+                    class="bm-phone-btn"
+                    :style="{
+                      backgroundColor: activeLink.theme.buttonColor,
+                      color: activeLink.theme.buttonTextColor
+                    }"
+                  >
+                    {{ btn.label }}
+                  </div>
                 </div>
               </div>
-            </div>
+            </DeviceStage3D>
           </aside>
         </div>
 
@@ -131,12 +135,12 @@
           <div class="bm-kpi-row">
             <div class="bm-kpi-box">
               <span>Profile Views</span>
-              <strong class="tabular-nums">{{ activeLink.views.toLocaleString() }}</strong>
+              <strong class="tabular-nums"><AnimatedNumber :value="activeLink.views" /></strong>
             </div>
             <div class="bm-kpi-box">
               <span>Total Button Clicks</span>
               <strong class="tabular-nums">
-                {{ activeLink.buttons.reduce((s, b) => s + b.clicks, 0).toLocaleString() }}
+                <AnimatedNumber :value="activeLink.buttons.reduce((s, b) => s + b.clicks, 0)" />
               </strong>
             </div>
           </div>
@@ -178,6 +182,8 @@ import BmBadge from '@/components/common/designSystem/atoms/BmBadge.vue';
 import BmButton from '@/components/common/designSystem/atoms/BmButton.vue';
 import BmStateView from '@/components/common/designSystem/atoms/BmStateView.vue';
 import BmTabs from '@/components/common/designSystem/atoms/BmTabs.vue';
+import AnimatedNumber from '@/components/common/motion/AnimatedNumber.vue';
+import DeviceStage3D from '@/components/three/DeviceStage3D.vue';
 import { useAppStore } from '@/stores/appStore';
 import { apiRequest } from '@/services/api';
 import type { SmartLink } from '@/types/api';
@@ -385,18 +391,14 @@ onMounted(loadSmartLinks);
   min-height: 36px;
 }
 
-.bm-phone-frame {
-  border: 1px solid #ececec;
-  border-radius: 24px;
-  padding: 2rem 1.25rem;
-  min-height: 460px;
+.bm-phone-inner {
+  padding: 0.75rem 0.25rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
   gap: 0.75rem;
-  color: #17191c;
-  box-shadow: var(--shadow-subtle-3);
+  color: #181615;
 }
 
 .bm-phone-avatar {

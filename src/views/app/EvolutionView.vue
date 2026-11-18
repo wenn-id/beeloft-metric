@@ -131,20 +131,27 @@
           />
           <template v-else-if="realtime">
             <div class="bm-kpi-grid">
-              <article class="bm-card bm-kpi-card">
+              <TiltSurface class="bm-card bm-kpi-card">
                 <div class="bm-rt-head">
                   <p class="bm-kpi-card__label">Active Visitors Right Now</p>
-                  <BmBadge tone="success">Live 5s</BmBadge>
+                  <BmBadge tone="success" :dot="true">Live 5s</BmBadge>
                 </div>
-                <p class="bm-kpi-card__value tabular-nums">{{ realtime.activeVisitors }}</p>
+                <p class="bm-kpi-card__value tabular-nums">
+                  <AnimatedNumber :value="realtime.activeVisitors" />
+                </p>
                 <p class="bm-kpi-card__delta">Unique visitors in last 5 minutes</p>
-              </article>
-              <article class="bm-card bm-kpi-card">
+              </TiltSurface>
+              <TiltSurface class="bm-card bm-kpi-card">
                 <p class="bm-kpi-card__label">Page Views (30m)</p>
-                <p class="bm-kpi-card__value tabular-nums">{{ realtime.pageViewsLast30m }}</p>
+                <p class="bm-kpi-card__value tabular-nums">
+                  <AnimatedNumber :value="realtime.pageViewsLast30m" />
+                </p>
                 <p class="bm-kpi-card__delta">First-party tracker.js & SmartLink hits</p>
-              </article>
+              </TiltSurface>
             </div>
+
+            <RealtimeGlobe3D :countries="realtime.countries" :theme="store.theme" />
+
             <div class="bm-rt-grid">
               <section class="bm-card bm-posts-card">
                 <h2>Top Active Pages</h2>
@@ -337,13 +344,13 @@
 
           <template v-else-if="summary">
             <div class="bm-kpi-grid">
-              <article v-for="kpi in summary.kpis" :key="kpi.id" class="bm-artifact bm-kpi-card">
+              <TiltSurface v-for="kpi in summary.kpis" :key="kpi.id" class="bm-artifact bm-kpi-card">
                 <p class="bm-kpi-card__label">{{ kpi.label }}</p>
                 <p class="bm-kpi-card__value tabular-nums">
-                  {{ typeof kpi.value === 'number' ? kpi.value.toLocaleString() : kpi.value }}
+                  <AnimatedNumber :value="kpi.value" />
                 </p>
                 <p class="bm-kpi-card__delta">{{ kpi.deltaText }}</p>
-              </article>
+              </TiltSurface>
             </div>
 
             <section class="bm-artifact bm-chart-card" aria-label="Impressions and Reach trend chart">
@@ -357,44 +364,7 @@
                 </div>
               </div>
 
-              <div class="bm-svg-wrap">
-                <svg
-                  :viewBox="`0 0 ${svgWidth} ${svgHeight}`"
-                  class="bm-chart-svg"
-                  role="img"
-                  aria-label="Daily impressions bar chart and reach line trend"
-                >
-                  <g v-for="(pt, idx) in summary.series" :key="pt.date">
-                    <rect
-                      :x="barX(idx)"
-                      :y="barY(pt.impressions)"
-                      :width="barWidth"
-                      :height="svgHeight - 28 - barY(pt.impressions)"
-                      fill="var(--bm-chart-bar)"
-                      rx="2"
-                    >
-                      <title>{{ pt.date }}: {{ pt.impressions.toLocaleString() }} impressions, {{ pt.reach.toLocaleString() }} reach</title>
-                    </rect>
-                    <text
-                      v-if="idx % Math.max(1, Math.floor(summary.series.length / 6)) === 0"
-                      :x="barX(idx) + barWidth / 2"
-                      :y="svgHeight - 8"
-                      text-anchor="middle"
-                      font-size="11"
-                      fill="var(--bm-text-muted)"
-                    >
-                      {{ pt.date.slice(5) }}
-                    </text>
-                  </g>
-                  <polyline
-                    v-if="reachPolyline"
-                    fill="none"
-                    stroke="var(--bm-chart-line)"
-                    stroke-width="3"
-                    :points="reachPolyline"
-                  />
-                </svg>
-              </div>
+              <InteractiveMetricChart :series="summary.series" />
             </section>
 
             <section class="bm-card bm-posts-card">
@@ -448,15 +418,31 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
+import { computed, defineAsyncComponent, h, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import AppShell from '@/components/layout/AppShell.vue';
 import BmBadge from '@/components/common/designSystem/atoms/BmBadge.vue';
 import BmButton from '@/components/common/designSystem/atoms/BmButton.vue';
 import BmStateView from '@/components/common/designSystem/atoms/BmStateView.vue';
 import NetworkBadge from '@/components/common/designSystem/atoms/NetworkBadge.vue';
+import AnimatedNumber from '@/components/common/motion/AnimatedNumber.vue';
+import InteractiveMetricChart from '@/components/common/motion/InteractiveMetricChart.vue';
+import TiltSurface from '@/components/common/motion/TiltSurface.vue';
 import { useAppStore } from '@/stores/appStore';
 import { apiRequest } from '@/services/api';
+
+const RealtimeGlobe3D = defineAsyncComponent({
+  loader: () => import('@/components/three/RealtimeGlobe3D.vue'),
+  loadingComponent: () =>
+    h(
+      'div',
+      {
+        class: 'bm-card',
+        style: 'padding:24px;text-align:center;color:var(--bm-text-muted);'
+      },
+      'Loading 3D visitor globe...'
+    )
+});
 import type {
   CompetitorProfile,
   EvolutionSummaryResponse,
@@ -622,39 +608,6 @@ async function handleEmptyAction(): Promise<void> {
     await loadSummary();
   }
 }
-
-const svgWidth = 760;
-const svgHeight = 230;
-
-const maxVal = computed(() => {
-  const pts = summary.value?.series ?? [];
-  const mx = Math.max(100, ...pts.map((p) => Math.max(p.impressions, p.reach)));
-  return Math.ceil(mx * 1.1);
-});
-
-const barWidth = computed(() => {
-  const count = summary.value?.series.length || 1;
-  return Math.max(8, Math.floor((svgWidth - 40) / count) - 6);
-});
-
-function barX(idx: number): number {
-  const count = summary.value?.series.length || 1;
-  const step = (svgWidth - 24) / count;
-  return 16 + idx * step;
-}
-
-function barY(val: number): number {
-  const usable = svgHeight - 40;
-  return svgHeight - 28 - Math.round((val / maxVal.value) * usable);
-}
-
-const reachPolyline = computed(() => {
-  const pts = summary.value?.series ?? [];
-  if (!pts.length) return '';
-  return pts
-    .map((pt, idx) => `${barX(idx) + barWidth.value / 2},${barY(pt.reach)}`)
-    .join(' ');
-});
 
 let rtTimer: ReturnType<typeof setInterval> | null = null;
 

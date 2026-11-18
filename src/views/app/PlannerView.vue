@@ -370,9 +370,10 @@
         </div>
       </template>
 
-      <!-- Composer Modal with AI Assistant + Approval Workflow -->
-      <BmModal :open="composerOpen" title="Schedule New Post" @close="composerOpen = false">
-        <form class="bm-form-stack" @submit.prevent="submitPost">
+      <!-- Composer Modal with AI Assistant + 3D Live Preview + Approval Workflow -->
+      <BmModal :open="composerOpen" :wide="true" title="Schedule New Post" @close="composerOpen = false">
+        <div class="bm-composer-split">
+          <form class="bm-form-stack" @submit.prevent="submitPost">
           <fieldset class="bm-net-fieldset">
             <legend class="bm-label">Select destination channels</legend>
             <div class="bm-net-checkboxes">
@@ -466,7 +467,50 @@
             <BmButton variant="secondary" @click="composerOpen = false">Cancel</BmButton>
             <BmButton type="submit" variant="primary" :loading="saving">Save to calendar</BmButton>
           </div>
-        </form>
+          </form>
+
+          <!-- Live 3D Device Preview -->
+          <aside class="bm-composer-preview" aria-label="Live post preview">
+            <DeviceStage3D label="Live 3D Post Preview" screen-bg="#fcfaf7">
+              <div class="bm-post-preview">
+                <div class="bm-post-preview__head">
+                  <div class="bm-post-preview__avatar" aria-hidden="true">
+                    {{ (store.activeBrand?.name || 'BM').slice(0, 2).toUpperCase() }}
+                  </div>
+                  <div>
+                    <strong>{{ store.activeBrand?.name || 'Workspace Brand' }}</strong>
+                    <div class="bm-post-preview__nets">
+                      <NetworkBadge v-for="n in postForm.networks" :key="n" :network="n" />
+                    </div>
+                  </div>
+                </div>
+
+                <div v-if="postForm.media.length > 0" class="bm-post-preview__media">
+                  <img
+                    v-if="postForm.media[0].type === 'IMAGE'"
+                    :src="postForm.media[0].url"
+                    alt="Attached post media preview"
+                    width="240"
+                    height="240"
+                  />
+                  <div v-else class="bm-post-preview__video">Video asset attached</div>
+                </div>
+
+                <p class="bm-post-preview__copy">
+                  {{ postForm.text || 'Type a caption or generate one with AI to preview how your post reads on mobile.' }}
+                </p>
+
+                <p v-if="postForm.firstComment" class="bm-post-preview__comment">
+                  <strong>First comment:</strong> {{ postForm.firstComment }}
+                </p>
+
+                <div class="bm-post-preview__time tabular-nums">
+                  Scheduled: {{ postForm.scheduledAt ? postForm.scheduledAt.replace('T', ' ') : 'Select time' }}
+                </div>
+              </div>
+            </DeviceStage3D>
+          </aside>
+        </div>
       </BmModal>
 
       <!-- Create Flow Modal -->
@@ -514,6 +558,7 @@ import BmModal from '@/components/common/designSystem/atoms/BmModal.vue';
 import BmStateView from '@/components/common/designSystem/atoms/BmStateView.vue';
 import BmTabs from '@/components/common/designSystem/atoms/BmTabs.vue';
 import NetworkBadge from '@/components/common/designSystem/atoms/NetworkBadge.vue';
+import DeviceStage3D from '@/components/three/DeviceStage3D.vue';
 import { useAppStore } from '@/stores/appStore';
 import { apiRequest } from '@/services/api';
 import type {
@@ -1204,6 +1249,90 @@ onMounted(loadPlanner);
   display: flex;
   justify-content: flex-end;
   gap: 0.625rem;
+}
+
+.bm-composer-split {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.bm-post-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 13.5px;
+  color: #181615;
+}
+
+.bm-post-preview__head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.bm-post-preview__avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #181615;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.bm-post-preview__nets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 2px;
+}
+
+.bm-post-preview__media img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 14px;
+  border: 1px solid #e5dfd6;
+}
+
+.bm-post-preview__video {
+  padding: 24px 12px;
+  border-radius: 14px;
+  background: #f3eee7;
+  text-align: center;
+  font-weight: 600;
+}
+
+.bm-post-preview__copy {
+  white-space: pre-wrap;
+  line-height: 1.48;
+  color: #181615;
+}
+
+.bm-post-preview__comment {
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: #f3eee7;
+  font-size: 12.5px;
+}
+
+.bm-post-preview__time {
+  margin-top: 6px;
+  font-size: 11.5px;
+  color: #5a5550;
+}
+
+@media (max-width: 820px) {
+  .bm-composer-split {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 760px) {

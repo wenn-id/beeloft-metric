@@ -3,6 +3,7 @@
     <div v-if="open" class="bm-modal-backdrop" @click.self="$emit('close')">
       <div
         class="bm-modal bm-artifact"
+        :class="{ 'bm-modal--wide': wide }"
         role="dialog"
         aria-modal="true"
         :aria-labelledby="titleId"
@@ -34,6 +35,7 @@ import { onMounted, onUnmounted } from 'vue';
 const props = defineProps<{
   open: boolean;
   title: string;
+  wide?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -71,6 +73,10 @@ onUnmounted(() => window.removeEventListener('keydown', onKeyDown));
   border-radius: var(--radius-cards);
   box-shadow: var(--shadow-subtle-2);
   background: var(--bm-elevated);
+}
+
+.bm-modal--wide {
+  width: min(920px, 100%);
 }
 
 .bm-modal__head {

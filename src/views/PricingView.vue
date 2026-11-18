@@ -220,7 +220,8 @@ const matchedTier = computed(() => {
   border-radius: 9999px;
   background: var(--bm-brand);
   color: var(--bm-brand-text);
-  font-weight: 400;
+  box-shadow: var(--bm-shadow-btn-primary);
+  font-weight: 500;
   text-decoration: none;
   width: fit-content;
 }
@@ -249,8 +250,12 @@ const matchedTier = computed(() => {
 }
 
 .bm-col-active {
-  background: var(--color-blush-peach);
-  color: var(--color-sienna-brown);
+  background: var(--bm-accent-soft);
+  color: var(--bm-accent-soft-text);
+}
+
+.bm-col-active small {
+  color: var(--bm-accent-soft-text);
 }
 
 .bm-faq {

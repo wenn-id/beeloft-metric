@@ -34,7 +34,17 @@
             Menu
           </button>
 
-          <router-link :to="brandUrl('/user-settings/plan')" class="bm-plan-pill">
+          <button
+            type="button"
+            class="bm-topbar-btn bm-cmd-trigger bm-transition"
+            aria-label="Open quick workspace jump (Ctrl+K)"
+            @click="paletteOpen = true"
+          >
+            <span>Jump</span>
+            <kbd class="bm-kbd">Ctrl K</kbd>
+          </button>
+
+          <router-link :to="brandUrl('/user-settings/plan')" class="bm-plan-pill bm-transition">
             {{ formattedPlan }}
           </router-link>
 
@@ -140,6 +150,13 @@
         >
           My Tasks
         </router-link>
+        <button
+          type="button"
+          class="bm-mobile-drawer__link bm-mobile-cmd-btn"
+          @click="mobileNavOpen = false; paletteOpen = true"
+        >
+          Quick Workspace Jump
+        </button>
       </nav>
     </div>
 
@@ -275,6 +292,12 @@
         </div>
       </form>
     </BmModal>
+
+    <CommandPalette
+      :open="paletteOpen"
+      @close="paletteOpen = false"
+      @open-add-brand="openAddBrand"
+    />
   </div>
 </template>
 
@@ -286,6 +309,7 @@ import BmBadge from '@/components/common/designSystem/atoms/BmBadge.vue';
 import BmButton from '@/components/common/designSystem/atoms/BmButton.vue';
 import BmModal from '@/components/common/designSystem/atoms/BmModal.vue';
 import BmTabs from '@/components/common/designSystem/atoms/BmTabs.vue';
+import CommandPalette from '@/components/common/CommandPalette.vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -296,6 +320,7 @@ const brandMenuOpen = ref(false);
 const notifDrawerOpen = ref(false);
 const userDrawerOpen = ref(false);
 const addBrandOpen = ref(false);
+const paletteOpen = ref(false);
 const newBrandName = ref('');
 const addBrandError = ref('');
 const creatingBrand = ref(false);
@@ -396,7 +421,15 @@ async function handleLogout(): Promise<void> {
   await router.push('/login');
 }
 
-function onEscape(ev: KeyboardEvent): void {
+function onGlobalKeydown(ev: KeyboardEvent): void {
+  if ((ev.ctrlKey || ev.metaKey) && ev.key.toLowerCase() === 'k') {
+    ev.preventDefault();
+    paletteOpen.value = !paletteOpen.value;
+    brandMenuOpen.value = false;
+    notifDrawerOpen.value = false;
+    userDrawerOpen.value = false;
+    return;
+  }
   if (ev.key === 'Escape') {
     brandMenuOpen.value = false;
     notifDrawerOpen.value = false;
@@ -406,14 +439,14 @@ function onEscape(ev: KeyboardEvent): void {
 }
 
 onMounted(() => {
-  window.addEventListener('keydown', onEscape);
+  window.addEventListener('keydown', onGlobalKeydown);
   if (!store.user) {
     store.bootstrap();
   }
 });
 
 onUnmounted(() => {
-  window.removeEventListener('keydown', onEscape);
+  window.removeEventListener('keydown', onGlobalKeydown);
 });
 </script>
 
@@ -430,6 +463,8 @@ onUnmounted(() => {
   top: 0;
   z-index: 40;
   background: var(--bm-chrome-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   color: var(--bm-chrome-text);
   border-bottom: 1px solid var(--bm-divider);
 }
@@ -529,12 +564,23 @@ onUnmounted(() => {
   min-height: 44px;
   padding: 0 14px;
   border-radius: var(--radius-buttons);
-  background: var(--color-blush-peach);
-  color: var(--color-sienna-brown);
-  font-size: 14px;
-  font-weight: 500;
+  background: var(--bm-accent-soft);
+  color: var(--bm-accent-soft-text);
+  border: 1px solid rgba(140, 47, 20, 0.22);
+  font-size: 13.5px;
+  font-weight: 600;
   text-decoration: none;
   white-space: nowrap;
+}
+
+.bm-kbd {
+  padding: 2px 6px;
+  border-radius: 6px;
+  background: var(--bm-surface);
+  border: 1px solid var(--bm-divider);
+  font-family: var(--font-sohne);
+  font-size: 11px;
+  color: var(--bm-text-muted);
 }
 
 .bm-topbar-btn {
@@ -847,7 +893,8 @@ onUnmounted(() => {
 
 @media (max-width: 1140px) {
   .bm-primary-nav,
-  .bm-plan-pill {
+  .bm-plan-pill,
+  .bm-cmd-trigger {
     display: none;
   }
 

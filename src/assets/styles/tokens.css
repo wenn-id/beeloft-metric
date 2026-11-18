@@ -1,23 +1,24 @@
 :root {
-  /* Steep Official Color Tokens */
-  --color-ink-black: #17191c;
-  --color-paper-white: #ffffff;
-  --color-mist-gray: #f2f2f3;
-  --color-fog-white: #fafafb;
-  --color-slate-gray: #777b86;
-  --color-slate-aa: #5f636d;
-  --color-ash-gray: #979799;
-  --color-smoke-gray: #a3a6af;
-  --color-hairline: #ececec;
+  /* Warm Tactile Studio Core Palette */
+  --color-ink-black: #181615;
+  --color-paper-white: #fcfaf7;
+  --color-mist-gray: #f3eee7;
+  --color-fog-white: #f8f5f0;
+  --color-slate-gray: #6f6962;
+  --color-slate-aa: #5a5550;
+  --color-ash-gray: #8b847c;
+  --color-smoke-gray: #9f9890;
+  --color-hairline: #e5dfd6;
   --color-blush-peach: #fbe1d1;
-  --color-sienna-brown: #5d2a1a;
+  --color-sienna-brown: #541d0c;
+  --color-terracotta: #8c2f14;
 
-  /* Steep Typography */
+  /* Editorial & UI Typography */
   --font-signifier: 'Signifier', 'Source Serif 4', Georgia, ui-serif, serif;
   --font-sohne: 'Sohne', 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
     'Segoe UI', Roboto, sans-serif;
 
-  /* Steep Scale */
+  /* Fluid Scale */
   --text-caption: 15px;
   --text-body: 17px;
   --text-body-lg: 20px;
@@ -27,7 +28,7 @@
   --text-heading-lg: 64px;
   --text-display: 90px;
 
-  /* Steep Spacing */
+  /* Spacing Scale */
   --spacing-unit: 4px;
   --spacing-4: 4px;
   --spacing-8: 8px;
@@ -40,60 +41,70 @@
   --spacing-64: 64px;
   --spacing-80: 80px;
 
-  /* Steep Radii */
+  /* Hierarchy Radii (varied deliberately per R-11) */
   --radius-images: 12px;
-  --radius-inputs: 16px;
+  --radius-inputs: 14px;
   --radius-smallcards: 16px;
   --radius-elevatedcards: 20px;
-  --radius-cards: 24px;
+  --radius-cards: 22px;
   --radius-buttons: 9999px;
 
-  /* Steep Shadows (reserved only for floating artifacts and overlays) */
-  --shadow-subtle: oklab(0 0 0 / 0.05) 0px 0px 0px 1px, rgba(0, 0, 0, 0.08) 0px 4px 24px 0px;
-  --shadow-subtle-2: oklab(0 0 0 / 0.05) 0px 0px 0px 1px, rgba(0, 0, 0, 0.1) 0px 8px 40px 0px;
-  --shadow-subtle-3: rgba(4, 23, 43, 0.05) 0px 0px 0px 1px,
-    rgba(0, 0, 0, 0.1) 0px 20px 25px -5px, rgba(0, 0, 0, 0.1) 0px 8px 10px -6px;
+  /* Motion Curves */
+  --ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-out-quart: cubic-bezier(0.165, 0.84, 0.44, 1);
 
-  /* Semantic Map for App Components (97% achromatic + Blush Peach / Sienna Brown) */
+  /* Tactile Multi-Layer Shadows */
+  --shadow-subtle: 0 1px 0 0 rgba(255, 255, 255, 0.9) inset,
+    0 1px 2px rgba(24, 22, 21, 0.05), 0 8px 24px -6px rgba(45, 32, 22, 0.07);
+  --shadow-subtle-2: 0 1px 0 0 rgba(255, 255, 255, 0.95) inset,
+    0 4px 12px rgba(24, 22, 21, 0.06), 0 18px 36px -8px rgba(45, 32, 22, 0.11);
+  --shadow-subtle-3: 0 1px 0 0 rgba(255, 255, 255, 0.96) inset,
+    0 6px 16px rgba(24, 22, 21, 0.07), 0 24px 48px -12px rgba(45, 32, 22, 0.14);
+
+  /* Semantic Map for App & Public Surfaces */
   --bm-bg: var(--color-paper-white);
   --bm-surface: var(--color-mist-gray);
-  --bm-elevated: var(--color-paper-white);
+  --bm-elevated: #ffffff;
   --bm-subtle: var(--color-fog-white);
   --bm-divider: var(--color-hairline);
-  --bm-control-border: #686c76;
+  --bm-border-soft: rgba(24, 22, 21, 0.09);
+  --bm-border-specular: rgba(255, 255, 255, 0.88);
+  --bm-control-border: #756e66;
 
   --bm-text: var(--color-ink-black);
   --bm-text-muted: var(--color-slate-aa);
 
-  --bm-chrome-bg: var(--color-paper-white);
+  --bm-chrome-bg: rgba(252, 250, 247, 0.88);
   --bm-chrome-text: var(--color-ink-black);
   --bm-chrome-muted: var(--color-slate-aa);
   --bm-chrome-active-bg: var(--color-mist-gray);
 
-  --bm-brand: var(--color-ink-black);
-  --bm-brand-hover: #2d3036;
-  --bm-brand-text: var(--color-paper-white);
+  --bm-brand: #181615;
+  --bm-brand-hover: #2d2926;
+  --bm-brand-text: #ffffff;
 
-  --bm-accent: var(--color-sienna-brown);
-  --bm-accent-text: var(--color-paper-white);
+  --bm-accent: var(--color-terracotta);
+  --bm-accent-text: #ffffff;
   --bm-accent-soft: var(--color-blush-peach);
   --bm-accent-soft-text: var(--color-sienna-brown);
 
-  /* Status tokens restrained strictly within the Steep palette */
-  --bm-success-bg: var(--color-paper-white);
-  --bm-success-text: var(--color-ink-black);
-  --bm-success-border: var(--color-ink-black);
+  /* WCAG AA Verified Semantic Status Tokens (>= 6.78:1) */
+  --bm-success-bg: #d1fae5;
+  --bm-success-text: #065f46;
+  --bm-success-border: #059669;
 
-  --bm-warning-bg: var(--color-blush-peach);
-  --bm-warning-text: var(--color-sienna-brown);
-  --bm-warning-border: var(--color-sienna-brown);
+  --bm-warning-bg: #fef3c7;
+  --bm-warning-text: #78350f;
+  --bm-warning-border: #d97706;
 
-  --bm-danger-bg: var(--color-blush-peach);
-  --bm-danger-text: var(--color-sienna-brown);
-  --bm-danger-border: var(--color-sienna-brown);
+  --bm-danger-bg: #ffe4e6;
+  --bm-danger-text: #881337;
+  --bm-danger-border: #e11d48;
 
-  --bm-chart-bar: var(--color-ink-black);
-  --bm-chart-line: var(--color-sienna-brown);
+  --bm-chart-bar: #2d2926;
+  --bm-chart-bar-muted: rgba(45, 41, 38, 0.16);
+  --bm-chart-line: #8c2f14;
+  --bm-chart-fill: rgba(140, 47, 20, 0.14);
 
   --bm-radius-sm: var(--radius-images);
   --bm-radius-md: var(--radius-inputs);
@@ -101,46 +112,69 @@
   --bm-radius-elevated: var(--radius-elevatedcards);
   --bm-radius-pill: var(--radius-buttons);
 
+  --bm-shadow-card: var(--shadow-subtle);
   --bm-shadow-lift: var(--shadow-subtle-3);
+  --bm-shadow-btn-primary: 0 1px 0 rgba(255, 255, 255, 0.18) inset, 0 3px 0 #050404,
+    0 8px 18px -4px rgba(24, 22, 21, 0.24);
+  --bm-shadow-btn-primary-active: 0 1px 0 rgba(255, 255, 255, 0.12) inset, 0 1px 0 #050404,
+    0 3px 8px -2px rgba(24, 22, 21, 0.2);
 }
 
 [data-theme='dark'] {
-  --bm-bg: #17191c;
-  --bm-surface: #22252a;
-  --bm-elevated: #1e2126;
-  --bm-subtle: #1c1f24;
-  --bm-divider: #31353c;
-  --bm-control-border: #b8bcc4;
+  --bm-bg: #111215;
+  --bm-surface: #1a1c21;
+  --bm-elevated: #21242b;
+  --bm-subtle: #15171c;
+  --bm-divider: #2e323c;
+  --bm-border-soft: rgba(255, 255, 255, 0.09);
+  --bm-border-specular: rgba(255, 255, 255, 0.08);
+  --bm-control-border: #8e94a0;
 
-  --bm-text: #ffffff;
-  --bm-text-muted: #c2c6ce;
+  --bm-text: #f7f4ef;
+  --bm-text-muted: #b8b3ab;
 
-  --bm-chrome-bg: #17191c;
-  --bm-chrome-text: #ffffff;
-  --bm-chrome-muted: #c2c6ce;
-  --bm-chrome-active-bg: #2a2e35;
+  --bm-chrome-bg: rgba(17, 18, 21, 0.88);
+  --bm-chrome-text: #f7f4ef;
+  --bm-chrome-muted: #b8b3ab;
+  --bm-chrome-active-bg: #262a33;
 
-  --bm-brand: #ffffff;
-  --bm-brand-hover: #e5e7eb;
-  --bm-brand-text: #17191c;
+  --bm-brand: #f7f4ef;
+  --bm-brand-hover: #e6dfd5;
+  --bm-brand-text: #111215;
 
-  --bm-accent: #fbe1d1;
-  --bm-accent-text: #17191c;
-  --bm-accent-soft: #fbe1d1;
-  --bm-accent-soft-text: #5d2a1a;
+  --bm-accent: #fbd6c0;
+  --bm-accent-text: #181615;
+  --bm-accent-soft: #3b2016;
+  --bm-accent-soft-text: #fde4d4;
 
-  --bm-success-bg: #22252a;
-  --bm-success-text: #ffffff;
-  --bm-success-border: #ffffff;
+  --bm-success-bg: #064e3b;
+  --bm-success-text: #a7f3d0;
+  --bm-success-border: #10b981;
 
-  --bm-warning-bg: #fbe1d1;
-  --bm-warning-text: #5d2a1a;
-  --bm-warning-border: #fbe1d1;
+  --bm-warning-bg: #573108;
+  --bm-warning-text: #fde68a;
+  --bm-warning-border: #f59e0b;
 
-  --bm-danger-bg: #fbe1d1;
-  --bm-danger-text: #5d2a1a;
-  --bm-danger-border: #fbe1d1;
+  --bm-danger-bg: #5c1125;
+  --bm-danger-text: #fecdd3;
+  --bm-danger-border: #f43f5e;
 
-  --bm-chart-bar: #e5e7eb;
-  --bm-chart-line: #fbe1d1;
+  --bm-chart-bar: #d8d2c9;
+  --bm-chart-bar-muted: rgba(216, 210, 201, 0.16);
+  --bm-chart-line: #fbd6c0;
+  --bm-chart-fill: rgba(251, 214, 192, 0.16);
+
+  --shadow-subtle: 0 1px 0 0 rgba(255, 255, 255, 0.07) inset,
+    0 8px 24px -6px rgba(0, 0, 0, 0.45);
+  --shadow-subtle-2: 0 1px 0 0 rgba(255, 255, 255, 0.09) inset,
+    0 16px 36px -8px rgba(0, 0, 0, 0.55);
+  --shadow-subtle-3: 0 1px 0 0 rgba(255, 255, 255, 0.11) inset,
+    0 24px 52px -12px rgba(0, 0, 0, 0.68);
+
+  --bm-shadow-card: var(--shadow-subtle);
+  --bm-shadow-lift: var(--shadow-subtle-3);
+  --bm-shadow-btn-primary: 0 1px 0 rgba(255, 255, 255, 0.65) inset, 0 3px 0 #a39a8e,
+    0 8px 20px -4px rgba(0, 0, 0, 0.5);
+  --bm-shadow-btn-primary-active: 0 1px 0 rgba(255, 255, 255, 0.5) inset, 0 1px 0 #a39a8e,
+    0 3px 8px -2px rgba(0, 0, 0, 0.4);
 }

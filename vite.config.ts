@@ -10,7 +10,16 @@ export default defineConfig({
   define: isGhPages ? { 'import.meta.env.VITE_STATIC_API': JSON.stringify('true') } : {},
   build: {
     outDir: isGhPages ? 'docs' : 'dist',
-    emptyOutDir: true
+    emptyOutDir: true,
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules/three')) {
+            return 'three';
+          }
+        }
+      }
+    }
   },
   resolve: {
     alias: {

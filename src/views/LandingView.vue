@@ -4,183 +4,195 @@
     <BrandHeaderPublic />
 
     <main id="landing-main">
-      <!-- Section 1: Steep Hero Spread on Paper White #ffffff -->
+      <!-- Section 1: Split Spatial Hero with Interactive Three.js Telemetry Core -->
       <section class="bm-hero-section">
         <div class="bm-container">
-          <div class="bm-hero-header">
-            <h1 class="bm-display-title">
-              Social metrics that read with <em>editorial clarity</em> across every channel.
-            </h1>
-            <p class="bm-hero-sub">
-              BeeloftMetric unifies channel evolution, publishing calendars, Comment-to-DM flows,
-              unified inbox triage, SmartLinks, and first-party web attribution on Cloudflare Edge.
-            </p>
-            <div class="bm-hero-actions">
-              <router-link
-                :to="store.isAuthenticated ? '/evolution/brandSummary' : '/register'"
-                class="bm-pill-filled bm-transition"
-              >
-                {{ store.isAuthenticated ? 'Open workspace' : 'Start 7-day free trial' }}
-              </router-link>
-              <router-link to="/pricing" class="bm-pill-ghost bm-transition">
-                Compare plans
-              </router-link>
+          <div class="bm-hero-split">
+            <div class="bm-hero-copy">
+              <h1 class="bm-display-title">
+                Social metrics that read with <em>editorial clarity</em> across every channel.
+              </h1>
+              <p class="bm-hero-sub">
+                BeeloftMetric unifies channel evolution, publishing calendars, Comment-to-DM flows,
+                unified inbox triage, SmartLinks, and first-party web attribution on Cloudflare Edge.
+              </p>
+              <div class="bm-hero-actions">
+                <router-link
+                  :to="store.isAuthenticated ? '/evolution/brandSummary' : '/register'"
+                  class="bm-pill-filled bm-transition"
+                >
+                  {{ store.isAuthenticated ? 'Open workspace' : 'Start 7-day free trial' }}
+                </router-link>
+                <router-link to="/pricing" class="bm-pill-ghost bm-transition">
+                  Compare plans
+                </router-link>
+              </div>
+
+              <!-- Live Interactive AI Caption Composer -->
+              <article class="bm-card bm-composer-card">
+                <div class="bm-composer-card__head">
+                  <strong>Test Live Caption Assistant</strong>
+                  <span class="bm-ghost-tag">Workers AI · Edge Endpoint</span>
+                </div>
+                <form class="bm-composer-box" @submit.prevent="runAiComposer">
+                  <button
+                    type="button"
+                    class="bm-circle-ghost"
+                    aria-label="Insert sample Indonesian prompt"
+                    @click="aiPrompt = 'Tulis pengumuman peluncuran koleksi akhir tahun untuk Instagram'"
+                  >
+                    @
+                  </button>
+                  <button
+                    type="button"
+                    class="bm-circle-ghost"
+                    aria-label="Show API endpoint details"
+                    @click="aiInfoShown = !aiInfoShown"
+                  >
+                    i
+                  </button>
+                  <label for="hero-ai-input" class="sr-only">Draft a social post</label>
+                  <input
+                    id="hero-ai-input"
+                    v-model="aiPrompt"
+                    type="text"
+                    class="bm-composer-input"
+                    placeholder="Write a prompt (e.g. Ringkas update fitur baru untuk LinkedIn)"
+                  />
+                  <button
+                    type="submit"
+                    class="bm-circle-send bm-transition"
+                    aria-label="Generate post draft"
+                    :disabled="aiLoading"
+                  >
+                    Go
+                  </button>
+                </form>
+                <p v-if="aiInfoShown" class="bm-composer-reply">
+                  Calls <code>POST /api/v2/integrations/ai/natural-language-scheduling</code> on the
+                  live Cloudflare Worker.
+                </p>
+                <p v-if="aiResult" class="bm-composer-reply" role="status">
+                  <strong>Draft:</strong> {{ aiResult }}
+                </p>
+              </article>
             </div>
-          </div>
 
-          <!-- Floating Product Artifacts Collage (Honest Product Interface Preview) -->
-          <div class="bm-collage">
-            <!-- Artifact 1: Supported Channels & Sync Modes -->
-            <article class="bm-artifact bm-artifact--table">
-              <div class="bm-artifact__top">
-                <div>
-                  <span class="bm-ghost-tag">Supported Integrations</span>
-                  <h3>Connected channel modes</h3>
-                </div>
-                <span class="bm-avatar-wrap" aria-hidden="true">
-                  <span class="bm-avatar-bubble bm-avatar--peach">BM</span>
-                </span>
-              </div>
-              <table class="bm-mini-table">
-                <thead>
-                  <tr>
-                    <th>Channel</th>
-                    <th>Auth</th>
-                    <th class="bm-num-col">Sync</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="row in channelCapabilityRows" :key="row.name">
-                    <td>{{ row.name }}</td>
-                    <td class="bm-muted-cell">{{ row.auth }}</td>
-                    <td class="bm-num-col">{{ row.sync }}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </article>
+            <!-- Interactive 3D Stage + Tactile Channel Matrix -->
+            <div class="bm-hero-stage-col">
+              <OrbitalHeroScene
+                :theme="store.theme"
+                :status-label="readinessLabel"
+                active-channels-label="15 channel connectors"
+              />
 
-            <!-- Artifact 2: Edge Infrastructure Readiness -->
-            <article class="bm-artifact bm-artifact--stat">
-              <div class="bm-artifact__top">
-                <span class="bm-ghost-tag">Edge Runtime Status</span>
-                <span class="bm-avatar-wrap" aria-hidden="true">
-                  <span class="bm-avatar-bubble bm-avatar--mist">CF</span>
-                </span>
-              </div>
-              <p class="bm-stat-val">
-                {{ readinessLabel }}
-              </p>
-              <p class="bm-stat-delta">{{ readinessSub }}</p>
-              <svg viewBox="0 0 220 56" class="bm-gestural-svg" aria-hidden="true">
-                <path
-                  d="M4 46 C 36 42, 52 24, 84 28 C 116 32, 144 12, 176 18 C 194 21, 206 10, 216 8"
-                  fill="none"
-                  stroke="#5d2a1a"
-                  stroke-width="2.2"
-                  stroke-linecap="round"
-                />
-              </svg>
-            </article>
-
-            <!-- Artifact 3: Scheduler & Cron Cadence -->
-            <article class="bm-artifact bm-artifact--curve">
-              <div class="bm-artifact__top">
-                <div>
+              <div class="bm-hero-mini-row">
+                <TiltSurface class="bm-card bm-mini-stat">
                   <span class="bm-ghost-tag">Auto-Publisher Cron</span>
-                  <p class="bm-stat-val tabular-nums">5 min</p>
-                </div>
-                <span class="bm-radial-pill">D1 + R2 Edge</span>
-              </div>
-              <svg viewBox="0 0 240 62" class="bm-gestural-svg" aria-hidden="true">
-                <path
-                  d="M4 50 Q 48 48 80 34 T 156 26 T 236 12"
-                  fill="none"
-                  stroke="#5d2a1a"
-                  stroke-width="2.2"
-                  stroke-linecap="round"
-                />
-              </svg>
-              <p class="bm-stat-delta">Executes scheduled posts, AutoLists, and webhook flows</p>
-            </article>
+                  <p class="bm-stat-val tabular-nums">Every 5 min</p>
+                  <p class="bm-stat-delta">Publishes scheduled posts, AutoLists, and DM flows</p>
+                </TiltSurface>
 
-            <!-- Artifact 4: Working AI Composer Input -->
-            <article class="bm-artifact bm-artifact--composer">
-              <div class="bm-artifact__top">
-                <span class="bm-ghost-tag">Natural Language Caption Assistant · Live API</span>
+                <TiltSurface class="bm-card bm-mini-stat">
+                  <span class="bm-ghost-tag">Edge Runtime</span>
+                  <p class="bm-stat-val">{{ readinessLabel }}</p>
+                  <p class="bm-stat-delta">{{ readinessSub }}</p>
+                </TiltSurface>
               </div>
-              <form class="bm-composer-box" @submit.prevent="runAiComposer">
-                <button
-                  type="button"
-                  class="bm-circle-ghost"
-                  aria-label="Insert sample prompt"
-                  @click="aiPrompt = 'Tulis pengumuman peluncuran koleksi akhir tahun untuk Instagram'"
-                >
-                  @
-                </button>
-                <button
-                  type="button"
-                  class="bm-circle-ghost"
-                  aria-label="Show AI endpoint details"
-                  @click="aiInfoShown = !aiInfoShown"
-                >
-                  i
-                </button>
-                <label for="hero-ai-input" class="sr-only">Draft a social post</label>
-                <input
-                  id="hero-ai-input"
-                  v-model="aiPrompt"
-                  type="text"
-                  class="bm-composer-input"
-                  placeholder="Write a prompt (e.g. Ringkas update fitur baru untuk LinkedIn)"
-                />
-                <button
-                  type="submit"
-                  class="bm-circle-send"
-                  aria-label="Generate post draft"
-                  :disabled="aiLoading"
-                >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" aria-hidden="true">
-                    <path d="M5 12h14M13 5l7 7-7 7" />
-                  </svg>
-                </button>
-              </form>
-              <p v-if="aiInfoShown" class="bm-composer-reply">
-                Calls <code>POST /api/v2/integrations/ai/natural-language-scheduling</code> on the
-                edge API using Workers AI, Gemini, or OpenAI.
-              </p>
-              <p v-if="aiResult" class="bm-composer-reply" role="status">
-                <strong>Draft:</strong> {{ aiResult }}
-              </p>
-            </article>
+            </div>
           </div>
         </div>
       </section>
 
-      <!-- Section 2: Alternating Fog White #fafafb Band with Flat Mist Gray Cards #f2f2f3 -->
+      <!-- Section 2: Asymmetric Capability Composition (Varied Hierarchy per R-05 & R-14) -->
       <section id="capabilities" class="bm-fog-band">
         <div class="bm-container">
           <div class="bm-band-head">
-            <h2 class="bm-section-heading">Every module isolated per workspace and backed by live edge storage.</h2>
+            <h2 class="bm-section-heading">
+              Isolated multi-brand workspaces with live spatial analytics and edge storage.
+            </h2>
             <p class="bm-band-sub">
-              Register an account to manage multiple client brands, embed real-time web tracking,
-              upload campaign media to R2, and publish across connected networks.
+              Manage client brands, embed real-time <code>tracker.js</code> beacons, preview
+              SmartLinks in 3D, and publish across connected networks.
             </p>
           </div>
 
-          <div class="bm-neutral-grid">
-            <article v-for="card in featureCards" :key="card.id" class="bm-card bm-neutral-card">
-              <span class="bm-ghost-tag">{{ card.category }}</span>
-              <h3>{{ card.title }}</h3>
-              <p>{{ card.body }}</p>
-              <router-link :to="store.isAuthenticated ? card.authedTo : '/register'" class="bm-arrow-link">
-                {{ card.cta }}
-              </router-link>
-            </article>
+          <div class="bm-asymmetric-showcase">
+            <!-- Flagship Wide Card -->
+            <TiltSurface class="bm-artifact bm-flagship-card" :max-deg="2.5">
+              <div class="bm-flagship-card__copy">
+                <span class="bm-ghost-tag">Flagship Analytics & 3D Geography</span>
+                <h3>Evolution Curves, Competitor Benchmarks & 3D Visitor Globe</h3>
+                <p>
+                  Inspect daily reach and impressions with interactive crosshair charts, track
+                  competitor handles, and spin a live 3D WebGL globe lit by real visitor country
+                  headers from <code>/tracker.js</code>.
+                </p>
+                <router-link
+                  :to="store.isAuthenticated ? '/evolution/web/real-time' : '/register'"
+                  class="bm-arrow-link"
+                >
+                  Open 3D Real-Time Analytics
+                </router-link>
+              </div>
+
+              <div class="bm-flagship-card__table-wrap">
+                <table class="bm-mini-table">
+                  <thead>
+                    <tr>
+                      <th>Channel</th>
+                      <th>Auth</th>
+                      <th class="bm-num-col">Sync</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="row in channelCapabilityRows" :key="row.name">
+                      <td><strong>{{ row.name }}</strong></td>
+                      <td class="bm-muted-cell">{{ row.auth }}</td>
+                      <td class="bm-num-col">{{ row.sync }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </TiltSurface>
+
+            <!-- Secondary Pair with Distinct Layouts -->
+            <div class="bm-secondary-pair">
+              <TiltSurface class="bm-card bm-secondary-card">
+                <span class="bm-ghost-tag">Publishing & Automation</span>
+                <h3>Calendar Queue, Cloudflare R2 Media & Comment-to-DM Flows</h3>
+                <p>
+                  Upload campaign images and video to R2, preview posts inside a 3D smartphone
+                  frame, and trigger automatic DM replies when followers comment keywords.
+                </p>
+                <router-link
+                  :to="store.isAuthenticated ? '/planner' : '/register'"
+                  class="bm-arrow-link"
+                >
+                  Open Planning Calendar
+                </router-link>
+              </TiltSurface>
+
+              <TiltSurface class="bm-card bm-secondary-card">
+                <span class="bm-ghost-tag">Client Operations & Bio Studio</span>
+                <h3>3D SmartLink Studio, Unified Inbox & Branded PDF/PPTX Decks</h3>
+                <p>
+                  Customize trackable <code>/bio/:slug</code> microsites with live 3D device tilt,
+                  resolve incoming DMs in one inbox, and export white-label client reports.
+                </p>
+                <router-link
+                  :to="store.isAuthenticated ? '/smartlink' : '/register'"
+                  class="bm-arrow-link"
+                >
+                  Open SmartLinks Studio
+                </router-link>
+              </TiltSurface>
+            </div>
           </div>
         </div>
       </section>
 
-      <!-- Section 3: Single Blush Peach Editorial Accent Card on #ffffff Canvas -->
+      <!-- Section 3: Warm Accent Telemetry Callout -->
       <section class="bm-paper-band">
         <div class="bm-container">
           <article class="bm-peach-card bm-attribution-callout" aria-label="Live Attribution Telemetry">
@@ -189,7 +201,7 @@
                 <p class="bm-peach-eyebrow">First-party session telemetry</p>
                 <h2>Live Attribution Engine (_bm) on beeloftmetric.biz.id</h2>
               </div>
-              <button type="button" class="bm-peach-btn" @click="loadTelemetry">
+              <button type="button" class="bm-peach-btn bm-transition" @click="loadTelemetry">
                 Refresh session log
               </button>
             </div>
@@ -240,18 +252,32 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { defineAsyncComponent, h, onMounted, ref } from 'vue';
 import BrandHeaderPublic from '@/components/common/BrandHeaderPublic.vue';
+import TiltSurface from '@/components/common/motion/TiltSurface.vue';
 import { apiRequest } from '@/services/api';
 import { getAttributionSnapshot } from '@/services/attribution';
 import { useAppStore } from '@/stores/appStore';
 import type { AttributionEvent } from '@/types/api';
 
+const OrbitalHeroScene = defineAsyncComponent({
+  loader: () => import('@/components/three/OrbitalHeroScene.vue'),
+  loadingComponent: () =>
+    h(
+      'div',
+      {
+        style:
+          'height:390px;border-radius:22px;border:1px solid var(--bm-divider);background:var(--bm-elevated);display:flex;align-items:center;justify-content:center;color:var(--bm-text-muted);font-size:14px;'
+      },
+      'Initializing 3D orbital telemetry stage...'
+    )
+});
+
 const store = useAppStore();
 const recentEvents = ref<AttributionEvent[]>([]);
 const snapshot = ref(getAttributionSnapshot());
 const readinessLabel = ref('Operational');
-const readinessSub = ref('Cloudflare Edge API + Multi-tenant isolation');
+const readinessSub = ref('Cloudflare Edge API + Multi-tenant D1');
 
 const aiPrompt = ref('');
 const aiLoading = ref(false);
@@ -259,38 +285,11 @@ const aiInfoShown = ref(false);
 const aiResult = ref('');
 
 const channelCapabilityRows = [
-  { name: 'Website & Blog', auth: 'tracker.js', sync: 'Real-time' },
+  { name: 'Website & Blog', auth: 'tracker.js', sync: 'Real-time 3D' },
   { name: 'Instagram & Facebook', auth: 'Meta OAuth2', sync: 'Graph + Webhook' },
   { name: 'TikTok & YouTube', auth: 'OAuth2', sync: 'Metrics + Video' },
   { name: 'X (Twitter) & LinkedIn', auth: 'OAuth2 PKCE', sync: 'Live Publish' },
   { name: 'SmartLink (/bio/:slug)', auth: 'Built-in', sync: 'Instant Clicks' }
-];
-
-const featureCards = [
-  {
-    id: 'analytics',
-    category: 'Analytics',
-    title: 'Evolution, Real-Time Web & Competitors',
-    body: 'Monitor real-time active website visitors via tracker.js, inspect Cloudflare country breakdowns, and benchmark competitor handles.',
-    cta: 'Open Analytics workspace',
-    authedTo: '/evolution/brandSummary'
-  },
-  {
-    id: 'planning',
-    category: 'Scheduling',
-    title: 'Calendar, R2 Media, Flows & Cron Queue',
-    body: 'Upload campaign visuals to R2, schedule multi-network queues executed by 5-minute Cron triggers, and automate Comment-to-DM replies.',
-    cta: 'Open Planning calendar',
-    authedTo: '/planner'
-  },
-  {
-    id: 'operations',
-    category: 'Operations',
-    title: 'Reporting Studio, Inbox & Public SmartLinks',
-    body: 'Publish shareable /bio/:slug microsites across devices, triage webhook DMs in Unified Inbox, and export branded reports.',
-    cta: 'Open SmartLinks & Reports',
-    authedTo: '/smartlink'
-  }
 ];
 
 async function runAiComposer(): Promise<void> {
@@ -338,57 +337,59 @@ onMounted(() => {
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
-  background: var(--color-paper-white);
+  background: transparent;
 }
 
 .bm-container {
-  max-width: 1200px;
+  max-width: 1220px;
   margin: 0 auto;
   padding: 0 20px;
   width: 100%;
 }
 
 .bm-hero-section {
-  background: var(--color-paper-white);
-  padding: 56px 0 80px;
+  padding: 48px 0 72px;
 }
 
-.bm-hero-header {
-  max-width: 920px;
-  margin: 0 auto 56px;
-  text-align: center;
+.bm-hero-split {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 36px;
+  align-items: center;
+}
+
+.bm-hero-copy {
   display: flex;
   flex-direction: column;
-  align-items: center;
   gap: 20px;
 }
 
 .bm-display-title {
   font-family: var(--font-signifier);
   font-weight: 400;
-  font-size: clamp(42px, 6.2vw, 84px);
-  line-height: 1.15;
+  font-size: clamp(38px, 5vw, 68px);
+  line-height: 1.12;
   letter-spacing: -0.025em;
-  color: var(--color-ink-black);
+  color: var(--bm-text);
 }
 
 .bm-display-title em {
   font-style: italic;
+  color: var(--bm-accent);
 }
 
 .bm-hero-sub {
-  max-width: 58ch;
+  max-width: 56ch;
   font-size: 17px;
-  line-height: 1.45;
+  line-height: 1.5;
   color: var(--bm-text-muted);
 }
 
 .bm-hero-actions {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
   gap: 12px;
-  margin-top: 8px;
+  margin-top: 4px;
 }
 
 .bm-pill-filled,
@@ -396,125 +397,238 @@ onMounted(() => {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
-  padding: 0 20px;
+  min-height: 46px;
+  padding: 0 22px;
   border-radius: var(--radius-buttons);
   font-family: var(--font-sohne);
-  font-size: 16px;
-  font-weight: 400;
+  font-size: 15.5px;
+  font-weight: 500;
   text-decoration: none;
 }
 
 .bm-pill-filled {
-  background: var(--color-ink-black);
-  color: var(--color-paper-white);
-  border: 1px solid var(--color-ink-black);
+  background: var(--bm-brand);
+  color: var(--bm-brand-text);
+  border: 1px solid var(--bm-brand);
+  box-shadow: var(--bm-shadow-btn-primary);
 }
 
 .bm-pill-filled:hover {
   background: var(--bm-brand-hover);
+  transform: translateY(-1px);
+}
+
+.bm-pill-filled:active {
+  transform: translateY(2px);
+  box-shadow: var(--bm-shadow-btn-primary-active);
 }
 
 .bm-pill-ghost {
-  background: transparent;
-  color: var(--color-ink-black);
-  border: 1px solid var(--color-ink-black);
+  background: var(--bm-elevated);
+  color: var(--bm-text);
+  border: 1px solid var(--bm-control-border);
+  box-shadow: 0 1px 0 var(--bm-border-specular) inset;
 }
 
 .bm-pill-ghost:hover {
-  background: var(--color-mist-gray);
+  background: var(--bm-surface);
+  transform: translateY(-1px);
 }
 
-.bm-collage {
-  display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-  gap: 24px;
-  align-items: start;
+.bm-composer-card {
+  margin-top: 8px;
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-.bm-artifact {
-  padding: 20px;
-  min-width: 0;
-}
-
-.bm-artifact--table {
-  grid-column: span 5;
-}
-
-.bm-artifact--stat {
-  grid-column: span 3;
-}
-
-.bm-artifact--curve {
-  grid-column: span 4;
-}
-
-.bm-artifact--composer {
-  grid-column: 3 / span 8;
-}
-
-.bm-artifact__top {
+.bm-composer-card__head {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  gap: 12px;
-  margin-bottom: 12px;
-}
-
-.bm-artifact__top h3 {
-  font-size: 18px;
-  font-weight: 500;
-  margin-top: 2px;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
 }
 
 .bm-ghost-tag {
-  font-size: 14px;
-  font-weight: 400;
+  font-size: 13px;
+  font-weight: 600;
   color: var(--bm-text-muted);
 }
 
-.bm-avatar-wrap {
-  position: relative;
-  display: inline-flex;
+.bm-composer-box {
+  display: flex;
   align-items: center;
+  gap: 8px;
+  border: 1px solid var(--bm-control-border);
+  border-radius: var(--radius-inputs);
+  padding: 6px 10px;
+  background: var(--bm-surface);
 }
 
-.bm-avatar-bubble {
+.bm-circle-ghost {
   width: 38px;
   height: 38px;
+  flex-shrink: 0;
   border-radius: 9999px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  border: 1px solid var(--bm-divider);
+  background: var(--bm-elevated);
+  color: var(--bm-text);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.bm-circle-ghost:hover {
+  border-color: var(--bm-accent);
+}
+
+.bm-composer-input {
+  flex: 1;
+  min-width: 0;
+  min-height: 40px;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 15px;
+  color: var(--bm-text);
+}
+
+.bm-circle-send {
+  min-width: 44px;
+  height: 40px;
+  padding: 0 12px;
+  flex-shrink: 0;
+  border-radius: 9999px;
+  border: none;
+  background: var(--bm-brand);
+  color: var(--bm-brand-text);
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 600;
 }
 
-.bm-avatar--peach {
-  background: var(--color-blush-peach);
-  color: var(--color-sienna-brown);
+.bm-composer-reply {
+  padding: 10px 12px;
+  border-radius: var(--radius-smallcards);
+  background: var(--bm-surface);
+  font-size: 13.5px;
+  overflow-wrap: anywhere;
 }
 
-.bm-avatar--mist {
-  background: var(--color-mist-gray);
-  color: var(--color-ink-black);
+.bm-hero-stage-col {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+.bm-hero-mini-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.bm-mini-stat {
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.bm-stat-val {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--bm-text);
+  line-height: 1.2;
+}
+
+.bm-stat-delta {
+  font-size: 13px;
+  color: var(--bm-text-muted);
+}
+
+.bm-fog-band {
+  background: var(--bm-subtle);
+  border-top: 1px solid var(--bm-divider);
+  border-bottom: 1px solid var(--bm-divider);
+  padding: 76px 0;
+}
+
+.bm-band-head {
+  max-width: 760px;
+  margin-bottom: 36px;
+}
+
+.bm-section-heading {
+  font-size: clamp(30px, 4vw, 50px);
+  line-height: 1.18;
+  margin-bottom: 12px;
+}
+
+.bm-band-sub {
+  font-size: 17px;
+  color: var(--bm-text-muted);
+}
+
+.bm-asymmetric-showcase {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.bm-flagship-card {
+  padding: 28px;
+}
+
+.bm-flagship-card :deep(.bm-tilt-surface__inner) {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 28px;
+  align-items: center;
+}
+
+.bm-flagship-card__copy {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.bm-flagship-card__copy h3,
+.bm-secondary-card h3 {
+  font-size: 21px;
+  font-weight: 600;
+  color: var(--bm-text);
+}
+
+.bm-flagship-card__copy p,
+.bm-secondary-card p {
+  font-size: 15.5px;
+  line-height: 1.52;
+  color: var(--bm-text-muted);
+}
+
+.bm-flagship-card__table-wrap {
+  padding: 16px;
+  border-radius: var(--radius-inputs);
+  background: var(--bm-surface);
+  border: 1px solid var(--bm-border-soft);
 }
 
 .bm-mini-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 14px;
+  font-size: 13.5px;
 }
 
 .bm-mini-table th,
 .bm-mini-table td {
-  padding: 8px 4px;
+  padding: 8px 6px;
   border-bottom: 1px solid var(--bm-divider);
   text-align: left;
 }
 
 .bm-mini-table th {
-  font-weight: 500;
+  font-weight: 600;
   color: var(--bm-text-muted);
 }
 
@@ -526,155 +640,28 @@ onMounted(() => {
   text-align: right;
 }
 
-.bm-stat-val {
-  font-size: 24px;
-  font-weight: 500;
-  color: var(--bg-text, var(--bm-text));
-  line-height: 1.2;
-}
-
-.bm-stat-delta {
-  font-size: 14px;
-  color: var(--bm-text-muted);
-  margin-top: 4px;
-}
-
-.bm-gestural-svg {
-  width: 100%;
-  height: 58px;
-  display: block;
-  margin-top: 12px;
-}
-
-.bm-radial-pill {
-  padding: 4px 10px;
-  border-radius: 9999px;
-  background: var(--color-mist-gray);
-  color: var(--color-ink-black);
-  font-size: 13px;
-  font-weight: 500;
-}
-
-.bm-composer-box {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  border: 1px solid var(--bm-divider);
-  border-radius: var(--radius-inputs);
-  padding: 8px 12px;
-  background: var(--bm-surface);
-}
-
-.bm-circle-ghost {
-  width: 40px;
-  height: 40px;
-  flex-shrink: 0;
-  border-radius: 9999px;
-  border: none;
-  background: transparent;
-  color: var(--bm-text-muted);
-  font-size: 16px;
-}
-
-.bm-circle-ghost:hover {
-  background: var(--color-mist-gray);
-  color: var(--color-ink-black);
-}
-
-.bm-composer-input {
-  flex: 1;
-  min-width: 0;
-  min-height: 40px;
-  border: none;
-  outline: none;
-  background: transparent;
-  font-size: 16px;
-  color: var(--bm-text);
-}
-
-.bm-composer-input:focus-visible {
-  outline: none;
-}
-
-.bm-circle-send {
-  width: 40px;
-  height: 40px;
-  flex-shrink: 0;
-  border-radius: 9999px;
-  border: none;
-  background: var(--color-ink-black);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.bm-composer-reply {
-  margin-top: 12px;
-  padding: 12px 14px;
-  border-radius: var(--radius-smallcards);
-  background: var(--color-mist-gray);
-  font-size: 14px;
-  overflow-wrap: anywhere;
-}
-
-.bm-fog-band {
-  background: var(--color-fog-white);
-  padding: 80px 0;
-}
-
-.bm-band-head {
-  max-width: 760px;
-  margin-bottom: 40px;
-}
-
-.bm-section-heading {
-  font-size: clamp(32px, 4.5vw, 56px);
-  line-height: 1.2;
-  letter-spacing: -0.96px;
-  margin-bottom: 12px;
-}
-
-.bm-band-sub {
-  font-size: 18px;
-  color: var(--bm-text-muted);
-}
-
-.bm-neutral-grid {
+.bm-secondary-pair {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 24px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px;
 }
 
-.bm-neutral-card {
-  padding: 32px 24px;
+.bm-secondary-card {
+  padding: 26px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-}
-
-.bm-neutral-card h3 {
-  font-size: 20px;
-  font-weight: 500;
-  color: var(--bm-text);
-}
-
-.bm-neutral-card p {
-  font-size: 16px;
-  line-height: 1.5;
-  color: var(--bm-text);
-  margin-bottom: auto;
+  gap: 10px;
 }
 
 .bm-paper-band {
-  background: var(--color-paper-white);
-  padding: 80px 0;
+  padding: 76px 0;
 }
 
 .bm-attribution-callout {
-  padding: 40px;
+  padding: 36px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 18px;
 }
 
 .bm-peach-head {
@@ -686,7 +673,8 @@ onMounted(() => {
 }
 
 .bm-peach-eyebrow {
-  font-size: 14px;
+  font-size: 13.5px;
+  font-weight: 600;
   margin-bottom: 4px;
 }
 
@@ -698,16 +686,20 @@ onMounted(() => {
   min-height: 44px;
   padding: 0 20px;
   border-radius: 9999px;
-  border: 1px solid var(--color-sienna-brown);
+  border: 1px solid currentColor;
   background: transparent;
-  color: var(--color-sienna-brown);
-  font-size: 15px;
-  font-weight: 500;
+  color: var(--bm-accent-soft-text);
+  font-size: 14.5px;
+  font-weight: 600;
+}
+
+.bm-peach-btn:hover {
+  background: rgba(140, 47, 20, 0.12);
 }
 
 .bm-peach-quote {
-  font-size: 18px;
-  line-height: 1.45;
+  font-size: 17px;
+  line-height: 1.48;
   max-width: 68ch;
 }
 
@@ -716,7 +708,7 @@ onMounted(() => {
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 16px;
   padding-top: 16px;
-  border-top: 1px solid rgba(93, 42, 26, 0.25);
+  border-top: 1px solid rgba(140, 47, 20, 0.25);
   font-size: 14px;
 }
 
@@ -727,7 +719,7 @@ onMounted(() => {
 
 .bm-footer {
   margin-top: auto;
-  background: var(--color-paper-white);
+  background: var(--bm-subtle);
   border-top: 1px solid var(--bm-divider);
   padding: 28px 0;
 }
@@ -741,7 +733,7 @@ onMounted(() => {
 }
 
 .bm-footer__brand {
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .bm-footer__copy {
@@ -755,22 +747,32 @@ onMounted(() => {
   gap: 20px;
 }
 
-@media (max-width: 960px) {
-  .bm-artifact--table,
-  .bm-artifact--stat,
-  .bm-artifact--curve,
-  .bm-artifact--composer {
-    grid-column: span 12;
+@media (max-width: 980px) {
+  .bm-hero-split {
+    grid-template-columns: minmax(0, 1fr);
   }
 
-  .bm-neutral-grid {
+  .bm-flagship-card :deep(.bm-tilt-surface__inner) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .bm-secondary-pair {
     grid-template-columns: minmax(0, 1fr);
   }
 }
 
 @media (max-width: 600px) {
   .bm-hero-section {
-    padding: 32px 0 48px;
+    padding: 28px 0 44px;
+  }
+
+  .bm-hero-mini-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .bm-fog-band,
+  .bm-paper-band {
+    padding: 48px 0;
   }
 
   .bm-attribution-callout {

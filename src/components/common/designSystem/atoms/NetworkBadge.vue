@@ -1,5 +1,6 @@
 <template>
-  <span class="bm-net-badge" :class="{ 'bm-net-badge--peach': isPeach }">
+  <span class="bm-net-badge" :data-net="networkKey">
+    <span class="bm-net-badge__dot" aria-hidden="true"></span>
     {{ code }}
   </span>
 </template>
@@ -25,36 +26,73 @@ const CODES: Record<string, string> = {
   bluesky: 'BS',
   twitch: 'TW',
   gmb: 'GBP',
-  metaAds: 'MA',
-  googleAds: 'GA',
-  tiktokAds: 'TA'
+  metaAds: 'META',
+  googleAds: 'GADS',
+  tiktokAds: 'TADS'
 };
 
-const code = computed(() => CODES[props.network] || 'CH');
-const isPeach = computed(() => String(props.network).includes('Ads'));
+const networkKey = computed(() => String(props.network || 'web'));
+const code = computed(() => CODES[networkKey.value] || 'CH');
 </script>
 
 <style scoped>
 .bm-net-badge {
+  --net-dot: #6f6962;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 30px;
-  height: 22px;
-  padding: 0 7px;
+  gap: 5px;
+  min-width: 34px;
+  height: 24px;
+  padding: 0 8px;
   border-radius: var(--radius-buttons);
   background: var(--bm-elevated);
   color: var(--bm-text);
-  border: 1px solid var(--bm-control-border);
+  border: 1px solid var(--bm-border-soft);
+  box-shadow: 0 1px 2px rgba(24, 22, 21, 0.05);
   font-family: var(--font-sohne);
   font-size: 11px;
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: 0.02em;
 }
 
-.bm-net-badge--peach {
-  background: var(--color-blush-peach);
-  color: var(--color-sienna-brown);
-  border-color: var(--color-sienna-brown);
+.bm-net-badge__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--net-dot);
+  flex-shrink: 0;
+}
+
+.bm-net-badge[data-net='web'] {
+  --net-dot: #0d9488;
+}
+.bm-net-badge[data-net='instagram'] {
+  --net-dot: #db2777;
+}
+.bm-net-badge[data-net='facebook'],
+.bm-net-badge[data-net='metaAds'] {
+  --net-dot: #2563eb;
+}
+.bm-net-badge[data-net='tiktok'],
+.bm-net-badge[data-net='tiktokAds'] {
+  --net-dot: #0f766e;
+}
+.bm-net-badge[data-net='youtube'],
+.bm-net-badge[data-net='pinterest'] {
+  --net-dot: #dc2626;
+}
+.bm-net-badge[data-net='linkedin'] {
+  --net-dot: #0284c7;
+}
+.bm-net-badge[data-net='gmb'],
+.bm-net-badge[data-net='googleAds'] {
+  --net-dot: #d97706;
+}
+.bm-net-badge[data-net='twitch'] {
+  --net-dot: #7c3aed;
+}
+.bm-net-badge[data-net='bluesky'] {
+  --net-dot: #0369a1;
 }
 </style>
