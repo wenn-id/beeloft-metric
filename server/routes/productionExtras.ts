@@ -25,7 +25,7 @@ import {
   verifyWebhookSignature
 } from '../services/oauthAndSocial.js';
 import { computeRealtimeAnalytics } from '../services/trackerScript.js';
-import { createBrandRecord, PLAN_QUOTAS } from '../workspaceTemplate.js';
+import { createBrandRecord, PLAN_QUOTAS, UNLIMITED_BRAND_LIMIT } from '../workspaceTemplate.js';
 import type {
   AdGroup,
   AdKeyword,
@@ -91,7 +91,7 @@ export function registerProductionExtraRoutes(
       return { error: 'Profile name is required.' };
     }
     const quota = PLAN_QUOTAS[user.plan];
-    if (user.workspace.brands.filter((b) => !b.deleted).length >= quota.brandLimit) {
+    if (user.role !== 'ADMIN' && user.workspace.brands.filter((b) => !b.deleted).length >= quota.brandLimit) {
       reply.code(403);
       return { error: `Brand limit (${quota.brandLimit}) reached on ${quota.label} plan.` };
     }
@@ -146,7 +146,7 @@ export function registerProductionExtraRoutes(
     const user = await requireUser(req, reply, repo);
     if (!user) return { error: 'Authentication required.' };
     return {
-      maxProfiles: PLAN_QUOTAS[user.plan].brandLimit,
+      maxProfiles: user.role === 'ADMIN' ? UNLIMITED_BRAND_LIMIT : PLAN_QUOTAS[user.plan].brandLimit,
       usedProfiles: user.workspace.brands.filter((b) => !b.deleted).length
     };
   });
@@ -157,11 +157,12 @@ export function registerProductionExtraRoutes(
     return {
       plan: user.plan,
       status: user.status,
+      unlimited: user.role === 'ADMIN',
       trialActive: Boolean(user.workspace.user.trialActive),
       trialEndsAt: user.workspace.user.trialEndsAt ?? null,
       trialDaysRemaining: user.workspace.user.trialDaysRemaining ?? 0,
-      validUntil: user.workspace.user.validUntil,
-      brandLimit: PLAN_QUOTAS[user.plan].brandLimit
+      validUntil: user.role === 'ADMIN' ? '2099-12-31T23:59:59.000Z' : user.workspace.user.validUntil,
+      brandLimit: user.role === 'ADMIN' ? UNLIMITED_BRAND_LIMIT : PLAN_QUOTAS[user.plan].brandLimit
     };
   });
 
@@ -944,7 +945,12 @@ export function registerProductionExtraRoutes(
   app.get('/api/v2/reporting/studio/plan-limits', async (req, reply) => {
     const user = await requireUser(req, reply, repo);
     if (!user) return { error: 'Authentication required.' };
-    return { data: { maxStudioReports: 50, usedStudioReports: user.workspace.studioReports.length } };
+    return {
+      data: {
+        maxStudioReports: user.role === 'ADMIN' ? UNLIMITED_BRAND_LIMIT : 50,
+        usedStudioReports: user.workspace.studioReports.length
+      }
+    };
   });
 
   app.get('/api/v2/reporting/studio/reports', async (req, reply) => {
@@ -1121,7 +1127,7 @@ export function registerProductionExtraRoutes(
       reply.code(404);
       return { error: 'Brand not found.' };
     }
-    if (body.whiteLabel?.enabled && !PLAN_QUOTAS[user.plan].allowWhiteLabel) {
+    if (user.role !== 'ADMIN' && body.whiteLabel?.enabled && !PLAN_QUOTAS[user.plan].allowWhiteLabel) {
       reply.code(403);
       return { error: 'White Label report branding requires Enterprise Custom plan.' };
     }

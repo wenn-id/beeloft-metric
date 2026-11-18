@@ -66,7 +66,12 @@
 
               <div class="bm-popover__divider"></div>
               <p class="bm-popover__caption tabular-nums">
-                {{ store.brands.length }} of {{ store.user?.brandLimit ?? 10 }} brands used
+                <template v-if="isUnlimitedUser">
+                  {{ store.brands.length }} brands active · Unlimited quota
+                </template>
+                <template v-else>
+                  {{ store.brands.length }} of {{ store.user?.brandLimit ?? 10 }} brands used
+                </template>
               </p>
               <BmButton variant="primary" size="sm" @click="openAddBrand">
                 + Add brand
@@ -310,7 +315,12 @@ const navItems = [
   { label: 'Ads', to: '/advertising/campaigns', matchPrefix: '/advertising' }
 ];
 
+const isUnlimitedUser = computed(
+  () => store.user?.role === 'ADMIN' || (store.user?.brandLimit ?? 0) >= 999999
+);
+
 const formattedPlan = computed(() => {
+  if (isUnlimitedUser.value) return 'Unlimited';
   if (store.user?.trialActive) {
     const days = store.user.trialDaysRemaining ?? 7;
     return `Trial (${days}d left)`;

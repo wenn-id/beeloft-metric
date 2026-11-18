@@ -11,6 +11,7 @@ import type {
 
 export const NEW_USER_TRIAL_DAYS = 7;
 export const NEW_USER_TRIAL_PLAN: UserProfile['plan'] = 'STARTER';
+export const UNLIMITED_BRAND_LIMIT = 999_999;
 
 export interface PlanQuotaSpec {
   id: UserProfile['plan'];
@@ -174,8 +175,11 @@ export function createCleanUserWorkspace(params: {
   const trialEndsAt = useTrial
     ? new Date(nowMs + NEW_USER_TRIAL_DAYS * 86400000).toISOString()
     : null;
-  const validUntil = trialEndsAt ?? new Date(nowMs + 365 * 86400000).toISOString();
+  const validUntil = params.isAdmin
+    ? '2099-12-31T23:59:59.000Z'
+    : (trialEndsAt ?? new Date(nowMs + 365 * 86400000).toISOString());
   const quota = PLAN_QUOTAS[plan];
+  const effectiveBrandLimit = params.isAdmin ? UNLIMITED_BRAND_LIMIT : quota.brandLimit;
   const baseOrigin = (params.origin || 'https://beeloftmetric.biz.id').replace(/\/+$/, '');
   const brandName = `${params.name.trim() || 'My'} Workspace`;
   const primaryBrand = createBrandRecord({
@@ -205,10 +209,10 @@ export function createCleanUserWorkspace(params: {
       trialDaysRemaining: useTrial ? NEW_USER_TRIAL_DAYS : 0,
       plan,
       status: 'ACTIVE',
-      emailVerified: Boolean(params.emailVerified),
+      emailVerified: Boolean(params.emailVerified || params.isAdmin),
       role: params.isAdmin ? 'ADMIN' : 'USER',
       validUntil,
-      brandLimit: quota.brandLimit,
+      brandLimit: effectiveBrandLimit,
       apiToken: params.apiToken,
       totpEnabled: false,
       approvedMcpScopes: ['mcp:evolution:read', 'mcp:planner:write', 'mcp:reports:read'],
@@ -285,10 +289,16 @@ export function createCleanUserWorkspace(params: {
     notifications: [
       {
         id: `ntf-welcome-${params.userId}`,
-        title: useTrial ? '7-day Starter free trial active' : 'Workspace ready on BeeloftMetric',
-        body: useTrial
-          ? `Your 7-day Starter free trial is active until ${trialEndsAt!.slice(0, 10)} (up to 5 brands, 2,000 monthly posts, and report exports).`
-          : 'Connect your website tracker or social channels in Brand Connections to start recording live telemetry.',
+        title: params.isAdmin
+          ? 'Unlimited Owner Workspace Active'
+          : useTrial
+            ? '7-day Starter free trial active'
+            : 'Workspace ready on BeeloftMetric',
+        body: params.isAdmin
+          ? 'All BeeloftMetric features, brands, scheduled posts, PDF/PPTX reports, White Label branding, and Operator Backoffice are permanently unlocked without limits.'
+          : useTrial
+            ? `Your 7-day Starter free trial is active until ${trialEndsAt!.slice(0, 10)} (up to 5 brands, 2,000 monthly posts, and report exports).`
+            : 'Connect your website tracker or social channels in Brand Connections to start recording live telemetry.',
         category: 'update',
         createdAt: now,
         read: false

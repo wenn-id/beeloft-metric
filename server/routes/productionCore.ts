@@ -30,7 +30,8 @@ import {
   createBrandRecord,
   createCleanUserWorkspace,
   NEW_USER_TRIAL_PLAN,
-  PLAN_QUOTAS
+  PLAN_QUOTAS,
+  UNLIMITED_BRAND_LIMIT
 } from '../workspaceTemplate.js';
 import type {
   AdCampaign,
@@ -381,6 +382,8 @@ export function registerProductionCoreRoutes(
       ...safeUser,
       emailVerified: user.emailVerified,
       role: user.role,
+      brandLimit: user.role === 'ADMIN' ? UNLIMITED_BRAND_LIMIT : safeUser.brandLimit,
+      validUntil: user.role === 'ADMIN' ? '2099-12-31T23:59:59.000Z' : safeUser.validUntil,
       features: {
         ...meta.featureFlags,
         ...user.workspace.user.features,
@@ -454,7 +457,7 @@ export function registerProductionCoreRoutes(
       plan: initialPlan,
       startTrial: !isAdmin,
       isAdmin,
-      emailVerified: false,
+      emailVerified: isAdmin,
       origin
     });
 
@@ -470,8 +473,8 @@ export function registerProductionCoreRoutes(
       totpEnabled: false,
       plan: initialPlan,
       status: 'ACTIVE',
-      emailVerified: false,
-      verificationToken,
+      emailVerified: isAdmin,
+      verificationToken: isAdmin ? null : verificationToken,
       role: isAdmin ? 'ADMIN' : 'USER',
       workspace,
       createdAt: nowIso,
@@ -493,12 +496,14 @@ export function registerProductionCoreRoutes(
     }
 
     const verifyUrl = `${origin}/activate-user?token=${encodeURIComponent(verificationToken)}`;
-    const emailDelivery = await sendTransactionalEmail(req.env, {
-      to: email,
-      subject: 'Verify your BeeloftMetric account (7-day free trial active)',
-      text: `Welcome to BeeloftMetric, ${name}.\n\nYour 7-day Starter free trial is now active.\nVerify your email address by opening:\n${verifyUrl}`,
-      html: `<p>Welcome to <strong>BeeloftMetric</strong>, ${name}. Your <strong>7-day Starter free trial</strong> is now active.</p><p><a href="${verifyUrl}">Verify your email address</a> to confirm account ownership.</p>`
-    });
+    const emailDelivery = isAdmin
+      ? { delivered: false, provider: 'none' as const, detail: 'Owner account auto-verified' }
+      : await sendTransactionalEmail(req.env, {
+          to: email,
+          subject: 'Verify your BeeloftMetric account (7-day free trial active)',
+          text: `Welcome to BeeloftMetric, ${name}.\n\nYour 7-day Starter free trial is now active.\nVerify your email address by opening:\n${verifyUrl}`,
+          html: `<p>Welcome to <strong>BeeloftMetric</strong>, ${name}. Your <strong>7-day Starter free trial</strong> is now active.</p><p><a href="${verifyUrl}">Verify your email address</a> to confirm account ownership.</p>`
+        });
 
     await issueUserSession({ repo, req, reply, userId });
     const { passwordHash: _ignored, ...safeUser } = workspace.user;
@@ -725,6 +730,7 @@ export function registerProductionCoreRoutes(
     const body = (req.body ?? {}) as { name?: string; email?: string; currentPassword?: string; newPassword?: string };
     if (typeof body.name === 'string' && body.name.trim().length >= 2) {
       user.name = body.name.trim();
+      user.workspace.user.name = user.name;
     }
     if (typeof body.email === 'string' && body.email.includes('@')) {
       const nextEmail = body.email.trim().toLowerCase();
@@ -735,6 +741,7 @@ export function registerProductionCoreRoutes(
           return { error: 'That email address is already registered to another account.' };
         }
         user.email = nextEmail;
+        user.workspace.user.email = nextEmail;
       }
     }
     if (body.newPassword) {
@@ -839,7 +846,7 @@ export function registerProductionCoreRoutes(
 
     const quota = PLAN_QUOTAS[user.plan];
     const activeCount = user.workspace.brands.filter((b) => !b.deleted).length;
-    if (activeCount >= quota.brandLimit) {
+    if (user.role !== 'ADMIN' && activeCount >= quota.brandLimit) {
       reply.code(403);
       return {
         error: `Your ${quota.label} plan includes up to ${quota.brandLimit} brand(s). Upgrade your subscription in User Settings to add more brands.`
@@ -1273,11 +1280,11 @@ export function registerProductionCoreRoutes(
       dateFrom?: string;
       dateTo?: string;
     };
-    if (user.plan === 'FREE') {
+    if (user.role !== 'ADMIN' && user.plan === 'FREE') {
       reply.code(403);
       return { error: 'Report exports require Starter plan or higher. Upgrade in Subscription & Plan.' };
     }
-    if (body.format === 'PPTX' && !PLAN_QUOTAS[user.plan].allowPptxExport) {
+    if (user.role !== 'ADMIN' && body.format === 'PPTX' && !PLAN_QUOTAS[user.plan].allowPptxExport) {
       reply.code(403);
       return { error: 'PPTX deck exports require Advanced or Enterprise plan.' };
     }
@@ -1445,7 +1452,7 @@ export function registerProductionCoreRoutes(
     }
 
     const quota = PLAN_QUOTAS[user.plan];
-    if (quota.monthlyScheduledPostLimit !== null) {
+    if (user.role !== 'ADMIN' && quota.monthlyScheduledPostLimit !== null) {
       const currentMonth = new Date().toISOString().slice(0, 7);
       const monthlyCount = user.workspace.plannerPosts.filter((p) =>
         p.scheduledAt.startsWith(currentMonth)

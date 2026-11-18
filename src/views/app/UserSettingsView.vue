@@ -28,6 +28,29 @@
             <label for="us-email" class="bm-label">Email address</label>
             <input id="us-email" v-model="emailInput" type="email" class="bm-input" required />
           </div>
+          <div>
+            <label for="us-cur-pwd" class="bm-label">Current password (only if changing password)</label>
+            <input
+              id="us-cur-pwd"
+              v-model="currentPasswordInput"
+              type="password"
+              autocomplete="current-password"
+              class="bm-input"
+              placeholder="Leave blank to keep current password"
+            />
+          </div>
+          <div>
+            <label for="us-new-pwd" class="bm-label">New password (min 6 characters)</label>
+            <input
+              id="us-new-pwd"
+              v-model="newPasswordInput"
+              type="password"
+              autocomplete="new-password"
+              minlength="6"
+              class="bm-input"
+              placeholder="Enter new password"
+            />
+          </div>
           <div class="bm-meta-row">
             <span>User ID: <strong class="tabular-nums">{{ store.user?.userId }}</strong></span>
             <span>Status: <BmBadge tone="success">{{ store.user?.status }}</BmBadge></span>
@@ -46,7 +69,18 @@
 
       <!-- Tab 2: Subscription Plan & Checkout -->
       <template v-else-if="activeTab === 'plan'">
-        <section v-if="store.user?.trialActive" class="bm-peach-card bm-trial-banner" role="status">
+        <section v-if="isUnlimitedUser" class="bm-peach-card bm-trial-banner" role="status">
+          <div>
+            <strong>Unlimited Owner Account Active</strong>
+            <p class="bm-trial-sub">
+              All BeeloftMetric features, brands, scheduled posts, PDF/PPTX report exports, Reporting
+              Studio, White Label branding, and Operator Backoffice are permanently unlocked without limits.
+            </p>
+          </div>
+          <BmBadge tone="accent">Unlimited</BmBadge>
+        </section>
+
+        <section v-else-if="store.user?.trialActive" class="bm-peach-card bm-trial-banner" role="status">
           <div>
             <strong>7-Day Starter Free Trial Active ({{ store.user.trialDaysRemaining ?? 7 }} day(s) remaining)</strong>
             <p class="bm-trial-sub">
@@ -250,7 +284,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import AppShell from '@/components/layout/AppShell.vue';
 import BmBadge from '@/components/common/designSystem/atoms/BmBadge.vue';
@@ -281,9 +315,15 @@ function tabFromPath(path: string): string {
 const activeTab = ref(tabFromPath(route.path));
 const nameInput = ref('');
 const emailInput = ref('');
+const currentPasswordInput = ref('');
+const newPasswordInput = ref('');
 const saving = ref(false);
 const savedMsg = ref('');
 const errMsg = ref('');
+
+const isUnlimitedUser = computed(
+  () => store.user?.role === 'ADMIN' || (store.user?.brandLimit ?? 0) >= 999999
+);
 
 const paymentProvider = ref<'midtrans' | 'stripe'>('midtrans');
 const couponCode = ref('');
@@ -345,12 +385,24 @@ async function saveProfile(): Promise<void> {
   savedMsg.value = '';
   errMsg.value = '';
   try {
+    const payload: Record<string, string> = {
+      name: nameInput.value,
+      email: emailInput.value
+    };
+    if (newPasswordInput.value) {
+      payload.currentPassword = currentPasswordInput.value;
+      payload.newPassword = newPasswordInput.value;
+    }
     await apiRequest('/api/v2/settings/users/profile', {
       method: 'PATCH',
-      body: JSON.stringify({ name: nameInput.value, email: emailInput.value })
+      body: JSON.stringify(payload)
     });
+    currentPasswordInput.value = '';
+    newPasswordInput.value = '';
     await store.bootstrap();
-    savedMsg.value = 'Account profile updated.';
+    savedMsg.value = payload.newPassword
+      ? 'Account profile and password updated.'
+      : 'Account profile updated.';
   } catch (err) {
     errMsg.value = err instanceof Error ? err.message : 'Unable to update profile.';
   } finally {

@@ -36,7 +36,7 @@ describe('BeeloftMetric Production Multi-Tenant API, Security, Real-Time & Billi
     const unauth = await app.inject({ method: 'GET', url: '/api/admin/userstatus' });
     expect(unauth.statusCode).toBe(401);
 
-    // First account becomes ADMIN on ENTERPRISE_CUSTOM
+    // First account becomes ADMIN on ENTERPRISE_CUSTOM with unlimited entitlements
     const regAdmin = await app.inject({
       method: 'POST',
       url: '/api/v2/auth/register',
@@ -46,6 +46,27 @@ describe('BeeloftMetric Production Multi-Tenant API, Security, Real-Time & Billi
     const adminCookie = extractCookieHeader(regAdmin.headers['set-cookie']);
     expect(adminCookie).toContain('_bm_session=');
     const adminBlogId = regAdmin.json().primaryBlogId;
+
+    const adminStatus = await app.inject({
+      method: 'GET',
+      url: '/api/admin/userstatus',
+      headers: { cookie: adminCookie }
+    });
+    expect(adminStatus.statusCode).toBe(200);
+    expect(adminStatus.json().role).toBe('ADMIN');
+    expect(adminStatus.json().plan).toBe('ENTERPRISE_CUSTOM');
+    expect(adminStatus.json().emailVerified).toBe(true);
+    expect(adminStatus.json().brandLimit).toBe(999999);
+    expect(adminStatus.json().validUntil).toBe('2099-12-31T23:59:59.000Z');
+    expect(adminStatus.json().trialActive).toBe(false);
+
+    const adminLimits = await app.inject({
+      method: 'GET',
+      url: '/api/v2/reporting/studio/plan-limits',
+      headers: { cookie: adminCookie }
+    });
+    expect(adminLimits.statusCode).toBe(200);
+    expect(adminLimits.json().data.maxStudioReports).toBe(999999);
 
     // Second public signup starts on a 7-day STARTER free trial with USER role
     const regUser = await app.inject({
