@@ -30,6 +30,7 @@ const router = createRouter({
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) return savedPosition;
     if (to.hash === '#capabilities') return { el: to.hash, top: 78 };
+    if (to.path === '/' && to.hash === '#analytics-demo') return { el: to.hash, top: 78 };
     if (to.meta.editorial && to.path !== from.path) return { top: 0 };
     return false;
   },

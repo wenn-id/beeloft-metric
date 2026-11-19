@@ -21,6 +21,9 @@
             </router-link>
             <router-link to="/pricing" class="bm-public-button">Compare plans</router-link>
           </div>
+          <a href="#analytics-demo" class="bm-landing-link bm-hero-demo-link">
+            Try the analytics demo <span aria-hidden="true">↓</span>
+          </a>
         </div>
       </section>
 
@@ -39,17 +42,28 @@
               Explore real-time analytics <span aria-hidden="true">↗</span>
             </router-link>
           </div>
-          <figure class="bm-product-figure">
-            <img
-              :src="dashboardImage"
-              alt="BeeloftMetric Brand Summary showing impressions, reach, and connected channels"
-              width="1440"
-              height="1000"
-              loading="lazy"
-              decoding="async"
-            />
-            <figcaption>Brand Summary · Sample data</figcaption>
-          </figure>
+          <section id="analytics-demo" class="bm-analytics-demo" aria-labelledby="analytics-demo-title" tabindex="-1">
+            <div class="bm-demo-header">
+              <div>
+                <h4 id="analytics-demo-title">Brand Summary demo</h4>
+                <span class="bm-feature-label">Sample data</span>
+              </div>
+              <select v-model.number="demoDays" class="bm-select" aria-label="Demo date range">
+                <option v-for="days in [7, 14, 30]" :key="days" :value="days">Last {{ days }} days</option>
+              </select>
+            </div>
+            <dl class="bm-demo-totals" aria-live="polite">
+              <div>
+                <dt>Total impressions</dt>
+                <dd>{{ demoImpressions.toLocaleString() }}</dd>
+              </div>
+              <div>
+                <dt>Average daily reach</dt>
+                <dd>{{ demoAverageReach.toLocaleString() }}</dd>
+              </div>
+            </dl>
+            <InteractiveMetricChart :key="demoDays" :series="demoSeries" />
+          </section>
         </article>
 
         <div class="bm-feature-grid">
@@ -182,19 +196,42 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import BrandHeaderPublic from '@/components/common/BrandHeaderPublic.vue';
+import InteractiveMetricChart from '@/components/common/motion/InteractiveMetricChart.vue';
 import heroImage from '@/assets/images/landing-ocean.webp';
-import dashboardImage from '@/assets/images/landing-dashboard.webp';
 import { apiRequest } from '@/services/api';
 import { getAttributionSnapshot } from '@/services/attribution';
 import { useAppStore } from '@/stores/appStore';
-import type { AttributionEvent } from '@/types/api';
+import type { AttributionEvent, DailyMetricPoint } from '@/types/api';
 
 const store = useAppStore();
 const recentEvents = ref<AttributionEvent[]>([]);
 const snapshot = ref(getAttributionSnapshot());
 const readiness = ref('');
+
+const demoDays = ref(14);
+const demoSample: DailyMetricPoint[] = [
+  3400, 4200, 5700, 5300, 4600, 2800, 3100, 3800, 5100, 6600,
+  5800, 6000, 3500, 3700, 4500, 6100, 7200, 8600, 6400, 3800,
+  4100, 5900, 7500, 6300, 8400, 9600, 5100, 4300, 6700, 8100
+].map((impressions, index) => {
+  const reach = Math.round(impressions * (0.62 + (index % 4) * 0.035));
+  return {
+    date: `2026-09-${String(index + 1).padStart(2, '0')}`,
+    impressions,
+    reach,
+    followers: 8360 + index * 21,
+    interactions: Math.round(reach * 0.048),
+    clicks: Math.round(reach * 0.019)
+  };
+});
+const demoSeries = computed(() => demoSample.slice(-demoDays.value));
+const demoImpressions = computed(() => demoSeries.value.reduce((total, day) => total + day.impressions, 0));
+const demoAverageReach = computed(() => {
+  const total = demoSeries.value.reduce((sum, day) => sum + day.reach, 0);
+  return Math.round(total / demoSeries.value.length);
+});
 
 const aiPrompt = ref('');
 const aiLoading = ref(false);
@@ -333,6 +370,10 @@ onMounted(() => {
   margin-top: 26px;
 }
 
+.bm-hero-demo-link {
+  margin-top: 8px;
+}
+
 .bm-capabilities {
   display: grid;
   gap: 16px;
@@ -384,7 +425,6 @@ onMounted(() => {
 }
 
 .bm-feature-label,
-.bm-product-figure figcaption,
 .bm-telemetry dt {
   font-family: var(--font-data);
   font-size: 11px;
@@ -393,21 +433,71 @@ onMounted(() => {
   color: var(--bm-text-muted);
 }
 
-.bm-product-figure {
+.bm-analytics-demo {
+  --bm-chart-bar: var(--bm-accent);
+  --bm-chart-bar-muted: color-mix(in srgb, var(--bm-accent) 35%, var(--bm-text-muted));
+  --bm-chart-line: light-dark(#007693, #00b3dd);
+
   min-width: 0;
-  margin: 0;
-}
-
-.bm-product-figure img {
-  display: block;
-  width: 100%;
-  height: auto;
+  padding: clamp(14px, 2vw, 24px);
   border: 1px solid var(--bm-divider);
-  border-radius: 12px;
+  border-radius: var(--radius-cards);
+  background: var(--bm-subtle);
+  scroll-margin-top: 78px;
 }
 
-.bm-product-figure figcaption {
-  margin-top: 10px;
+.bm-demo-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 16px;
+}
+
+.bm-demo-header h4 {
+  margin: 0;
+  font-size: 1.125rem;
+}
+
+.bm-demo-header .bm-select {
+  width: auto;
+  max-width: 100%;
+}
+
+.bm-demo-totals {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 28px;
+  margin-block: 16px;
+}
+
+.bm-demo-totals dt {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--bm-text-muted);
+  font-size: 0.8125rem;
+}
+
+.bm-demo-totals dt::before {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  background: var(--bm-chart-bar-muted);
+  content: '';
+}
+
+.bm-demo-totals div + div dt::before {
+  width: 10px;
+  height: 2px;
+  background: var(--bm-chart-line);
+}
+
+.bm-demo-totals dd {
+  margin: 0;
+  font-size: clamp(1.375rem, 3vw, 2rem);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.035em;
 }
 
 .bm-feature-grid,
