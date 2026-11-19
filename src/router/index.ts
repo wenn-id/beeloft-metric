@@ -149,7 +149,7 @@ router.beforeEach(async (to) => {
 });
 
 router.afterEach((to, _from, failure) => {
-  if (!failure) useAppStore().applyPageTheme(to.meta.public && !to.meta.editorial ? 'light' : 'dark');
+  if (!failure) useAppStore().applyPageTheme(to.meta.public ? 'light' : 'dark');
   trackAttributionEvent('route_view', to.fullPath);
 });
 

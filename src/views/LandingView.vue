@@ -4,34 +4,28 @@
     <BrandHeaderPublic class="bm-pub-header--editorial" />
 
     <main id="landing-main" tabindex="-1">
-      <section
-        ref="heroSection"
-        class="bm-hero-section"
-        aria-labelledby="landing-title"
-        @pointermove="reactToHeroPointer"
-        @pointerdown="reactToHeroPointer"
-        @pointerleave="leaveHero"
-        @pointercancel="resetHero"
-      >
-        <img class="bm-hero-image" :src="heroImage" alt="" fetchpriority="high" />
-        <div class="bm-container bm-hero-copy">
-          <h1 id="landing-title">See what works.<br /><em>Publish what’s next.</em></h1>
-          <p>
-            Social analytics and publishing for teams that manage more than one brand.
-          </p>
-          <div class="bm-hero-actions">
-            <router-link
-              :to="store.isAuthenticated ? '/evolution/brandSummary' : '/register'"
-              class="bm-public-button bm-public-button--primary"
-            >
-              {{ store.isAuthenticated ? 'Open workspace' : 'Start 7-day free trial' }}
-              <span aria-hidden="true">↗</span>
-            </router-link>
-            <router-link to="/pricing" class="bm-public-button">Compare plans</router-link>
+      <section class="bm-hero-section" aria-labelledby="landing-title">
+        <div class="bm-container bm-hero-layout">
+          <div class="bm-hero-copy">
+            <h1 id="landing-title">See what works. <span>Publish what’s next.</span></h1>
+            <p>Social analytics and publishing for teams that manage more than one brand.</p>
+            <div class="bm-hero-actions">
+              <router-link
+                :to="store.isAuthenticated ? '/evolution/brandSummary' : '/register'"
+                class="bm-public-button bm-public-button--primary"
+              >
+                {{ store.isAuthenticated ? 'Open workspace' : 'Start 7-day free trial' }}
+                <span aria-hidden="true">↗</span>
+              </router-link>
+              <router-link to="/pricing" class="bm-public-button">Compare plans</router-link>
+            </div>
+            <a href="#analytics-demo" class="bm-landing-link bm-hero-demo-link">
+              Try the analytics demo <span aria-hidden="true">↓</span>
+            </a>
           </div>
-          <a href="#analytics-demo" class="bm-landing-link bm-hero-demo-link">
-            Try the analytics demo <span aria-hidden="true">↓</span>
-          </a>
+          <div class="bm-hero-field">
+            <HeroSignalField :dark="store.theme === 'dark'" />
+          </div>
         </div>
       </section>
 
@@ -206,8 +200,8 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import BrandHeaderPublic from '@/components/common/BrandHeaderPublic.vue';
+import HeroSignalField from '@/components/common/motion/HeroSignalField.vue';
 import InteractiveMetricChart from '@/components/common/motion/InteractiveMetricChart.vue';
-import heroImage from '@/assets/images/landing-ocean.webp';
 import { apiRequest } from '@/services/api';
 import { getAttributionSnapshot } from '@/services/attribution';
 import { useAppStore } from '@/stores/appStore';
@@ -215,10 +209,7 @@ import type { AttributionEvent, DailyMetricPoint } from '@/types/api';
 
 const store = useAppStore();
 const landing = ref<HTMLElement | null>(null);
-const heroSection = ref<HTMLElement | null>(null);
-const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 let revealObserver: IntersectionObserver | undefined;
-let heroResetTimer: number | undefined;
 const recentEvents = ref<AttributionEvent[]>([]);
 const snapshot = ref(getAttributionSnapshot());
 const readiness = ref('');
@@ -261,32 +252,6 @@ const channelCapabilityRows = [
 
 function workspaceLink(path: string): string {
   return store.isAuthenticated ? path : '/register';
-}
-
-function reactToHeroPointer(event: PointerEvent): void {
-  const hero = heroSection.value;
-  const isTouch = event.pointerType !== 'mouse';
-  if (!hero || reducedMotion.matches || (isTouch && event.type !== 'pointerdown')) return;
-
-  const bounds = hero.getBoundingClientRect();
-  const x = (event.clientX - bounds.left) / bounds.width;
-  const y = (event.clientY - bounds.top) / bounds.height;
-  hero.style.setProperty('--bm-hero-x', x.toFixed(3));
-  hero.style.setProperty('--bm-hero-y', y.toFixed(3));
-  hero.classList.add('bm-hero-section--reacting');
-  window.clearTimeout(heroResetTimer);
-  if (isTouch) heroResetTimer = window.setTimeout(resetHero, 620);
-}
-
-function leaveHero(event: PointerEvent): void {
-  if (event.pointerType === 'mouse') resetHero();
-}
-
-function resetHero(): void {
-  window.clearTimeout(heroResetTimer);
-  heroSection.value?.classList.remove('bm-hero-section--reacting');
-  heroSection.value?.style.removeProperty('--bm-hero-x');
-  heroSection.value?.style.removeProperty('--bm-hero-y');
 }
 
 async function runAiComposer(): Promise<void> {
@@ -343,7 +308,6 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   revealObserver?.disconnect();
-  resetHero();
 });
 </script>
 
@@ -356,74 +320,47 @@ onBeforeUnmount(() => {
 }
 
 .bm-hero-section {
-  --bm-text: #f5f5f7;
-  --bm-text-muted: #dedee5;
-  --bm-control-border: #b8b9c4;
-  --bm-brand: #ffffff;
-  --bm-brand-text: #0f1011;
-  --bm-brand-hover: #e3e3e8;
-  --bm-accent: #d1c9ff;
-  --bm-surface: #25262b;
+  --bm-hero-paper: #fdfcf9;
+  --bm-hero-glow: #ece8fc;
 
-  position: relative;
-  isolation: isolate;
   overflow: clip;
+  border-bottom: 1px solid var(--bm-divider);
+  background: radial-gradient(ellipse at 79% 52%, var(--bm-hero-glow), transparent 53%), var(--bm-hero-paper);
+}
+
+:global([data-theme='dark']) .bm-hero-section {
+  --bm-hero-paper: #111115;
+  --bm-hero-glow: #1e1932;
+}
+
+.bm-hero-layout {
   display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.04fr);
   align-items: center;
-  min-height: clamp(560px, 83svh, 750px);
-  padding: 88px 0 134px;
-  background: #0f1011;
-  color: var(--bm-text);
+  gap: clamp(24px, 3.7vw, 60px);
+  max-width: 1320px;
+  min-height: clamp(580px, 78svh, 750px);
+  padding-block: clamp(55px, 8vw, 104px);
 }
 
-.bm-hero-image,
-.bm-hero-section::before,
-.bm-hero-section::after {
-  position: absolute;
-  z-index: -1;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-}
-
-.bm-hero-image {
-  z-index: -3;
-  object-fit: cover;
-  object-position: center 52%;
-}
-
-.bm-hero-section::before {
-  content: '';
-  z-index: -2;
-  opacity: 0;
-  background: radial-gradient(
-    ellipse min(42vw, 540px) 58% at calc(var(--bm-hero-x, 0.5) * 100%) calc(var(--bm-hero-y, 0.5) * 100%),
-    rgba(169, 154, 255, 0.36), transparent 85%
-  );
-  mix-blend-mode: screen;
-}
-
-.bm-hero-section::after {
-  content: '';
-  background: linear-gradient(180deg, #0f1011 0%, rgba(10, 12, 20, 0.52) 42%, rgba(10, 12, 20, 0.16) 67%, #0f1011 100%);
-}
-
-.bm-hero-copy {
-  display: grid;
-  justify-items: center;
-  text-align: center;
+.bm-hero-field {
+  position: relative;
+  min-width: 0;
+  aspect-ratio: 1.13;
 }
 
 .bm-hero-copy h1 {
-  font-size: clamp(3.1rem, 8vw, 7rem);
-  font-weight: 300;
-  line-height: 0.98;
-  letter-spacing: -0.055em;
+  font-family: var(--font-sohne);
+  font-size: clamp(3rem, 5vw, 4.65rem);
+  font-weight: 500;
+  line-height: 0.99;
+  letter-spacing: -0.075em;
+  text-wrap: balance;
 }
 
-.bm-hero-copy h1 em {
-  font-weight: 300;
+.bm-hero-copy h1 span {
+  display: block;
+  color: var(--bm-accent);
 }
 
 .bm-hero-copy p {
@@ -436,9 +373,14 @@ onBeforeUnmount(() => {
 .bm-hero-actions {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
   gap: 10px;
   margin-top: 26px;
+}
+
+.bm-hero-actions .bm-public-button {
+  border-radius: 999px;
+  min-height: 48px;
+  padding-inline: 20px;
 }
 
 .bm-hero-demo-link {
@@ -733,28 +675,6 @@ onBeforeUnmount(() => {
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .bm-hero-image {
-    transform: translate3d(
-      calc((var(--bm-hero-x, 0.5) - 0.5) * -30px),
-      calc((var(--bm-hero-y, 0.5) - 0.5) * -22px),
-      0
-    ) scale(1.1);
-    transition: transform 520ms var(--ease-spring);
-  }
-
-  .bm-hero-section--reacting .bm-hero-image {
-    transition-duration: 280ms;
-  }
-
-  .bm-hero-section::before {
-    transition: opacity 440ms var(--ease-out-quart);
-  }
-
-  .bm-hero-section--reacting::before {
-    opacity: 1;
-    transition-duration: 180ms;
-  }
-
   .bm-landing-revealed {
     animation: bm-landing-reveal 570ms var(--ease-out-quart);
   }
@@ -769,7 +689,7 @@ onBeforeUnmount(() => {
       view-timeline-name: --bm-hero-scroll;
     }
 
-    .bm-hero-image {
+    .bm-hero-field {
       animation: bm-hero-drift auto linear both;
       animation-timeline: --bm-hero-scroll;
       animation-range: exit 0% exit 100%;
@@ -794,18 +714,26 @@ onBeforeUnmount(() => {
   .bm-draft-card {
     grid-template-columns: minmax(0, 1fr);
   }
+
+  .bm-hero-layout {
+    grid-template-columns: minmax(0, 1fr);
+    padding-block: clamp(40px, 7.5vw, 60px) 22px;
+    min-height: 0;
+    gap: 8px;
+  }
+
+  .bm-hero-copy h1 {
+    font-size: clamp(2.4rem, 11vw, 4.6rem);
+  }
+
+  .bm-hero-field {
+    width: min(100%, 490px);
+    margin-inline: auto;
+    aspect-ratio: 1.36;
+  }
 }
 
 @media (max-width: 580px) {
-  .bm-hero-section {
-    min-height: 570px;
-    padding: 58px 0 100px;
-  }
-
-  .bm-hero-image {
-    object-position: 58% center;
-  }
-
   .bm-feature-grid {
     grid-template-columns: minmax(0, 1fr);
   }
