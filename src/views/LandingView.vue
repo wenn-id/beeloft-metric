@@ -1,10 +1,18 @@
 <template>
-  <div class="bm-public-page bm-landing">
+  <div ref="landing" class="bm-public-page bm-landing">
     <a href="#landing-main" class="bm-skip-link">Skip to content</a>
     <BrandHeaderPublic class="bm-pub-header--editorial" />
 
     <main id="landing-main" tabindex="-1">
-      <section class="bm-hero-section" aria-labelledby="landing-title">
+      <section
+        ref="heroSection"
+        class="bm-hero-section"
+        aria-labelledby="landing-title"
+        @pointermove="reactToHeroPointer"
+        @pointerdown="reactToHeroPointer"
+        @pointerleave="leaveHero"
+        @pointercancel="resetHero"
+      >
         <img class="bm-hero-image" :src="heroImage" alt="" fetchpriority="high" />
         <div class="bm-container bm-hero-copy">
           <h1 id="landing-title">See what works.<br /><em>Publish what’s next.</em></h1>
@@ -28,9 +36,9 @@
       </section>
 
       <section id="capabilities" class="bm-container bm-capabilities">
-        <h2>From insight to the next post.</h2>
+        <h2 data-scroll-reveal>From insight to the next post.</h2>
 
-        <article class="bm-product-panel">
+        <article class="bm-product-panel" data-scroll-reveal>
           <div class="bm-product-copy">
             <span class="bm-feature-label">Analytics</span>
             <h3>Understand what moved the numbers.</h3>
@@ -67,7 +75,7 @@
         </article>
 
         <div class="bm-feature-grid">
-          <article class="bm-feature-card bm-feature-card--publishing">
+          <article class="bm-feature-card bm-feature-card--publishing" data-scroll-reveal>
             <span class="bm-feature-label">Publishing</span>
             <h3>Line up your next campaign.</h3>
             <p>
@@ -78,7 +86,7 @@
               Explore Planner <span aria-hidden="true">↗</span>
             </router-link>
           </article>
-          <article class="bm-feature-card">
+          <article class="bm-feature-card" data-scroll-reveal>
             <span class="bm-feature-label">Client work</span>
             <h3>Give each brand its own space.</h3>
             <p>
@@ -109,7 +117,7 @@
       </section>
 
       <section class="bm-container bm-landing-tools" aria-label="Product demos">
-        <article class="bm-draft-card">
+        <article class="bm-draft-card" data-scroll-reveal>
           <div>
             <h2>Draft your next post.</h2>
             <p>Give the caption assistant a topic for a LinkedIn caption in Indonesian.</p>
@@ -196,7 +204,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import BrandHeaderPublic from '@/components/common/BrandHeaderPublic.vue';
 import InteractiveMetricChart from '@/components/common/motion/InteractiveMetricChart.vue';
 import heroImage from '@/assets/images/landing-ocean.webp';
@@ -206,6 +214,11 @@ import { useAppStore } from '@/stores/appStore';
 import type { AttributionEvent, DailyMetricPoint } from '@/types/api';
 
 const store = useAppStore();
+const landing = ref<HTMLElement | null>(null);
+const heroSection = ref<HTMLElement | null>(null);
+const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+let revealObserver: IntersectionObserver | undefined;
+let heroResetTimer: number | undefined;
 const recentEvents = ref<AttributionEvent[]>([]);
 const snapshot = ref(getAttributionSnapshot());
 const readiness = ref('');
@@ -250,6 +263,32 @@ function workspaceLink(path: string): string {
   return store.isAuthenticated ? path : '/register';
 }
 
+function reactToHeroPointer(event: PointerEvent): void {
+  const hero = heroSection.value;
+  const isTouch = event.pointerType !== 'mouse';
+  if (!hero || reducedMotion.matches || (isTouch && event.type !== 'pointerdown')) return;
+
+  const bounds = hero.getBoundingClientRect();
+  const x = (event.clientX - bounds.left) / bounds.width;
+  const y = (event.clientY - bounds.top) / bounds.height;
+  hero.style.setProperty('--bm-hero-x', x.toFixed(3));
+  hero.style.setProperty('--bm-hero-y', y.toFixed(3));
+  hero.classList.add('bm-hero-section--reacting');
+  window.clearTimeout(heroResetTimer);
+  if (isTouch) heroResetTimer = window.setTimeout(resetHero, 620);
+}
+
+function leaveHero(event: PointerEvent): void {
+  if (event.pointerType === 'mouse') resetHero();
+}
+
+function resetHero(): void {
+  window.clearTimeout(heroResetTimer);
+  heroSection.value?.classList.remove('bm-hero-section--reacting');
+  heroSection.value?.style.removeProperty('--bm-hero-x');
+  heroSection.value?.style.removeProperty('--bm-hero-y');
+}
+
 async function runAiComposer(): Promise<void> {
   if (!aiPrompt.value.trim() || aiLoading.value) return;
   aiLoading.value = true;
@@ -288,6 +327,23 @@ async function loadTelemetry(): Promise<void> {
 
 onMounted(() => {
   setTimeout(loadTelemetry, 200);
+  if (typeof IntersectionObserver === 'undefined') return;
+
+  revealObserver = new IntersectionObserver((entries, observer) => {
+    for (const entry of entries) {
+      if (!entry.isIntersecting) continue;
+      entry.target.classList.add('bm-landing-revealed');
+      observer.unobserve(entry.target);
+    }
+  });
+  landing.value?.querySelectorAll('[data-scroll-reveal]').forEach((element) => {
+    if (element.getBoundingClientRect().top >= window.innerHeight) revealObserver?.observe(element);
+  });
+});
+
+onBeforeUnmount(() => {
+  revealObserver?.disconnect();
+  resetHero();
 });
 </script>
 
@@ -311,6 +367,7 @@ onMounted(() => {
 
   position: relative;
   isolation: isolate;
+  overflow: clip;
   display: grid;
   align-items: center;
   min-height: clamp(560px, 83svh, 750px);
@@ -320,17 +377,31 @@ onMounted(() => {
 }
 
 .bm-hero-image,
+.bm-hero-section::before,
 .bm-hero-section::after {
   position: absolute;
   z-index: -1;
   inset: 0;
   width: 100%;
   height: 100%;
+  pointer-events: none;
 }
 
 .bm-hero-image {
+  z-index: -3;
   object-fit: cover;
   object-position: center 52%;
+}
+
+.bm-hero-section::before {
+  content: '';
+  z-index: -2;
+  opacity: 0;
+  background: radial-gradient(
+    ellipse min(42vw, 540px) 58% at calc(var(--bm-hero-x, 0.5) * 100%) calc(var(--bm-hero-y, 0.5) * 100%),
+    rgba(169, 154, 255, 0.36), transparent 85%
+  );
+  mix-blend-mode: screen;
 }
 
 .bm-hero-section::after {
@@ -659,6 +730,63 @@ onMounted(() => {
 .bm-footer-brand {
   font-weight: 600;
   text-decoration: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .bm-hero-image {
+    transform: translate3d(
+      calc((var(--bm-hero-x, 0.5) - 0.5) * -30px),
+      calc((var(--bm-hero-y, 0.5) - 0.5) * -22px),
+      0
+    ) scale(1.1);
+    transition: transform 520ms var(--ease-spring);
+  }
+
+  .bm-hero-section--reacting .bm-hero-image {
+    transition-duration: 280ms;
+  }
+
+  .bm-hero-section::before {
+    transition: opacity 440ms var(--ease-out-quart);
+  }
+
+  .bm-hero-section--reacting::before {
+    opacity: 1;
+    transition-duration: 180ms;
+  }
+
+  .bm-landing-revealed {
+    animation: bm-landing-reveal 570ms var(--ease-out-quart);
+  }
+
+  .bm-landing-revealed:focus-within {
+    --bm-reveal-opacity: 1;
+    --bm-reveal-offset: 0px;
+  }
+
+  @supports (view-timeline-name: --bm-hero-scroll) and (animation-range: exit 0% exit 100%) {
+    .bm-hero-section {
+      view-timeline-name: --bm-hero-scroll;
+    }
+
+    .bm-hero-image {
+      animation: bm-hero-drift auto linear both;
+      animation-timeline: --bm-hero-scroll;
+      animation-range: exit 0% exit 100%;
+    }
+  }
+}
+
+@keyframes bm-landing-reveal {
+  from {
+    opacity: var(--bm-reveal-opacity, 0.35);
+    transform: translateY(var(--bm-reveal-offset, 24px));
+  }
+}
+
+@keyframes bm-hero-drift {
+  from { translate: 0 0; }
+  to { translate: 0 64px; }
 }
 
 @media (max-width: 800px) {

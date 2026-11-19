@@ -133,7 +133,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import type { DailyMetricPoint } from '@/types/api';
 
 const props = defineProps<{
@@ -157,6 +157,14 @@ const selectedIdx = ref<number | null>(null);
 const highlightedIndex = computed(() => activeIdx.value ?? selectedIdx.value);
 const pointIndex = computed(() => highlightedIndex.value ?? props.series.length - 1);
 const activePoint = computed(() => props.series[pointIndex.value] ?? null);
+
+watch(() => props.series, (series, previous) => {
+  activeIdx.value = null;
+  if (selectedIdx.value === null) return;
+  const selectedDate = previous[selectedIdx.value]?.date;
+  const index = series.findIndex((point) => point.date === selectedDate);
+  selectedIdx.value = index < 0 ? null : index;
+});
 
 let plotObserver: ResizeObserver | undefined;
 

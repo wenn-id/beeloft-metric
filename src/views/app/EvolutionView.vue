@@ -30,6 +30,9 @@
               <option :value="14">Last 14 days</option>
               <option :value="30">Last 30 days</option>
             </select>
+            <span role="status" :class="loading && summary?.connected ? 'bm-date-status' : 'sr-only'">
+              {{ loading && summary?.connected ? 'Updating metrics…' : '' }}
+            </span>
           </div>
         </div>
       </header>
@@ -341,14 +344,14 @@
         <!-- Evolution Analytics Mode -->
         <template v-else>
           <BmStateView
-            v-if="loading"
+            v-if="loading && !summary?.connected"
             kind="loading"
             title="Loading channel analytics"
             description="Fetching metric series and top posts for the selected period."
           />
 
           <BmStateView
-            v-else-if="errorMsg"
+            v-else-if="errorMsg && !summary?.connected"
             kind="error"
             title="Unable to load analytics"
             :description="errorMsg"
@@ -368,6 +371,10 @@
           />
 
           <template v-else-if="summary">
+            <div v-if="errorMsg" class="bm-date-error">
+              <p role="alert">Could not update analytics. Showing {{ summary.periodLabel.toLowerCase() }}.</p>
+              <BmButton variant="secondary" size="sm" @click="loadSummary">Retry</BmButton>
+            </div>
             <dl class="bm-scorecard" aria-label="Key metrics">
               <div v-for="kpi in summary.kpis" :key="kpi.id" class="bm-kpi-card">
                 <dt class="bm-kpi-card__label">{{ kpi.label }}</dt>
@@ -383,7 +390,7 @@
                 <div class="bm-chart-card__head">
                   <div>
                     <h2 id="impressions-trend">Impressions and reach</h2>
-                    <p class="bm-chart-period">Daily trend · {{ summary.periodLabel }}</p>
+                    <p class="bm-chart-period" aria-live="polite">Daily trend · {{ summary.periodLabel }}</p>
                   </div>
                   <div class="bm-chart-legend">
                     <span><i class="bm-legend-swatch bm-legend-swatch--bar"></i> Impressions</span>
@@ -528,6 +535,7 @@ const adChannels: NetworkKey[] = ['metaAds', 'googleAds', 'tiktokAds'];
 
 const days = ref(30);
 const loading = ref(true);
+let latestSummaryRequest = 0;
 const errorMsg = ref('');
 const summary = ref<EvolutionSummaryResponse | null>(null);
 const realtime = ref<RealtimeOverview | null>(null);
@@ -621,17 +629,20 @@ async function loadSummary(): Promise<void> {
     return;
   }
 
+  const request = ++latestSummaryRequest;
   loading.value = true;
   errorMsg.value = '';
   try {
     const res = await apiRequest<{ data: EvolutionSummaryResponse }>(
       `/api/v2/evolution/summary?blogId=${store.activeBlogId}&network=${activeSection.value}&days=${days.value}`
     );
-    summary.value = res.data;
+    if (request === latestSummaryRequest) summary.value = res.data;
   } catch (err) {
-    errorMsg.value = err instanceof Error ? err.message : 'Unable to load summary.';
+    if (request === latestSummaryRequest) {
+      errorMsg.value = err instanceof Error ? err.message : 'Unable to load summary.';
+    }
   } finally {
-    loading.value = false;
+    if (request === latestSummaryRequest) loading.value = false;
   }
 }
 
@@ -683,9 +694,12 @@ async function handleEmptyAction(): Promise<void> {
 
 let rtTimer: ReturnType<typeof setInterval> | null = null;
 
-watch(() => [store.activeBlogId, activeSection.value], loadSummary, { immediate: true });
+watch([() => store.activeBlogId, activeSection], () => {
+  latestSummaryRequest += 1;
+  summary.value = null;
+  return loadSummary();
+}, { immediate: true });
 onMounted(() => {
-  loadSummary();
   rtTimer = setInterval(() => {
     if (activeSection.value === 'real-time' && store.activeBlogId) {
       loadSummary().catch(() => undefined);
@@ -772,6 +786,11 @@ onUnmounted(() => {
   font-weight: 500;
 }
 
+.bm-side-item:active {
+  background: var(--bm-accent-soft);
+  color: var(--bm-accent-soft-text);
+}
+
 .bm-conn-tag {
   margin-left: auto;
   padding: 1px 5px;
@@ -835,6 +854,7 @@ onUnmounted(() => {
 }
 
 .bm-date-controls {
+  position: relative;
   min-width: 134px;
 }
 
@@ -842,6 +862,28 @@ onUnmounted(() => {
   border-radius: 8px;
   font-size: 13px;
   font-weight: 500;
+}
+
+.bm-date-status {
+  position: absolute;
+  inset-block-start: calc(100% + 2px);
+  inset-inline-start: 0;
+  color: var(--bm-text-muted);
+  font-size: 11px;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.bm-date-error {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  padding: 10px 14px;
+  border: 1px solid var(--bm-danger-border);
+  border-radius: var(--radius-inputs);
+  background: var(--bm-danger-bg);
+  color: var(--bm-danger-text);
 }
 
 .bm-kpi-grid,
@@ -1170,6 +1212,30 @@ onUnmounted(() => {
 
   .bm-hashtag-form {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .bm-side-item {
+    transition: background-color 160ms var(--ease-out-quart), color 160ms var(--ease-out-quart),
+      transform 160ms var(--ease-out-quart);
+  }
+
+  .bm-side-item:active {
+    transform: translateY(1px);
+  }
+
+  @media (max-width: 960px) {
+    .bm-evo-sidebar--open {
+      animation: bm-analytics-menu-in 200ms var(--ease-out-quart);
+    }
+  }
+}
+
+@keyframes bm-analytics-menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
   }
 }
 
