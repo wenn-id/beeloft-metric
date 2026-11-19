@@ -23,24 +23,32 @@ import TeamOrgView from '@/views/app/TeamOrgView.vue';
 import AffiliationView from '@/views/app/AffiliationView.vue';
 import BackofficeView from '@/views/app/BackofficeView.vue';
 
+const editorialPublic = { public: true, editorial: true };
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
+  scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) return savedPosition;
+    if (to.hash === '#capabilities') return { el: to.hash, top: 78 };
+    if (to.meta.editorial && to.path !== from.path) return { top: 0 };
+    return false;
+  },
   routes: [
     // Public & Auth
-    { path: '/', component: LandingView, meta: { public: true } },
-    { path: '/pricing', component: PricingView, meta: { public: true } },
-    { path: '/login', component: LoginView, meta: { public: true } },
-    { path: '/login/:variant', component: LoginView, meta: { public: true } },
-    { path: '/register', component: RegisterView, meta: { public: true } },
-    { path: '/activate-user', component: LoginView, meta: { public: true } },
-    { path: '/activate-collaborator', component: LoginView, meta: { public: true } },
-    { path: '/new-password', component: LoginView, meta: { public: true } },
+    { path: '/', component: LandingView, meta: editorialPublic },
+    { path: '/pricing', component: PricingView, meta: editorialPublic },
+    { path: '/login', component: LoginView, meta: editorialPublic },
+    { path: '/login/:variant', component: LoginView, meta: editorialPublic },
+    { path: '/register', component: RegisterView, meta: editorialPublic },
+    { path: '/activate-user', component: LoginView, meta: editorialPublic },
+    { path: '/activate-collaborator', component: LoginView, meta: editorialPublic },
+    { path: '/new-password', component: LoginView, meta: editorialPublic },
     { path: '/logout', redirect: '/login' },
-    { path: '/oauth/:action', component: LoginView, meta: { public: true } },
-    { path: '/legal', component: LegalView, meta: { public: true } },
+    { path: '/oauth/:action', component: LoginView, meta: editorialPublic },
+    { path: '/legal', component: LegalView, meta: editorialPublic },
     { path: '/bio/:slug', component: PublicBioView, meta: { public: true } },
     { path: '/public/smartlink/:slug', component: PublicBioView, meta: { public: true } },
-    { path: '/reporting/studio/public/:id', component: StudioPublicView, meta: { public: true } },
+    { path: '/reporting/studio/public/:id', component: StudioPublicView, meta: editorialPublic },
 
     // Analytics / Evolution
     { path: '/evolution', redirect: '/evolution/brandSummary' },
@@ -139,7 +147,8 @@ router.beforeEach(async (to) => {
   return true;
 });
 
-router.afterEach((to) => {
+router.afterEach((to, _from, failure) => {
+  if (!failure) useAppStore().applyPageTheme(to.meta.public && !to.meta.editorial ? 'light' : 'dark');
   trackAttributionEvent('route_view', to.fullPath);
 });
 

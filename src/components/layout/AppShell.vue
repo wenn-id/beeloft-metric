@@ -6,9 +6,8 @@
       <div class="bm-topbar__inner">
         <div class="bm-topbar__left">
           <router-link :to="brandUrl('/evolution/brandSummary')" class="bm-brand-link">
-            <span class="bm-brand-text">
-              <strong class="bm-shell-wordmark">BeeloftMetric</strong>
-            </span>
+            <span class="bm-shell-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+            <strong class="bm-shell-wordmark">BeeloftMetric</strong>
           </router-link>
 
           <nav class="bm-primary-nav" aria-label="Primary sections">
@@ -22,9 +21,6 @@
               {{ item.label }}
             </router-link>
           </nav>
-        </div>
-
-        <div class="bm-topbar__right">
           <button
             type="button"
             class="bm-mobile-menu-btn bm-topbar-btn"
@@ -33,7 +29,9 @@
           >
             Menu
           </button>
+        </div>
 
+        <div class="bm-topbar__right">
           <button
             type="button"
             class="bm-topbar-btn bm-cmd-trigger bm-transition"
@@ -456,6 +454,7 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   background: var(--bm-bg);
+  color: var(--bm-text);
 }
 
 .bm-topbar {
@@ -463,21 +462,20 @@ onUnmounted(() => {
   top: 0;
   z-index: 40;
   background: var(--bm-chrome-bg);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(16px);
   color: var(--bm-chrome-text);
   border-bottom: 1px solid var(--bm-divider);
 }
 
 .bm-topbar__inner {
-  max-width: 1280px;
+  max-width: 1440px;
   margin: 0 auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 0.75rem;
   min-height: 68px;
-  padding: 8px 20px;
+  padding: 8px clamp(20px, 2.5vw, 36px);
 }
 
 .bm-topbar__left {
@@ -497,44 +495,53 @@ onUnmounted(() => {
 }
 
 .bm-shell-wordmark {
-  font-family: var(--font-signifier);
-  font-weight: 400;
-  font-size: 22px;
-  letter-spacing: -0.02em;
-}
-
-.bm-brand-text {
-  display: flex;
-  flex-direction: column;
-  line-height: 1.05;
-}
-
-.bm-brand-text strong {
-  font-weight: 500;
+  font-weight: 650;
   font-size: 16px;
+  letter-spacing: -0.035em;
 }
 
-.bm-logo-note {
-  font-size: 0.5625rem;
-  color: var(--bm-chrome-muted);
-  white-space: nowrap;
+.bm-shell-mark {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 3px;
+  padding-bottom: 8px;
+  border-radius: 8px;
+  background: var(--bm-brand);
+}
+
+.bm-shell-mark i {
+  width: 3px;
+  height: 6px;
+  border-radius: 1px;
+  background: var(--bm-brand-text);
+}
+
+.bm-shell-mark i:nth-child(2) {
+  height: 10px;
+}
+
+.bm-shell-mark i:last-child {
+  height: 14px;
 }
 
 .bm-primary-nav {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 2px;
 }
 
 .bm-nav-item {
   display: inline-flex;
   align-items: center;
   min-height: 44px;
-  padding: 0 12px;
-  border-radius: var(--radius-buttons);
+  padding: 0 10px;
+  border-radius: 8px;
   text-decoration: none;
   color: var(--bm-chrome-muted);
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 400;
   white-space: nowrap;
 }
@@ -562,12 +569,12 @@ onUnmounted(() => {
   display: inline-flex;
   align-items: center;
   min-height: 44px;
-  padding: 0 14px;
-  border-radius: var(--radius-buttons);
-  background: var(--bm-accent-soft);
-  color: var(--bm-accent-soft-text);
-  border: 1px solid rgba(140, 47, 20, 0.22);
-  font-size: 13.5px;
+  padding: 0 10px;
+  border-radius: 8px;
+  background: var(--bm-subtle);
+  color: var(--bm-text);
+  border: 1px solid var(--bm-divider);
+  font-size: 12px;
   font-weight: 600;
   text-decoration: none;
   white-space: nowrap;
@@ -588,13 +595,13 @@ onUnmounted(() => {
   align-items: center;
   gap: 0.375rem;
   min-height: 44px;
-  padding: 0 14px;
-  border-radius: var(--radius-buttons);
+  padding: 0 12px;
+  border-radius: 8px;
   border: 1px solid var(--bm-divider);
   background: transparent;
   color: var(--bm-chrome-text);
-  font-size: 14px;
-  font-weight: 400;
+  font-size: 13px;
+  font-weight: 500;
   white-space: nowrap;
 }
 
@@ -625,9 +632,9 @@ onUnmounted(() => {
   min-width: 20px;
   height: 20px;
   padding: 0 6px;
-  border-radius: var(--radius-buttons);
-  background: var(--color-blush-peach);
-  color: var(--color-sienna-brown);
+  border-radius: 999px;
+  background: var(--bm-surface);
+  color: var(--bm-text);
   font-size: 12px;
   font-weight: 500;
 }
@@ -737,6 +744,11 @@ onUnmounted(() => {
   max-width: 1240px;
   margin: 0 auto;
   padding: 32px 20px;
+}
+
+:is(.bm-shell--analytics, .bm-shell--editorial) .bm-main {
+  max-width: 1440px;
+  padding-inline: clamp(16px, 2.5vw, 36px);
 }
 
 .bm-drawer-backdrop {
@@ -891,7 +903,7 @@ onUnmounted(() => {
   font-weight: 500;
 }
 
-@media (max-width: 1140px) {
+@media (max-width: 1280px) {
   .bm-primary-nav,
   .bm-plan-pill,
   .bm-cmd-trigger {
@@ -905,11 +917,37 @@ onUnmounted(() => {
 
 @media (max-width: 640px) {
   .bm-topbar__inner {
+    display: grid;
+    gap: 6px;
     padding: 8px 12px;
   }
 
+  .bm-topbar__left {
+    justify-content: space-between;
+  }
+
+  .bm-topbar__right {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) repeat(3, auto);
+  }
+
+  .bm-topbar-btn {
+    padding-inline: 10px;
+  }
+
+  .bm-brand-btn {
+    width: 100%;
+    justify-content: space-between;
+  }
+
   .bm-brand-btn__name {
-    max-width: 90px;
+    max-width: none;
+  }
+
+  .bm-popover {
+    left: 0;
+    right: auto;
+    max-width: calc(100vw - 24px);
   }
 
   .bm-main {

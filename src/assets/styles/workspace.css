@@ -1,0 +1,127 @@
+.bm-workspace-page {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.bm-workspace-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px 24px;
+  margin-bottom: 4px;
+}
+
+.bm-workspace-head h1 {
+  font-size: clamp(2.65rem, 5.4vw, 4.75rem);
+  font-weight: 300;
+  line-height: 1.02;
+  letter-spacing: -0.05em;
+  overflow-wrap: anywhere;
+}
+
+.bm-workspace-context {
+  margin-bottom: 8px;
+  color: var(--bm-text-muted);
+  font-family: var(--font-data);
+  font-size: 11px;
+  letter-spacing: 0.035em;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+}
+
+.bm-workspace-head .bm-page-sub {
+  max-width: 66ch;
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.bm-workspace-page .bm-page-sub {
+  color: var(--bm-text-muted);
+}
+
+.bm-workspace-page :is(section, article, aside) > h2 {
+  font-weight: 300;
+  letter-spacing: -0.025em;
+}
+
+.bm-workspace-page .bm-table th {
+  background: var(--bm-subtle);
+  color: var(--bm-text-muted);
+  font-family: var(--font-data);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.025em;
+  text-transform: uppercase;
+}
+
+.bm-workspace-page :is(.bm-input, .bm-select, .bm-textarea),
+.bm-modal :is(.bm-input, .bm-select, .bm-textarea) {
+  box-shadow: none;
+}
+
+.bm-modal .bm-modal-actions {
+  flex-wrap: wrap;
+}
+
+.bm-scorecard {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 132px), 1fr));
+  gap: 12px;
+  margin: 0;
+}
+
+.bm-scorecard .bm-kpi-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+  padding: clamp(13px, 1.9vw, 26px);
+  border: 1px solid var(--bm-divider);
+  border-radius: var(--radius-cards);
+  background: var(--bm-elevated);
+}
+
+.bm-scorecard .bm-kpi-card:first-child {
+  --bm-text: var(--bm-category-text);
+  --bm-text-muted: var(--bm-category-muted);
+
+  border-color: transparent;
+  background: var(--bm-category-bg);
+  color: var(--bm-text);
+}
+
+.bm-scorecard dd {
+  margin: 0;
+}
+
+.bm-scorecard .bm-kpi-card__label {
+  color: var(--bm-text-muted);
+  font-weight: 500;
+  font-family: var(--font-data);
+  font-size: 11px;
+  text-transform: uppercase;
+}
+
+.bm-scorecard .bm-kpi-card__value {
+  font-family: var(--font-signifier);
+  font-size: clamp(1.55rem, 3.1vw, 2.9rem);
+  font-weight: 300;
+  line-height: 1.15;
+  letter-spacing: -0.035em;
+  overflow-wrap: anywhere;
+}
+
+.bm-scorecard .bm-kpi-card__delta {
+  font-weight: 500;
+  color: var(--bm-text-muted);
+  font-size: 12px;
+}
+
+@media (max-width: 600px) {
+  .bm-scorecard {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

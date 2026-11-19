@@ -1,9 +1,10 @@
 <template>
-  <div class="bm-auth-page">
-    <BrandHeaderPublic />
+  <div class="bm-public-page bm-auth-page">
+    <a href="#auth-main" class="bm-skip-link">Skip to content</a>
+    <BrandHeaderPublic class="bm-pub-header--editorial" />
 
-    <main class="bm-auth-main">
-      <div class="bm-auth-card bm-card">
+    <main id="auth-main" class="bm-auth-main" tabindex="-1">
+      <div class="bm-auth-card">
         <h1>Start your 7-day free trial</h1>
         <p class="bm-auth-sub">
           Every new account unlocks 7 days of full Starter access (up to 5 brands, 2,000 scheduled
@@ -51,8 +52,9 @@
           </div>
 
           <p v-if="selectedPlan && selectedPlan !== 'FREE'" class="bm-plan-note">
-            Selected tier: <strong>{{ selectedPlan }}</strong>. Your workspace starts immediately and
-            proceeds to subscription checkout.
+            Selected plan <strong>{{ selectedPlan.replaceAll('_', ' ').toLowerCase() }}</strong>.
+            <template v-if="selectedPlan === 'STARTER'">Your trial starts when you create your workspace.</template>
+            <template v-else>Continue to plan settings after creating your workspace.</template>
           </p>
 
           <p v-if="errorMsg" class="bm-auth-error" role="alert">{{ errorMsg }}</p>
@@ -130,70 +132,3 @@ async function submitRegister(): Promise<void> {
   }
 }
 </script>
-
-<style scoped>
-.bm-auth-page {
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-}
-
-.bm-auth-main {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem 1rem;
-}
-
-.bm-auth-card {
-  width: min(460px, 100%);
-  padding: 2rem 1.75rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.bm-auth-card h1 {
-  font-size: 1.75rem;
-}
-
-.bm-auth-sub {
-  color: var(--bm-text-muted);
-  font-size: 0.9375rem;
-}
-
-.bm-auth-form {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.bm-plan-note {
-  padding: 0.625rem 0.75rem;
-  border-radius: var(--bm-radius-md);
-  background: var(--color-blush-peach);
-  color: var(--color-sienna-brown);
-  font-size: 0.875rem;
-}
-
-.bm-auth-error {
-  padding: 0.625rem 0.75rem;
-  border-radius: var(--bm-radius-md);
-  background: var(--bm-danger-bg);
-  color: var(--bm-danger-text);
-  border: 1px solid var(--bm-danger-border);
-  font-size: 0.875rem;
-  font-weight: 500;
-}
-
-.bm-auth-foot {
-  font-size: 0.875rem;
-  color: var(--bm-text-muted);
-}
-
-.bm-auth-foot a {
-  color: var(--bm-accent);
-  font-weight: 500;
-}
-</style>

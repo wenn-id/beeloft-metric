@@ -1,6 +1,6 @@
 <template>
-  <div class="bm-public-studio">
-    <BrandHeaderPublic />
+  <div class="bm-public-page">
+    <BrandHeaderPublic class="bm-pub-header--editorial" />
     <main class="bm-ps-main">
       <BmStateView
         v-if="loading"
@@ -17,20 +17,20 @@
         @action="router.push('/')"
       />
       <template v-else>
-        <div class="bm-ps-head">
+        <header class="bm-workspace-head">
           <div>
-            <BmBadge tone="accent">Shared Reporting Studio Deck</BmBadge>
+            <p class="bm-workspace-context">Shared Reporting Studio Deck</p>
             <h1>{{ report.title }}</h1>
             <p class="bm-ps-sub">Last updated: {{ report.updatedAt.slice(0, 16).replace('T', ' ') }}</p>
           </div>
           <router-link
             v-if="store.isAuthenticated"
             :to="`/reporting/studio?blogId=${report.blogId}`"
-            class="bm-edit-link"
+            class="bm-public-button"
           >
             Edit in Reporting Studio
           </router-link>
-        </div>
+        </header>
 
         <div class="bm-ps-blocks">
           <section v-for="blk in report.blocks" :key="blk.id" class="bm-card bm-ps-block">
@@ -90,37 +90,15 @@ onMounted(async () => {
 .bm-ps-main {
   max-width: 960px;
   margin: 0 auto;
-  padding: 2rem 1.25rem;
+  padding: clamp(32px, 5vw, 68px) clamp(18px, 3vw, 36px);
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
 }
 
-.bm-ps-head {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: flex-end;
-  gap: 1rem;
-}
-
-.bm-ps-head h1 {
-  margin-top: 0.5rem;
-}
-
 .bm-ps-sub {
+  margin-top: 10px;
   color: var(--bm-text-muted);
-}
-
-.bm-edit-link {
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px;
-  padding: 0 1rem;
-  border: 1px solid var(--bm-control-border);
-  border-radius: var(--bm-radius-md);
-  text-decoration: none;
-  font-weight: 700;
 }
 
 .bm-ps-blocks {
@@ -137,11 +115,15 @@ onMounted(async () => {
 
 .bm-ps-block__top {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
+  gap: 8px;
 }
 
 .bm-ps-text {
   color: var(--bm-text-muted);
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
 }
 </style>

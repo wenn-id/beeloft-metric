@@ -1,13 +1,52 @@
 <template>
-  <AppShell>
+  <AppShell class="bm-shell--analytics">
     <div class="bm-evo-layout">
-      <aside class="bm-evo-sidebar bm-card" aria-label="Analytics sections">
+      <header class="bm-page-head">
+        <div>
+          <div class="bm-page-context">
+            <span>{{ brandName }}</span>
+            <span v-if="store.activeBrand?.isSample" class="bm-demo-label">Sample data</span>
+          </div>
+          <h1 ref="pageTitle" tabindex="-1">{{ pageHeading }}</h1>
+        </div>
+
+        <div class="bm-page-controls">
+          <BmButton
+            class="bm-evo-sidebar-toggle"
+            variant="secondary"
+            :aria-expanded="mobileSectionsOpen"
+            aria-controls="analytics-sections"
+            @click="mobileSectionsOpen = !mobileSectionsOpen"
+          >
+            Analytics sections
+          </BmButton>
+          <div
+            v-if="activeSection !== 'hashtag-tracker' && activeSection !== 'competitors' && activeSection !== 'real-time'"
+            class="bm-date-controls"
+          >
+            <label for="evo-range" class="sr-only">Date range</label>
+            <select id="evo-range" v-model.number="days" class="bm-select" @change="loadSummary">
+              <option :value="7">Last 7 days</option>
+              <option :value="14">Last 14 days</option>
+              <option :value="30">Last 30 days</option>
+            </select>
+          </div>
+        </div>
+      </header>
+
+      <aside
+        id="analytics-sections"
+        class="bm-evo-sidebar bm-card"
+        :class="{ 'bm-evo-sidebar--open': mobileSectionsOpen }"
+        aria-label="Analytics sections"
+      >
         <div class="bm-sidebar-group">
           <p class="bm-sidebar-heading">Overview</p>
           <button
             type="button"
             class="bm-side-item"
             :class="{ 'bm-side-item--active': activeSection === 'brandSummary' }"
+            :aria-current="activeSection === 'brandSummary' ? 'page' : undefined"
             @click="selectSection('brandSummary')"
           >
             Brand Summary
@@ -16,6 +55,7 @@
             type="button"
             class="bm-side-item"
             :class="{ 'bm-side-item--active': activeSection === 'web' }"
+            :aria-current="activeSection === 'web' ? 'page' : undefined"
             @click="selectSection('web')"
           >
             <NetworkBadge network="web" /> Website & Blog
@@ -24,6 +64,7 @@
             type="button"
             class="bm-side-item"
             :class="{ 'bm-side-item--active': activeSection === 'real-time' }"
+            :aria-current="activeSection === 'real-time' ? 'page' : undefined"
             @click="selectSection('real-time')"
           >
             <NetworkBadge network="web" /> Real-Time Web
@@ -38,6 +79,7 @@
             type="button"
             class="bm-side-item"
             :class="{ 'bm-side-item--active': activeSection === net }"
+            :aria-current="activeSection === net ? 'page' : undefined"
             @click="selectSection(net)"
           >
             <NetworkBadge :network="net" />
@@ -52,6 +94,7 @@
             type="button"
             class="bm-side-item"
             :class="{ 'bm-side-item--active': activeSection === 'gmb' }"
+            :aria-current="activeSection === 'gmb' ? 'page' : undefined"
             @click="selectSection('gmb')"
           >
             <NetworkBadge network="gmb" /> Google Business Profile
@@ -62,6 +105,7 @@
             type="button"
             class="bm-side-item"
             :class="{ 'bm-side-item--active': activeSection === adNet }"
+            :aria-current="activeSection === adNet ? 'page' : undefined"
             @click="selectSection(adNet)"
           >
             <NetworkBadge :network="adNet" />
@@ -76,6 +120,7 @@
             type="button"
             class="bm-side-item"
             :class="{ 'bm-side-item--active': activeSection === 'competitors' }"
+            :aria-current="activeSection === 'competitors' ? 'page' : undefined"
             @click="selectSection('competitors')"
           >
             Competitors
@@ -84,6 +129,7 @@
             type="button"
             class="bm-side-item"
             :class="{ 'bm-side-item--active': activeSection === 'hashtag-tracker' }"
+            :aria-current="activeSection === 'hashtag-tracker' ? 'page' : undefined"
             @click="selectSection('hashtag-tracker')"
           >
             Hashtag Tracker
@@ -98,27 +144,6 @@
       </aside>
 
       <section class="bm-evo-content">
-        <div class="bm-page-head">
-          <div>
-            <h1>{{ pageHeading }}</h1>
-            <p class="bm-page-sub">
-              Brand: <strong>{{ store.activeBrand?.name || 'Loading...' }}</strong>
-            </p>
-          </div>
-
-          <div
-            v-if="activeSection !== 'hashtag-tracker' && activeSection !== 'competitors' && activeSection !== 'real-time'"
-            class="bm-date-controls"
-          >
-            <label for="evo-range" class="sr-only">Date range</label>
-            <select id="evo-range" v-model.number="days" class="bm-select" @change="loadSummary">
-              <option :value="7">Last 7 days</option>
-              <option :value="14">Last 14 days</option>
-              <option :value="30">Last 30 days</option>
-            </select>
-          </div>
-        </div>
-
         <!-- Real-Time Web Telemetry Mode -->
         <template v-if="activeSection === 'real-time'">
           <BmStateView
@@ -155,7 +180,7 @@
             <div class="bm-rt-grid">
               <section class="bm-card bm-posts-card">
                 <h2>Top Active Pages</h2>
-                <table class="bm-table">
+                <table class="bm-table bm-table--realtime">
                   <thead>
                     <tr>
                       <th>Path</th>
@@ -172,7 +197,7 @@
               </section>
               <section class="bm-card bm-posts-card">
                 <h2>Referrers & Countries</h2>
-                <table class="bm-table">
+                <table class="bm-table bm-table--realtime">
                   <thead>
                     <tr>
                       <th>Source / Country</th>
@@ -343,34 +368,63 @@
           />
 
           <template v-else-if="summary">
-            <div class="bm-kpi-grid">
-              <TiltSurface v-for="kpi in summary.kpis" :key="kpi.id" class="bm-artifact bm-kpi-card">
-                <p class="bm-kpi-card__label">{{ kpi.label }}</p>
-                <p class="bm-kpi-card__value tabular-nums">
+            <dl class="bm-scorecard" aria-label="Key metrics">
+              <div v-for="kpi in summary.kpis" :key="kpi.id" class="bm-kpi-card">
+                <dt class="bm-kpi-card__label">{{ kpi.label }}</dt>
+                <dd class="bm-kpi-card__value tabular-nums">
                   <AnimatedNumber :value="kpi.value" />
-                </p>
-                <p class="bm-kpi-card__delta">{{ kpi.deltaText }}</p>
-              </TiltSurface>
-            </div>
-
-            <section class="bm-artifact bm-chart-card" aria-label="Impressions and Reach trend chart">
-              <div class="bm-chart-card__head">
-                <h2>
-                  How did Impressions and Reach trend per day ({{ summary.periodLabel }})?
-                </h2>
-                <div class="bm-chart-legend">
-                  <span><i class="bm-legend-swatch bm-legend-swatch--bar"></i> Impressions</span>
-                  <span><i class="bm-legend-swatch bm-legend-swatch--line"></i> Reach</span>
-                </div>
+                </dd>
+                <dd class="bm-kpi-card__delta">{{ kpi.deltaText }}</dd>
               </div>
+            </dl>
 
-              <InteractiveMetricChart :series="summary.series" />
-            </section>
+            <div class="bm-performance-grid" :class="{ 'bm-performance-grid--channels': showChannelOverview }">
+              <section class="bm-chart-card" aria-labelledby="impressions-trend">
+                <div class="bm-chart-card__head">
+                  <div>
+                    <h2 id="impressions-trend">Impressions and reach</h2>
+                    <p class="bm-chart-period">Daily trend · {{ summary.periodLabel }}</p>
+                  </div>
+                  <div class="bm-chart-legend">
+                    <span><i class="bm-legend-swatch bm-legend-swatch--bar"></i> Impressions</span>
+                    <span><i class="bm-legend-swatch bm-legend-swatch--line"></i> Reach</span>
+                  </div>
+                </div>
+
+                <InteractiveMetricChart :series="summary.series" />
+              </section>
+
+              <section v-if="showChannelOverview" class="bm-channels-card" aria-labelledby="connected-channels">
+                <div class="bm-channels-head">
+                  <h2 id="connected-channels">Connected channels</h2>
+                  <span class="bm-channel-count tabular-nums">{{ connectedChannels.length }}</span>
+                </div>
+                <ul class="bm-channel-list">
+                  <li v-for="channel in connectedChannels" :key="channel.network">
+                    <router-link
+                      :to="{ path: `/evolution/${channel.network}`, query: { blogId: store.activeBlogId } }"
+                      class="bm-channel-link"
+                    >
+                      <NetworkBadge :network="channel.network" />
+                      <span>{{ channel.label }}</span>
+                    </router-link>
+                  </li>
+                </ul>
+                <router-link
+                  :to="{ path: '/brands/connections', query: { blogId: store.activeBlogId } }"
+                  class="bm-manage-channels"
+                >
+                  Manage connections
+                </router-link>
+              </section>
+            </div>
 
             <section class="bm-card bm-posts-card">
               <div class="bm-posts-card__head">
-                <h2>Top performing posts to review</h2>
-                <span class="bm-posts-count tabular-nums">{{ summary.topPosts.length }} items</span>
+                <h2>Top performing posts</h2>
+                <span class="bm-posts-count tabular-nums">
+                  {{ summary.topPosts.length }} {{ summary.topPosts.length === 1 ? 'post' : 'posts' }}
+                </span>
               </div>
 
               <BmStateView
@@ -383,14 +437,14 @@
                 @action="router.push(`/planner?blogId=${store.activeBlogId}`)"
               />
 
-              <div v-else class="bm-table-scroll">
-                <table class="bm-table">
+              <div v-else class="bm-table-scroll" role="region" aria-label="Top performing posts table" tabindex="0">
+                <table class="bm-table bm-posts-table">
                   <thead>
                     <tr>
-                      <th>Published</th>
+                      <th>Post</th>
                       <th>Channel</th>
+                      <th>Published</th>
                       <th>Format</th>
-                      <th>Post Summary</th>
                       <th>Reach</th>
                       <th>Engagement</th>
                       <th>Clicks</th>
@@ -398,10 +452,10 @@
                   </thead>
                   <tbody>
                     <tr v-for="post in summary.topPosts" :key="post.id">
-                      <td class="tabular-nums">{{ post.publishedAt.slice(0, 10) }}</td>
-                      <td><NetworkBadge :network="post.network" /></td>
-                      <td>{{ post.format }}</td>
                       <td>{{ post.title }}</td>
+                      <td><NetworkBadge :network="post.network" /></td>
+                      <td class="tabular-nums">{{ post.publishedAt.slice(0, 10) }}</td>
+                      <td>{{ post.format }}</td>
                       <td class="tabular-nums">{{ post.reach.toLocaleString() }}</td>
                       <td class="tabular-nums">{{ post.engagementRate }}%</td>
                       <td class="tabular-nums">{{ post.clicks.toLocaleString() }}</td>
@@ -418,7 +472,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, defineAsyncComponent, h, onMounted, onUnmounted, ref, watch } from 'vue';
+import { computed, defineAsyncComponent, h, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import AppShell from '@/components/layout/AppShell.vue';
 import BmBadge from '@/components/common/designSystem/atoms/BmBadge.vue';
@@ -454,6 +508,8 @@ import type {
 const route = useRoute();
 const router = useRouter();
 const store = useAppStore();
+const mobileSectionsOpen = ref(false);
+const pageTitle = ref<HTMLElement | null>(null);
 
 const socialChannels: NetworkKey[] = [
   'instagram',
@@ -493,6 +549,16 @@ const activeSection = computed(() => {
   return net;
 });
 
+const brandName = computed(() => {
+  const brand = store.activeBrand;
+  if (!brand) return 'Loading…';
+  return brand.isSample ? brand.name.replace(/\s*\[SAMPLE DATA\]$/, '') : brand.name;
+});
+const connectedChannels = computed(() => store.connections.filter((channel) => channel.connected));
+const showChannelOverview = computed(
+  () => activeSection.value === 'brandSummary' && connectedChannels.value.length > 0
+);
+
 function channelLabel(net: string): string {
   const found = store.connections.find((c) => c.network === net);
   if (found) return found.label;
@@ -514,6 +580,8 @@ function isConnected(net: NetworkKey): boolean {
 }
 
 async function selectSection(sec: string): Promise<void> {
+  const restoreFocus = mobileSectionsOpen.value;
+  mobileSectionsOpen.value = false;
   let path = `/evolution/${sec}`;
   if (sec === 'real-time') path = '/evolution/web/real-time';
   if (sec === 'competitors') path = '/evolution/competitors';
@@ -522,6 +590,10 @@ async function selectSection(sec: string): Promise<void> {
     path,
     query: { blogId: String(store.activeBlogId) }
   });
+  if (restoreFocus) {
+    await nextTick();
+    pageTitle.value?.focus();
+  }
 }
 
 async function loadSummary(): Promise<void> {
@@ -628,201 +700,373 @@ onUnmounted(() => {
 <style scoped>
 .bm-evo-layout {
   display: grid;
-  grid-template-columns: 245px minmax(0, 1fr);
-  gap: 1.25rem;
+  grid-template:
+    'sidebar header' max-content
+    'sidebar content' 1fr / 216px minmax(0, 1fr);
+  gap: 24px;
   align-items: start;
 }
 
+.bm-page-controls > .bm-evo-sidebar-toggle {
+  display: none;
+}
+
 .bm-evo-sidebar {
-  padding: 0.875rem;
+  grid-area: sidebar;
+  padding: 14px 12px;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 10px;
+  border: 1px solid var(--bm-divider);
+  border-radius: var(--radius-cards);
+  box-shadow: none;
 }
 
 .bm-sidebar-group {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 1px;
+}
+
+.bm-sidebar-group + .bm-sidebar-group {
+  padding-top: 10px;
+  border-top: 1px solid var(--bm-divider);
 }
 
 .bm-sidebar-heading {
-  font-size: 0.75rem;
-  font-weight: 700;
+  padding: 3px 8px 5px;
   color: var(--bm-text-muted);
+  font-family: var(--font-data);
+  font-size: 10px;
+  font-weight: 500;
   text-transform: uppercase;
-  padding: 0.25rem 0.5rem;
+  letter-spacing: 0.055em;
 }
 
 .bm-side-item {
-  width: 100%;
-  min-height: 44px;
-  padding: 0.375rem 0.625rem;
-  border-radius: var(--bm-radius-md);
-  border: 1px solid transparent;
-  background: transparent;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 6px;
+  width: 100%;
+  min-height: 44px;
+  padding: 5px 8px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--bm-text-muted);
   text-align: left;
   text-decoration: none;
-  font-size: 0.875rem;
-  font-weight: 600;
+  font-size: 13px;
+  font-weight: 500;
 }
 
 .bm-side-item:hover {
   background: var(--bm-subtle);
+  color: var(--bm-text);
 }
 
-.bm-side-item--active {
-  background: var(--bm-subtle);
-  border-color: var(--bm-accent);
+.bm-side-item--active,
+.bm-side-item--active:hover {
+  background: var(--bm-surface);
+  color: var(--bm-text);
+  font-weight: 500;
 }
 
 .bm-conn-tag {
   margin-left: auto;
-  font-size: 0.6875rem;
-  padding: 2px 6px;
-  border-radius: var(--bm-radius-sm);
-  background: var(--bm-accent-soft);
-  color: var(--bm-accent-soft-text);
-  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: var(--bm-success-bg);
+  color: var(--bm-success-text);
+  font-size: 10px;
+  font-weight: 600;
 }
 
 .bm-evo-content {
+  grid-area: content;
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 20px;
 }
 
 .bm-page-head {
+  grid-area: header;
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
   align-items: flex-end;
-  gap: 1rem;
+  gap: 14px;
 }
 
 .bm-page-head h1 {
-  font-size: clamp(1.375rem, 2.5vw, 1.875rem);
+  margin-top: 9px;
+  font-family: var(--font-signifier);
+  font-size: clamp(2.75rem, 5.6vw, 5rem);
+  line-height: 1;
+  font-weight: 300;
+  letter-spacing: -0.045em;
+  overflow-wrap: anywhere;
 }
 
-.bm-page-sub {
-  color: var(--bm-text-muted);
-  font-size: 0.9375rem;
-}
-
-.bm-date-controls {
-  min-width: 170px;
-}
-
-.bm-sample-banner {
+.bm-page-context,
+.bm-page-controls {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 10px;
-  padding: 16px 20px;
-  font-size: 14px;
-  font-weight: 400;
+  gap: 8px;
 }
 
-.bm-kpi-grid {
+.bm-page-context {
+  color: var(--bm-text-muted);
+  font-family: var(--font-data);
+  font-size: 11px;
+  letter-spacing: 0.045em;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+}
+
+.bm-demo-label {
+  padding: 2px 7px;
+  border: 1px solid var(--bm-divider);
+  border-radius: 999px;
+  background: var(--bm-subtle);
+  font-size: 10px;
+}
+
+.bm-date-controls {
+  min-width: 134px;
+}
+
+.bm-date-controls .bm-select {
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.bm-kpi-grid,
+.bm-rt-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr));
   gap: 16px;
 }
 
 .bm-rt-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
 }
 
-.bm-kpi-card {
-  padding: 18px 20px;
+.bm-rt-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 12px;
+}
+
+.bm-kpi-grid .bm-kpi-card {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  padding: 18px 20px;
 }
 
-.bm-kpi-card__label {
-  font-size: 14px;
-  font-weight: 400;
+.bm-kpi-grid .bm-kpi-card__label {
   color: var(--bm-text-muted);
+  font-size: 13px;
+  font-weight: 500;
 }
 
-.bm-kpi-card__value {
+.bm-kpi-grid .bm-kpi-card__value {
   font-size: 26px;
   font-weight: 500;
   line-height: 1.15;
 }
 
-.bm-kpi-card__delta {
-  font-size: 13px;
+.bm-kpi-grid .bm-kpi-card__delta {
   color: var(--bm-accent);
+  font-size: 13px;
   font-weight: 500;
 }
 
-.bm-chart-card,
-.bm-posts-card,
-.bm-hashtag-form-wrap {
-  padding: 1.25rem;
+.bm-performance-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
 }
 
+@media (min-width: 1180px) {
+  .bm-performance-grid--channels {
+    grid-template-columns: minmax(0, 1fr) 230px;
+  }
+}
+
+.bm-chart-card {
+  --bm-elevated: #191a1b;
+  --bm-surface: #252627;
+  --bm-text: #f5f5f7;
+  --bm-text-muted: #b5b5b7;
+  --bm-divider: #3f4041;
+  --bm-border-soft: var(--bm-divider);
+  --bm-accent: #d1c9ff;
+  --bm-accent-soft: #2e2e2e;
+  --bm-accent-soft-text: #f5f5f7;
+  --bm-chart-bar: #d1c9ff;
+  --bm-chart-bar-muted: #696a77;
+  --bm-chart-line: #00b3dd;
+
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: clamp(16px, 2.2vw, 32px);
+  border: 1px solid var(--bm-divider);
+  border-radius: var(--radius-cards);
+  background: var(--bm-elevated);
+  color: var(--bm-text);
+  color-scheme: dark;
+}
+
+.bm-chart-card :deep(.bm-ic-wrap) {
+  flex: 1;
+  justify-content: space-between;
+}
+
+.bm-chart-period {
+  margin-top: 4px;
+  color: var(--bm-text-muted);
+  font-family: var(--font-data);
+  font-size: 11px;
+}
+
+.bm-channels-card,
+.bm-posts-card,
+.bm-hashtag-form-wrap {
+  min-width: 0;
+  padding: clamp(16px, 1.7vw, 24px);
+  border: 1px solid var(--bm-divider);
+  border-radius: var(--radius-cards);
+  background: var(--bm-elevated);
+  box-shadow: none;
+}
+
+.bm-channels-card {
+  padding: 16px;
+}
+
+.bm-channels-head,
 .bm-chart-card__head,
 .bm-posts-card__head {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
-  gap: 0.75rem;
-  margin-bottom: 1rem;
+  gap: 12px;
+  margin-bottom: 14px;
 }
 
+.bm-channels-head h2,
 .bm-chart-card__head h2,
-.bm-posts-card__head h2 {
-  font-size: 1.0625rem;
+.bm-posts-card h2,
+.bm-hashtag-form-wrap h2 {
+  font-family: var(--font-signifier);
+  font-size: 22px;
+  font-weight: 300;
+  letter-spacing: -0.025em;
+}
+
+.bm-chart-card__head h2 {
+  font-size: clamp(1.75rem, 2.65vw, 2.375rem);
+}
+
+.bm-channels-head {
+  flex-wrap: nowrap;
+  gap: 8px;
 }
 
 .bm-chart-legend {
   display: flex;
-  gap: 1rem;
-  font-size: 0.8125rem;
-  font-weight: 600;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  color: var(--bm-text-muted);
+  font-size: 12px;
 }
 
 .bm-chart-legend span {
   display: inline-flex;
   align-items: center;
-  gap: 0.375rem;
+  gap: 6px;
 }
 
 .bm-legend-swatch {
   display: inline-block;
-  width: 12px;
-  height: 12px;
-  border-radius: 2px;
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
 }
 
 .bm-legend-swatch--bar {
-  background: var(--bm-chart-bar);
+  background: var(--bm-chart-bar-muted);
 }
 
 .bm-legend-swatch--line {
+  width: 14px;
+  height: 3px;
   background: var(--bm-chart-line);
 }
 
-.bm-svg-wrap {
-  width: 100%;
-  overflow-x: auto;
+.bm-channel-count {
+  flex: none;
+  min-width: 26px;
+  padding: 2px 6px;
+  border-radius: 6px;
+  background: var(--bm-surface);
+  color: var(--bm-text);
+  text-align: center;
+  font-size: 12px;
+  font-family: var(--font-data);
 }
 
-.bm-chart-svg {
-  width: 100%;
-  min-width: 520px;
-  height: auto;
-  display: block;
+.bm-channel-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 165px), 1fr));
+  gap: 0 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 1180px) {
+  .bm-channel-list {
+    max-height: 308px;
+    overflow-y: auto;
+  }
+}
+
+.bm-channel-link,
+.bm-manage-channels {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  font-size: 13px;
+  font-weight: 550;
+  text-decoration: none;
+}
+
+.bm-channel-link {
+  border-bottom: 1px solid var(--bm-divider);
+}
+
+.bm-channel-link:hover,
+.bm-manage-channels:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.bm-manage-channels {
+  margin-top: 4px;
+  color: var(--bm-text);
+  text-decoration: underline;
+  text-decoration-color: var(--bm-control-border);
+  text-underline-offset: 3px;
 }
 
 .bm-table-scroll {
@@ -831,63 +1075,108 @@ onUnmounted(() => {
 
 .bm-table {
   width: 100%;
-  border-collapse: collapse;
   min-width: 540px;
+  border-collapse: collapse;
+}
+
+.bm-table--realtime {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .bm-table th,
 .bm-table td {
-  padding: 0.75rem;
+  padding: 12px 10px;
   border-bottom: 1px solid var(--bm-divider);
   text-align: left;
-  font-size: 0.875rem;
+  font-size: 13px;
 }
 
 .bm-table th {
+  background: var(--bm-subtle);
   color: var(--bm-text-muted);
-  font-weight: 700;
+  font-family: var(--font-data);
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
 }
 
-.bm-handle-sub {
-  font-size: 0.75rem;
-  color: var(--bm-text-muted);
+.bm-posts-table {
+  min-width: 690px;
 }
 
+.bm-posts-table :is(th, td):first-child {
+  width: 34%;
+}
+
+.bm-posts-table :is(th, td):nth-last-child(-n + 3) {
+  text-align: right;
+}
+
+.bm-posts-table td:nth-child(3) {
+  white-space: nowrap;
+}
+
+.bm-handle-sub,
 .bm-posts-count {
-  font-size: 0.8125rem;
   color: var(--bm-text-muted);
+  font-size: 12px;
 }
 
 .bm-hashtag-form {
-  margin-top: 0.875rem;
   display: grid;
   grid-template-columns: 1fr 220px auto;
-  gap: 0.875rem;
   align-items: end;
+  gap: 14px;
+  margin-top: 14px;
 }
 
 @media (max-width: 960px) {
   .bm-evo-layout {
-    grid-template-columns: minmax(0, 1fr);
+    grid-template:
+      'header' max-content
+      'content' 1fr / minmax(0, 1fr);
+    gap: 16px;
+  }
+
+  .bm-evo-layout:has(.bm-evo-sidebar--open) {
+    grid-template:
+      'header' max-content
+      'sidebar' max-content
+      'content' 1fr / minmax(0, 1fr);
+  }
+
+  .bm-page-controls > .bm-evo-sidebar-toggle {
+    display: inline-flex;
+    padding-inline: 11px;
+    border-radius: 8px;
+    font-size: 13px;
+    box-shadow: none;
+  }
+
+  .bm-evo-sidebar:not(.bm-evo-sidebar--open) {
+    display: none;
   }
 
   .bm-evo-sidebar {
-    flex-direction: row;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 195px), 1fr));
   }
 
-  .bm-sidebar-group {
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-items: center;
-  }
-
-  .bm-side-item {
-    width: auto;
+  .bm-sidebar-group + .bm-sidebar-group {
+    padding-top: 0;
+    border-top: 0;
   }
 
   .bm-hashtag-form {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .bm-page-head {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }
 </style>

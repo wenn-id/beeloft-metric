@@ -17,41 +17,15 @@
         @action="router.push('/')"
       />
 
-      <section v-else class="bm-bio-card bm-artifact">
-        <div class="bm-bio-avatar" aria-hidden="true">{{ smartLink.title.slice(0, 2).toUpperCase() }}</div>
-        <h1>{{ smartLink.title }}</h1>
-        <p class="bm-bio-desc">{{ smartLink.description }}</p>
-
-        <div class="bm-bio-links">
-          <a
-            v-for="btn in activeButtons"
-            :key="btn.id"
-            :href="btn.url"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="bm-bio-btn"
-            :style="{
-              backgroundColor: smartLink.theme.buttonColor,
-              color: smartLink.theme.buttonTextColor
-            }"
-            @click="recordButtonClick(btn)"
-          >
-            <span>{{ btn.label }}</span>
-            <span aria-hidden="true">↗</span>
-          </a>
-        </div>
-
-        <footer class="bm-bio-foot">
-          <router-link to="/">Powered by BeeloftMetric</router-link>
-        </footer>
-      </section>
+      <SmartLinkBio v-else :link="smartLink" class="bm-bio-card" @link-click="recordButtonClick" />
     </main>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
+import { ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import SmartLinkBio from '@/components/common/SmartLinkBio.vue';
 import BmStateView from '@/components/common/designSystem/atoms/BmStateView.vue';
 import { apiRequest } from '@/services/api';
 import type { SmartLink, SmartLinkButton } from '@/types/api';
@@ -63,16 +37,12 @@ const loading = ref(true);
 const errorMsg = ref('');
 const smartLink = ref<SmartLink | null>(null);
 
-const activeButtons = computed(
-  () => smartLink.value?.buttons.filter((b) => b.active) ?? []
-);
-
 async function fetchBio(): Promise<void> {
   loading.value = true;
   errorMsg.value = '';
   try {
     const slug = String(route.params.slug || '');
-    const res = await apiRequest<{ data: SmartLink }>(`/api/v2/public/smart-links/${slug}`);
+    const res = await apiRequest<{ data: SmartLink }>(`/api/v2/public/smart-links/${encodeURIComponent(slug)}`);
     smartLink.value = res.data;
   } catch (err) {
     errorMsg.value = err instanceof Error ? err.message : 'Unable to load SmartLink.';
@@ -84,97 +54,32 @@ async function fetchBio(): Promise<void> {
 function recordButtonClick(btn: SmartLinkButton): void {
   if (!smartLink.value) return;
   const endpoint = `/api/v2/public/smart-links/${encodeURIComponent(smartLink.value.slug)}/click`;
-  const payload = JSON.stringify({ buttonId: btn.id });
-  if (typeof navigator !== 'undefined' && navigator.sendBeacon) {
-    const blob = new Blob([payload], { type: 'application/json' });
-    navigator.sendBeacon(endpoint, blob);
-  } else {
-    fetch(endpoint, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: payload,
-      keepalive: true
-    }).catch(() => undefined);
-  }
-  btn.clicks += 1;
+  void apiRequest(endpoint, {
+    method: 'POST',
+    body: JSON.stringify({ buttonId: btn.id }),
+    keepalive: true
+  }).catch(() => undefined);
 }
 
-onMounted(fetchBio);
+watch(() => route.params.slug, fetchBio, { immediate: true });
 </script>
 
 <style scoped>
 .bm-bio-page {
   min-height: 100dvh;
-  padding: 2rem 1rem;
+  padding: clamp(26px, 7vw, 88px) 16px;
   display: flex;
   justify-content: center;
   align-items: flex-start;
 }
 
 .bm-bio-container {
-  width: min(460px, 100%);
+  width: min(550px, 100%);
 }
 
 .bm-bio-card {
-  padding: 2rem 1.5rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: 0.875rem;
-}
-
-.bm-bio-avatar {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  background: var(--color-blush-peach);
-  color: var(--color-sienna-brown);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 500;
-  font-size: 1.25rem;
-}
-
-.bm-bio-desc {
-  color: var(--bm-text-muted);
-}
-
-.bm-bio-links {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  margin-top: 0.5rem;
-}
-
-.bm-bio-btn {
-  width: 100%;
-  min-height: 52px;
-  padding: 0.75rem 1.25rem;
-  border-radius: 9999px;
-  border: 1px solid var(--color-ink-black);
-  font-weight: 500;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 0.5rem;
-  text-align: left;
-  text-decoration: none;
-}
-
-.bm-bio-foot {
-  margin-top: 1rem;
-  font-size: 0.8125rem;
-}
-
-.bm-bio-foot a {
-  color: var(--bm-text-muted);
-  text-decoration: none;
-}
-
-.bm-bio-foot a:hover {
-  text-decoration: underline;
+  padding: clamp(22px, 4vw, 42px);
+  border: 1px solid color-mix(in srgb, currentColor 18%, transparent);
+  border-radius: 20px;
 }
 </style>

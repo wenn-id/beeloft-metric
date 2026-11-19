@@ -1,7 +1,7 @@
 <template>
-  <AppShell>
-    <div class="bm-org-page">
-      <div class="bm-page-head">
+  <AppShell class="bm-shell--editorial">
+    <div class="bm-workspace-page bm-org-page">
+      <header class="bm-workspace-head">
         <div>
           <h1>Team, Users & Organization Settings</h1>
           <p class="bm-page-sub">
@@ -9,7 +9,7 @@
           </p>
         </div>
         <BmButton variant="primary" @click="inviteOpen = true">+ Invite member</BmButton>
-      </div>
+      </header>
 
       <BmTabs v-model="activeTab" :tabs="tabs" label="Organization management tabs" />
 
@@ -275,20 +275,6 @@ onMounted(loadData);
 </script>
 
 <style scoped>
-.bm-org-page {
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-}
-
-.bm-page-head {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: center;
-  gap: 1rem;
-}
-
 .bm-page-sub {
   color: var(--bm-text-muted);
 }

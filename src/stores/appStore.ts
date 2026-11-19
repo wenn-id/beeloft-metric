@@ -45,11 +45,16 @@ export const useAppStore = defineStore('app', () => {
   function applyTheme(next: 'light' | 'dark'): void {
     theme.value = next;
     document.documentElement.setAttribute('data-theme', next);
-    window.localStorage.setItem(THEME_KEY, next);
+  }
+
+  function applyPageTheme(defaultTheme: 'light' | 'dark'): void {
+    const saved = window.localStorage.getItem(THEME_KEY);
+    applyTheme(saved === 'light' || saved === 'dark' ? saved : defaultTheme);
   }
 
   function toggleTheme(): void {
     applyTheme(theme.value === 'light' ? 'dark' : 'light');
+    window.localStorage.setItem(THEME_KEY, theme.value);
   }
 
   async function bootstrap(): Promise<boolean> {
@@ -176,6 +181,7 @@ export const useAppStore = defineStore('app', () => {
     loading,
     error,
     applyTheme,
+    applyPageTheme,
     toggleTheme,
     bootstrap,
     ensureBootstrapped,

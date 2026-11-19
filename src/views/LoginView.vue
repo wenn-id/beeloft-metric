@@ -1,10 +1,11 @@
 <template>
-  <div class="bm-auth-page">
-    <BrandHeaderPublic />
+  <div class="bm-public-page bm-auth-page">
+    <a href="#auth-main" class="bm-skip-link">Skip to content</a>
+    <BrandHeaderPublic class="bm-pub-header--editorial" />
 
-    <main class="bm-auth-main">
+    <main id="auth-main" class="bm-auth-main" tabindex="-1">
       <!-- 1. Email Activation View (/activate-user?token=...) -->
-      <div v-if="mode === 'verify'" class="bm-auth-card bm-card">
+      <div v-if="mode === 'verify'" class="bm-auth-card">
         <h1>Email Verification</h1>
         <p class="bm-auth-sub">{{ statusBanner || 'Confirming your email verification token...' }}</p>
         <p v-if="errorMsg" class="bm-auth-error" role="alert">{{ errorMsg }}</p>
@@ -14,7 +15,7 @@
       </div>
 
       <!-- 2. Collaborator Invite Acceptance (/activate-collaborator?token=...) -->
-      <div v-else-if="mode === 'invite'" class="bm-auth-card bm-card">
+      <div v-else-if="mode === 'invite'" class="bm-auth-card">
         <h1>Accept Workspace Invitation</h1>
         <p class="bm-auth-sub">Set a password to activate your collaborator access on BeeloftMetric.</p>
         <form class="bm-auth-form" @submit.prevent="submitAcceptInvite">
@@ -38,7 +39,7 @@
       </div>
 
       <!-- 3. Password Reset Confirmation (/new-password?token=...) -->
-      <div v-else-if="mode === 'reset'" class="bm-auth-card bm-card">
+      <div v-else-if="mode === 'reset'" class="bm-auth-card">
         <h1>Set a New Password</h1>
         <p class="bm-auth-sub">Choose a new password for your BeeloftMetric account.</p>
         <form class="bm-auth-form" @submit.prevent="submitResetPassword">
@@ -66,7 +67,7 @@
       </div>
 
       <!-- 4. Forgot Password Request -->
-      <div v-else-if="forgotOpen" class="bm-auth-card bm-card">
+      <div v-else-if="forgotOpen" class="bm-auth-card">
         <h1>Reset Your Password</h1>
         <p class="bm-auth-sub">
           Enter your registered work email and we will send a 60-minute password reset link.
@@ -76,6 +77,7 @@
             <label for="fg-email" class="bm-label">Work email</label>
             <input
               id="fg-email"
+              ref="forgotEmail"
               v-model="email"
               type="email"
               class="bm-input"
@@ -91,14 +93,14 @@
           </BmButton>
         </form>
         <p class="bm-auth-foot">
-          <button type="button" class="bm-link-btn" @click="forgotOpen = false">
+          <button type="button" class="bm-auth-link" @click="setForgotOpen(false)">
             Back to sign in
           </button>
         </p>
       </div>
 
       <!-- 5. Standard Sign-In + TOTP 2FA Challenge -->
-      <div v-else class="bm-auth-card bm-card">
+      <div v-else class="bm-auth-card">
         <h1>Sign in to BeeloftMetric</h1>
         <p class="bm-auth-sub">
           Access your brand analytics, publishing calendar, unified inbox, and SmartLinks.
@@ -110,6 +112,7 @@
               <label for="login-email" class="bm-label">Work email</label>
               <input
                 id="login-email"
+                ref="loginEmail"
                 v-model="email"
                 type="email"
                 class="bm-input"
@@ -120,9 +123,9 @@
             </div>
 
             <div>
-              <div class="bm-label-row">
+              <div class="bm-auth-label-row">
                 <label for="login-password" class="bm-label">Password</label>
-                <button type="button" class="bm-link-btn" @click="forgotOpen = true">
+                <button type="button" class="bm-auth-link" @click="setForgotOpen(true)">
                   Forgot password?
                 </button>
               </div>
@@ -171,7 +174,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
+import { computed, nextTick, onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import BrandHeaderPublic from '@/components/common/BrandHeaderPublic.vue';
 import BmButton from '@/components/common/designSystem/atoms/BmButton.vue';
@@ -189,6 +192,8 @@ const totpCode = ref('');
 const newPassword = ref('');
 const needsTwoFactor = ref(false);
 const forgotOpen = ref(false);
+const forgotEmail = ref<HTMLInputElement | null>(null);
+const loginEmail = ref<HTMLInputElement | null>(null);
 const errorMsg = ref('');
 const statusBanner = ref('');
 const submitting = ref(false);
@@ -199,6 +204,14 @@ const mode = computed(() => {
   if (route.path === '/new-password') return 'reset';
   return 'login';
 });
+
+async function setForgotOpen(open: boolean): Promise<void> {
+  forgotOpen.value = open;
+  errorMsg.value = '';
+  statusBanner.value = '';
+  await nextTick();
+  (open ? forgotEmail.value : loginEmail.value)?.focus();
+}
 
 async function submitLogin(): Promise<void> {
   submitting.value = true;
@@ -314,88 +327,3 @@ onMounted(async () => {
   }
 });
 </script>
-
-<style scoped>
-.bm-auth-page {
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-}
-
-.bm-auth-main {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem 1rem;
-}
-
-.bm-auth-card {
-  width: min(460px, 100%);
-  padding: 2rem 1.75rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.bm-auth-card h1 {
-  font-size: 1.75rem;
-}
-
-.bm-auth-sub {
-  color: var(--bm-text-muted);
-  font-size: 0.9375rem;
-}
-
-.bm-auth-form {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.bm-label-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-}
-
-.bm-link-btn {
-  border: none;
-  background: transparent;
-  padding: 0;
-  color: var(--bm-accent);
-  font-size: 0.8125rem;
-  font-weight: 500;
-  text-decoration: underline;
-}
-
-.bm-auth-error {
-  padding: 0.625rem 0.75rem;
-  border-radius: var(--bm-radius-md);
-  background: var(--bm-danger-bg);
-  color: var(--bm-danger-text);
-  border: 1px solid var(--bm-danger-border);
-  font-size: 0.875rem;
-  font-weight: 500;
-}
-
-.bm-auth-ok {
-  padding: 0.625rem 0.75rem;
-  border-radius: var(--bm-radius-md);
-  background: var(--bm-success-bg);
-  color: var(--bm-success-text);
-  border: 1px solid var(--bm-success-border);
-  font-size: 0.875rem;
-  font-weight: 500;
-}
-
-.bm-auth-foot {
-  font-size: 0.875rem;
-  color: var(--bm-text-muted);
-}
-
-.bm-auth-foot a {
-  color: var(--bm-accent);
-  font-weight: 500;
-}
-</style>

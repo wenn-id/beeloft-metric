@@ -1,7 +1,7 @@
 <template>
-  <AppShell>
-    <div class="bm-settings-page">
-      <div class="bm-page-head">
+  <AppShell class="bm-shell--editorial">
+    <div class="bm-workspace-page bm-settings-page">
+      <header class="bm-workspace-head">
         <div>
           <h1>User Settings, Billing & Security</h1>
           <p class="bm-page-sub">
@@ -9,7 +9,7 @@
             TOTP 2FA.
           </p>
         </div>
-      </div>
+      </header>
 
       <BmTabs v-model="activeTab" :tabs="tabs" label="User settings tabs" />
 
@@ -17,7 +17,7 @@
       <p v-if="errMsg" class="bm-error-banner" role="alert">{{ errMsg }}</p>
 
       <!-- Tab 1: Account -->
-      <section v-if="activeTab === 'account'" class="bm-card bm-settings-card">
+      <section v-if="activeTab === 'account'" class="bm-card bm-settings-card bm-settings-card--profile">
         <h2>Account Profile</h2>
         <form class="bm-form-stack" @submit.prevent="saveProfile">
           <div>
@@ -69,7 +69,7 @@
 
       <!-- Tab 2: Subscription Plan & Checkout -->
       <template v-else-if="activeTab === 'plan'">
-        <section v-if="isUnlimitedUser" class="bm-peach-card bm-trial-banner" role="status">
+        <section v-if="isUnlimitedUser" class="bm-card bm-trial-banner" role="status">
           <div>
             <strong>Unlimited Owner Account Active</strong>
             <p class="bm-trial-sub">
@@ -80,7 +80,7 @@
           <BmBadge tone="accent">Unlimited</BmBadge>
         </section>
 
-        <section v-else-if="store.user?.trialActive" class="bm-peach-card bm-trial-banner" role="status">
+        <section v-else-if="store.user?.trialActive" class="bm-card bm-trial-banner" role="status">
           <div>
             <strong>7-Day Starter Free Trial Active ({{ store.user.trialDaysRemaining ?? 7 }} day(s) remaining)</strong>
             <p class="bm-trial-sub">
@@ -525,12 +525,6 @@ onMounted(syncInputs);
 </script>
 
 <style scoped>
-.bm-settings-page {
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-}
-
 .bm-page-sub {
   color: var(--bm-text-muted);
 }
@@ -558,6 +552,14 @@ onMounted(syncInputs);
 }
 
 .bm-trial-banner {
+  --bm-text: var(--bm-category-text);
+  --bm-text-muted: var(--bm-category-muted);
+  --bm-accent-soft: #e3dcff;
+  --bm-accent-soft-text: var(--bm-category-text);
+
+  border-color: transparent;
+  background: var(--bm-category-bg);
+  color: var(--bm-text);
   padding: 1.25rem 1.5rem;
   display: flex;
   flex-wrap: wrap;
@@ -573,7 +575,7 @@ onMounted(syncInputs);
 
 .bm-checkout-controls {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
   gap: 1rem;
 }
 
@@ -584,11 +586,25 @@ onMounted(syncInputs);
 }
 
 .bm-settings-card {
-  padding: 1.375rem;
+  min-width: 0;
+  padding: clamp(16px, 2.3vw, 32px);
   max-width: 640px;
   display: flex;
   flex-direction: column;
   gap: 0.875rem;
+}
+
+.bm-settings-card--profile {
+  max-width: 860px;
+}
+
+.bm-settings-card--profile .bm-form-stack {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.bm-settings-card--profile .bm-form-stack > :nth-last-child(-n + 2) {
+  grid-column: 1 / -1;
 }
 
 .bm-wide-card {
@@ -596,7 +612,7 @@ onMounted(syncInputs);
 }
 
 .bm-settings-card h2 {
-  font-size: 1.125rem;
+  font-size: clamp(1.4rem, 2.25vw, 1.9rem);
 }
 
 .bm-form-stack,
@@ -611,12 +627,12 @@ onMounted(syncInputs);
   flex-wrap: wrap;
   align-items: center;
   gap: 1rem;
-  font-size: 0.875rem;
+  font-size: 13px;
 }
 
 .bm-plan-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 236px), 1fr));
   gap: 1rem;
 }
 
@@ -633,18 +649,22 @@ onMounted(syncInputs);
 
 .bm-plan-card__head {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
   gap: 0.5rem;
 }
 
 .bm-plan-card__head h2 {
-  font-size: 1.0625rem;
+  font-size: 1.4rem;
+  font-weight: 300;
 }
 
 .bm-plan-price {
-  font-size: 1.35rem;
-  font-weight: 500;
+  font-family: var(--font-signifier);
+  font-size: 1.85rem;
+  font-weight: 300;
+  letter-spacing: -0.025em;
 }
 
 .bm-plan-desc {
@@ -658,7 +678,7 @@ onMounted(syncInputs);
   background: var(--bm-subtle);
   border: 1px solid var(--bm-divider);
   border-radius: var(--bm-radius-md);
-  overflow-x: auto;
+  overflow-wrap: anywhere;
 }
 
 .bm-scopes {
@@ -682,6 +702,7 @@ onMounted(syncInputs);
 
 .bm-table {
   width: 100%;
+  min-width: 580px;
   border-collapse: collapse;
 }
 
@@ -697,5 +718,11 @@ onMounted(syncInputs);
   display: flex;
   justify-content: flex-end;
   gap: 0.625rem;
+}
+
+@media (max-width: 640px) {
+  .bm-settings-card--profile .bm-form-stack {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 </style>

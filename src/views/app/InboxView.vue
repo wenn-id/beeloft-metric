@@ -1,16 +1,17 @@
 <template>
-  <AppShell>
-    <div class="bm-inbox-page">
-      <div class="bm-page-head">
+  <AppShell class="bm-shell--editorial">
+    <div class="bm-workspace-page bm-inbox-page">
+      <header class="bm-workspace-head">
         <div>
+          <p v-if="store.activeBrand" class="bm-workspace-context">{{ store.activeBrand.name }}</p>
           <h1>Unified Inbox</h1>
           <p class="bm-page-sub">
-            Triage comments, direct messages, and reviews for <strong>{{ store.activeBrand?.name }}</strong>.
+            Triage comments, direct messages, and reviews.
           </p>
         </div>
-      </div>
+      </header>
 
-      <div class="bm-inbox-grid">
+      <div class="bm-inbox-grid" :class="{ 'bm-inbox-grid--reading': reading && selectedThread }">
         <aside class="bm-card bm-inbox-filters" aria-label="Inbox filters">
           <h2>Status</h2>
           <div class="bm-filter-list">
@@ -20,6 +21,7 @@
               type="button"
               class="bm-filter-btn"
               :class="{ 'bm-filter-btn--active': statusFilter === st.id }"
+              :aria-pressed="statusFilter === st.id"
               @click="statusFilter = st.id"
             >
               {{ st.label }}
@@ -32,6 +34,7 @@
               type="button"
               class="bm-filter-btn"
               :class="{ 'bm-filter-btn--active': networkFilter === 'ALL' }"
+              :aria-pressed="networkFilter === 'ALL'"
               @click="networkFilter = 'ALL'"
             >
               All channels
@@ -42,6 +45,7 @@
               type="button"
               class="bm-filter-btn"
               :class="{ 'bm-filter-btn--active': networkFilter === ch }"
+              :aria-pressed="networkFilter === ch"
               @click="networkFilter = ch"
             >
               <NetworkBadge :network="ch" /> {{ ch }}
@@ -50,6 +54,10 @@
         </aside>
 
         <section class="bm-card bm-inbox-list" aria-label="Conversations">
+          <header class="bm-inbox-list__head">
+            <h2 ref="listTitle" tabindex="-1">Conversations</h2>
+            <span v-if="!loading" class="tabular-nums">{{ threads.length }}</span>
+          </header>
           <BmStateView
             v-if="loading"
             kind="loading"
@@ -74,7 +82,8 @@
               type="button"
               class="bm-thread-row"
               :class="{ 'bm-thread-row--active': selectedThread?.id === thr.id }"
-              @click="selectedId = thr.id"
+              :aria-current="selectedThread?.id === thr.id ? 'true' : undefined"
+              @click="openThread(thr.id)"
             >
               <div class="bm-thread-row__top">
                 <span class="bm-thread-row__author">
@@ -99,9 +108,12 @@
           />
 
           <template v-else>
+            <BmButton class="bm-inbox-back" variant="secondary" size="sm" @click="backToThreads">
+              Back to conversations
+            </BmButton>
             <div class="bm-detail-head">
               <div>
-                <h2>{{ selectedThread.contactName }}</h2>
+                <h2 ref="threadTitle" tabindex="-1">{{ selectedThread.contactName }}</h2>
                 <p class="bm-detail-meta">
                   {{ selectedThread.contactHandle }} on {{ selectedThread.network }} ({{ selectedThread.channelType }})
                 </p>
@@ -151,7 +163,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, nextTick, onMounted, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import AppShell from '@/components/layout/AppShell.vue';
 import BmBadge from '@/components/common/designSystem/atoms/BmBadge.vue';
@@ -178,11 +190,29 @@ const loading = ref(true);
 const sending = ref(false);
 const threads = ref<InboxThread[]>([]);
 const selectedId = ref<string | null>(null);
+const reading = ref(false);
+const listTitle = ref<HTMLElement | null>(null);
+const threadTitle = ref<HTMLElement | null>(null);
 const replyText = ref('');
 
 const selectedThread = computed(
   () => threads.value.find((t) => t.id === selectedId.value) ?? threads.value[0] ?? null
 );
+
+async function openThread(id: string): Promise<void> {
+  selectedId.value = id;
+  reading.value = true;
+  if (window.matchMedia('(max-width: 960px)').matches) {
+    await nextTick();
+    threadTitle.value?.focus();
+  }
+}
+
+async function backToThreads(): Promise<void> {
+  reading.value = false;
+  await nextTick();
+  listTitle.value?.focus();
+}
 
 function statusTone(st: InboxThread['status']): 'warning' | 'accent' | 'success' {
   if (st === 'UNREAD') return 'warning';
@@ -199,6 +229,7 @@ async function loadThreads(): Promise<void> {
     threads.value = res.data;
     if (!threads.value.some((t) => t.id === selectedId.value)) {
       selectedId.value = threads.value[0]?.id ?? null;
+      reading.value = false;
     }
   } finally {
     loading.value = false;
@@ -234,33 +265,29 @@ onMounted(loadThreads);
 </script>
 
 <style scoped>
-.bm-inbox-page {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
 .bm-page-sub {
   color: var(--bm-text-muted);
 }
 
 .bm-inbox-grid {
   display: grid;
-  grid-template-columns: 220px 340px 1fr;
-  gap: 1rem;
+  grid-template-columns: 182px minmax(240px, 0.78fr) minmax(0, 1.45fr);
+  gap: 14px;
   min-height: 540px;
 }
 
 .bm-inbox-filters,
 .bm-inbox-list,
 .bm-inbox-detail {
-  padding: 1rem;
+  min-width: 0;
+  padding: clamp(14px, 1.55vw, 24px);
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
 }
 
 .bm-inbox-filters h2 {
+  font-family: var(--font-data);
   font-size: 0.75rem;
   text-transform: uppercase;
   color: var(--bm-text-muted);
@@ -275,14 +302,15 @@ onMounted(loadThreads);
 .bm-filter-btn {
   min-height: 44px;
   padding: 0 0.75rem;
-  border-radius: var(--bm-radius-md);
+  border-radius: var(--radius-inputs);
   border: 1px solid transparent;
   background: transparent;
   display: flex;
   align-items: center;
   gap: 0.5rem;
   text-align: left;
-  font-weight: 600;
+  font-size: 14px;
+  font-weight: 500;
   text-transform: capitalize;
 }
 
@@ -291,8 +319,29 @@ onMounted(loadThreads);
 }
 
 .bm-filter-btn--active {
-  background: var(--bm-subtle);
-  border-color: var(--bm-accent);
+  background: var(--bm-surface);
+  border-color: var(--bm-divider);
+}
+
+.bm-inbox-list__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.bm-inbox-list__head h2,
+.bm-detail-head h2 {
+  font-size: clamp(1.4rem, 2.3vw, 2rem);
+  font-weight: 300;
+  letter-spacing: -0.025em;
+  overflow-wrap: anywhere;
+}
+
+.bm-inbox-list__head span {
+  color: var(--bm-text-muted);
+  font-family: var(--font-data);
+  font-size: 12px;
 }
 
 .bm-thread-items {
@@ -304,22 +353,27 @@ onMounted(loadThreads);
 .bm-thread-row {
   width: 100%;
   padding: 0.75rem;
-  border-radius: var(--bm-radius-md);
+  border-radius: var(--radius-inputs);
   border: 1px solid var(--bm-divider);
-  background: var(--bm-surface);
+  background: var(--bm-subtle);
   text-align: left;
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
 }
 
+.bm-thread-row:hover,
 .bm-thread-row--active {
-  background: var(--bm-subtle);
-  border-color: var(--bm-accent);
+  background: var(--bm-surface);
+}
+
+.bm-thread-row--active {
+  border-color: var(--bm-control-border);
 }
 
 .bm-thread-row__top {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
   gap: 0.5rem;
@@ -327,6 +381,7 @@ onMounted(loadThreads);
 
 .bm-thread-row__author {
   display: inline-flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 0.375rem;
 }
@@ -334,6 +389,7 @@ onMounted(loadThreads);
 .bm-thread-row__handle {
   font-size: 0.75rem;
   color: var(--bm-text-muted);
+  overflow-wrap: anywhere;
 }
 
 .bm-thread-row__snippet {
@@ -356,6 +412,7 @@ onMounted(loadThreads);
 .bm-detail-meta {
   font-size: 0.875rem;
   color: var(--bm-text-muted);
+  overflow-wrap: anywhere;
 }
 
 .bm-messages {
@@ -368,9 +425,11 @@ onMounted(loadThreads);
 
 .bm-msg {
   padding: 0.75rem 1rem;
-  border-radius: var(--bm-radius-md);
+  border-radius: var(--radius-inputs);
   border: 1px solid var(--bm-divider);
   max-width: 85%;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
 }
 
 .bm-msg--contact {
@@ -380,17 +439,23 @@ onMounted(loadThreads);
 
 .bm-msg--operator {
   align-self: flex-end;
-  background: var(--bm-accent-soft);
+  background: color-mix(in srgb, var(--bm-accent) 12%, var(--bm-elevated));
   color: var(--bm-accent-soft-text);
-  border-color: var(--bm-accent);
 }
 
 .bm-msg__head {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
-  gap: 1rem;
+  gap: 4px 12px;
   font-size: 0.75rem;
   margin-bottom: 0.25rem;
+}
+
+.bm-msg__head time {
+  color: var(--bm-text-muted);
+  font-family: var(--font-data);
+  font-size: 11px;
 }
 
 .bm-reply-form {
@@ -406,9 +471,33 @@ onMounted(loadThreads);
   justify-content: flex-end;
 }
 
-@media (max-width: 1024px) {
+.bm-inbox-grid .bm-inbox-back {
+  display: none;
+}
+
+@media (max-width: 960px) {
   .bm-inbox-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
+    min-height: 0;
+  }
+
+  .bm-inbox-grid:not(.bm-inbox-grid--reading) .bm-inbox-detail,
+  .bm-inbox-grid--reading :is(.bm-inbox-filters, .bm-inbox-list) {
+    display: none;
+  }
+
+  .bm-inbox-grid .bm-inbox-back {
+    display: inline-flex;
+    align-self: flex-start;
+  }
+
+  .bm-filter-list {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .bm-msg {
+    max-width: 100%;
   }
 }
 </style>

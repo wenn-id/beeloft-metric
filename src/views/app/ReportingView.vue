@@ -1,12 +1,12 @@
 <template>
-  <AppShell>
-    <div class="bm-rep-page">
-      <div class="bm-page-head">
+  <AppShell class="bm-shell--editorial">
+    <div class="bm-workspace-page bm-rep-page">
+      <header class="bm-workspace-head">
         <div>
+          <p v-if="store.activeBrand" class="bm-workspace-context">{{ store.activeBrand.name }}</p>
           <h1>Reports, Studio & Campaigns</h1>
           <p class="bm-page-sub">
-            Export PDF/PPTX reports, assemble Reporting Studio decks, and track multi-channel tags for
-            <strong>{{ store.activeBrand?.name }}</strong>.
+            Generate reports, assemble Reporting Studio decks, and track multi-channel tags.
           </p>
         </div>
         <div class="bm-head-actions">
@@ -18,7 +18,7 @@
           </BmButton>
           <BmButton v-else variant="primary" @click="generateOpen = true">+ Generate report</BmButton>
         </div>
-      </div>
+      </header>
 
       <BmTabs v-model="activeTab" :tabs="tabs" label="Reporting suite sections" />
 
@@ -33,7 +33,7 @@
       <template v-else-if="activeTab === 'templates'">
         <section class="bm-rep-section">
           <h2>System Templates</h2>
-          <div class="bm-rep-grid">
+          <div class="bm-rep-grid bm-rep-grid--system">
             <article v-for="tpl in systemTemplates" :key="tpl.id" class="bm-card bm-tpl-card">
               <div class="bm-tpl-card__head">
                 <h3>{{ tpl.name }}</h3>
@@ -83,7 +83,7 @@
           @action="generateOpen = true"
         />
 
-        <div v-else class="bm-card bm-table-scroll">
+        <div v-else class="bm-card bm-table-scroll" role="region" aria-label="Report export history" tabindex="0">
           <table class="bm-table">
             <thead>
               <tr>
@@ -105,9 +105,9 @@
                 <td class="tabular-nums">{{ rep.summaryMetrics.reach.toLocaleString() }}</td>
                 <td><BmBadge tone="success">{{ rep.status }}</BmBadge></td>
                 <td>
-                  <a href="#" class="bm-dl-link" @click.prevent="downloadReport(rep)">
+                  <button type="button" class="bm-dl-link" @click="downloadReport(rep)">
                     Download export
-                  </a>
+                  </button>
                 </td>
               </tr>
             </tbody>
@@ -550,20 +550,6 @@ onMounted(loadReports);
 </script>
 
 <style scoped>
-.bm-rep-page {
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-}
-
-.bm-page-head {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: center;
-  gap: 1rem;
-}
-
 .bm-page-sub {
   color: var(--bm-text-muted);
 }
@@ -574,8 +560,15 @@ onMounted(loadReports);
   gap: 0.75rem;
 }
 
+.bm-rep-section h2 {
+  font-size: clamp(1.45rem, 2.4vw, 2rem);
+  font-weight: 300;
+  letter-spacing: -0.025em;
+}
+
 .bm-rep-section__head {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
@@ -583,27 +576,51 @@ onMounted(loadReports);
 
 .bm-rep-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
   gap: 1rem;
+}
+
+.bm-rep-grid--system {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
 }
 
 .bm-tpl-card,
 .bm-looker-card {
-  padding: 1.125rem;
+  padding: clamp(16px, 2vw, 26px);
   display: flex;
   flex-direction: column;
   gap: 0.625rem;
 }
 
+.bm-rep-grid--system .bm-tpl-card:first-child {
+  --bm-text: var(--bm-category-text);
+  --bm-text-muted: var(--bm-category-muted);
+  --bm-elevated: #e3dcff;
+  --bm-surface: #c4baf7;
+  --bm-divider: #a89acc;
+  --bm-control-border: #756796;
+  --bm-accent: #4b49aa;
+
+  border-color: transparent;
+  background: var(--bm-category-bg);
+  color: var(--bm-text);
+}
+
 .bm-tpl-card__head {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: flex-start;
   gap: 0.5rem;
 }
 
 .bm-tpl-card__head h3 {
-  font-size: 1rem;
+  margin: 0;
+  font-family: var(--font-signifier);
+  font-size: 1.4rem;
+  font-weight: 300;
+  letter-spacing: -0.025em;
+  overflow-wrap: anywhere;
 }
 
 .bm-tpl-card__desc {
@@ -613,7 +630,7 @@ onMounted(loadReports);
 
 .bm-tpl-card__secs {
   font-size: 0.8125rem;
-  font-weight: 600;
+  color: var(--bm-text-muted);
   margin-top: auto;
 }
 
@@ -625,6 +642,7 @@ onMounted(loadReports);
 
 .bm-studio-list,
 .bm-studio-editor {
+  min-width: 0;
   padding: 1.125rem;
   display: flex;
   flex-direction: column;
@@ -632,14 +650,14 @@ onMounted(loadReports);
 }
 
 .bm-studio-list h2 {
-  font-size: 0.9375rem;
+  font-size: 1.4rem;
 }
 
 .bm-studio-item {
   width: 100%;
   min-height: 48px;
   padding: 0.625rem 0.75rem;
-  border-radius: var(--bm-radius-md);
+  border-radius: var(--radius-inputs);
   border: 1px solid var(--bm-divider);
   background: var(--bm-surface);
   display: flex;
@@ -655,8 +673,7 @@ onMounted(loadReports);
 }
 
 .bm-studio-item--active {
-  border-color: var(--bm-accent);
-  background: var(--bm-subtle);
+  border-color: var(--bm-control-border);
 }
 
 .bm-studio-head {
@@ -738,7 +755,6 @@ onMounted(loadReports);
 
 .bm-table-scroll {
   overflow-x: auto;
-  padding: 0.5rem;
 }
 
 .bm-table {
@@ -756,9 +772,15 @@ onMounted(loadReports);
 }
 
 .bm-dl-link {
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: transparent;
   color: var(--bm-accent);
-  font-weight: 700;
-  text-decoration: none;
+  font-weight: 500;
+  text-align: left;
+  text-decoration: underline;
+  text-underline-offset: 4px;
 }
 
 .bm-form-stack {
@@ -782,7 +804,7 @@ onMounted(loadReports);
 @media (max-width: 820px) {
   .bm-studio-layout,
   .bm-two-col {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 </style>

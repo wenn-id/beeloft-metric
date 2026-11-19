@@ -1,21 +1,21 @@
 <template>
-  <AppShell>
-    <div class="bm-sl-page">
-      <div class="bm-page-head">
+  <AppShell class="bm-shell--editorial">
+    <div class="bm-workspace-page">
+      <header class="bm-workspace-head">
         <div>
+          <p v-if="store.activeBrand" class="bm-workspace-context">{{ store.activeBrand.name }}</p>
           <h1>SmartLinks Bio Microsite</h1>
-          <p class="bm-page-sub">
-            Configure your public link-in-bio page and click tracking for
-            <strong>{{ store.activeBrand?.name }}</strong>.
-          </p>
+          <p class="bm-page-sub">Design your public link-in-bio page and track views and clicks.</p>
         </div>
         <div v-if="activeLink" class="bm-head-actions">
-          <router-link :to="`/bio/${activeLink.slug}`" class="bm-open-public">
-            Open public /bio/{{ activeLink.slug }}
+          <router-link :to="`/bio/${publishedSlug}`" class="bm-public-button">
+            Open public page
           </router-link>
           <BmButton variant="primary" :loading="saving" @click="saveChanges">Save changes</BmButton>
         </div>
-      </div>
+      </header>
+
+      <p v-if="errorBanner" class="bm-error-banner" role="alert">{{ errorBanner }}</p>
 
       <BmStateView
         v-if="loading"
@@ -35,117 +35,116 @@
       />
 
       <template v-else>
-        <BmTabs v-model="activeTab" :tabs="tabs" label="SmartLink tabs" />
+        <div class="bm-sl-toolbar">
+          <BmTabs v-model="activeTab" :tabs="tabs" label="SmartLink tabs" />
+          <a v-if="activeTab === 'links'" href="#smartlink-preview" class="bm-public-button bm-sl-preview-jump">
+            Jump to preview
+          </a>
+        </div>
 
         <p v-if="savedBanner" class="bm-saved-banner" role="status">{{ savedBanner }}</p>
 
         <div v-if="activeTab === 'links'" class="bm-sl-split">
-          <!-- Left Editor Column -->
-          <section class="bm-card bm-sl-editor">
-            <h2>Profile & Theme</h2>
-            <div>
-              <label for="sl-title" class="bm-label">Display title</label>
-              <input id="sl-title" v-model="activeLink.title" type="text" class="bm-input" />
-            </div>
-            <div>
-              <label for="sl-slug" class="bm-label">Public URL slug</label>
-              <input id="sl-slug" v-model="activeLink.slug" type="text" class="bm-input" />
-            </div>
-            <div>
-              <label for="sl-desc" class="bm-label">Bio summary</label>
-              <textarea id="sl-desc" v-model="activeLink.description" class="bm-textarea"></textarea>
-            </div>
-
-            <div class="bm-color-row">
+          <div class="bm-sl-fields">
+            <section class="bm-card bm-sl-editor" aria-labelledby="smartlink-profile">
+              <h2 id="smartlink-profile">Profile & Theme</h2>
               <div>
-                <label for="sl-bg" class="bm-label">Page background</label>
-                <input id="sl-bg" v-model="activeLink.theme.backgroundColor" type="color" class="bm-color-input" />
+                <label for="sl-title" class="bm-label">Display title</label>
+                <input id="sl-title" v-model="activeLink.title" type="text" class="bm-input" />
               </div>
               <div>
-                <label for="sl-btn-bg" class="bm-label">Button color</label>
-                <input id="sl-btn-bg" v-model="activeLink.theme.buttonColor" type="color" class="bm-color-input" />
+                <label for="sl-slug" class="bm-label">Public URL slug</label>
+                <input id="sl-slug" v-model="activeLink.slug" type="text" class="bm-input" />
               </div>
               <div>
-                <label for="sl-btn-fg" class="bm-label">Button label</label>
-                <input id="sl-btn-fg" v-model="activeLink.theme.buttonTextColor" type="color" class="bm-color-input" />
+                <label for="sl-desc" class="bm-label">Bio summary</label>
+                <textarea id="sl-desc" v-model="activeLink.description" class="bm-textarea"></textarea>
               </div>
-            </div>
 
-            <div class="bm-links-header">
-              <h2>Buttons</h2>
-              <BmButton variant="secondary" size="sm" @click="addButton">+ Add button</BmButton>
-            </div>
-
-            <div class="bm-btn-editor-list">
-              <article v-for="(btn, idx) in activeLink.buttons" :key="btn.id" class="bm-btn-edit-card">
-                <div class="bm-two-col">
-                  <div>
-                    <label :for="`bl-${idx}`" class="bm-label">Label</label>
-                    <input :id="`bl-${idx}`" v-model="btn.label" type="text" class="bm-input" />
-                  </div>
-                  <div>
-                    <label :for="`bu-${idx}`" class="bm-label">Destination URL</label>
-                    <input :id="`bu-${idx}`" v-model="btn.url" type="url" class="bm-input" />
-                  </div>
+              <div class="bm-color-row">
+                <div>
+                  <label for="sl-bg" class="bm-label">Page background</label>
+                  <input id="sl-bg" v-model="activeLink.theme.backgroundColor" type="color" class="bm-color-input" />
                 </div>
-                <div class="bm-btn-edit-foot">
-                  <label :for="`ba-${idx}`" class="bm-check-inline">
-                    <input :id="`ba-${idx}`" v-model="btn.active" type="checkbox" />
-                    <span>Visible on public page</span>
-                  </label>
-                  <button type="button" class="bm-slot-del" @click="removeButton(idx)">Remove</button>
+                <div>
+                  <label for="sl-btn-bg" class="bm-label">Button color</label>
+                  <input id="sl-btn-bg" v-model="activeLink.theme.buttonColor" type="color" class="bm-color-input" />
                 </div>
-              </article>
-            </div>
-          </section>
+                <div>
+                  <label for="sl-btn-fg" class="bm-label">Button text color</label>
+                  <input id="sl-btn-fg" v-model="activeLink.theme.buttonTextColor" type="color" class="bm-color-input" />
+                </div>
+              </div>
+            </section>
 
-          <!-- Right 3D Smartphone Preview Column -->
-          <aside class="bm-card bm-sl-preview-wrap" aria-label="Live 3D SmartLink preview">
+            <section class="bm-card bm-sl-editor" aria-labelledby="smartlink-buttons">
+              <header class="bm-links-header">
+                <h2 id="smartlink-buttons">Buttons</h2>
+                <BmButton variant="secondary" size="sm" @click="addButton">+ Add button</BmButton>
+              </header>
+
+              <div class="bm-btn-editor-list">
+                <article v-for="(btn, idx) in activeLink.buttons" :key="btn.id" class="bm-btn-edit-card">
+                  <div class="bm-two-col">
+                    <div>
+                      <label :for="`bl-${idx}`" class="bm-label">Label</label>
+                      <input :id="`bl-${idx}`" v-model="btn.label" type="text" class="bm-input" />
+                    </div>
+                    <div>
+                      <label :for="`bu-${idx}`" class="bm-label">Destination URL</label>
+                      <input :id="`bu-${idx}`" v-model="btn.url" type="url" class="bm-input" />
+                    </div>
+                  </div>
+                  <div class="bm-btn-edit-foot">
+                    <label :for="`ba-${idx}`" class="bm-check-inline">
+                      <input :id="`ba-${idx}`" v-model="btn.active" type="checkbox" />
+                      <span>Visible on public page</span>
+                    </label>
+                    <button
+                      type="button"
+                      class="bm-slot-del"
+                      :aria-label="`Remove ${btn.label || 'button'}`"
+                      @click="removeButton(idx)"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                </article>
+              </div>
+            </section>
+          </div>
+
+          <aside id="smartlink-preview" class="bm-card bm-sl-preview-wrap" aria-labelledby="smartlink-preview-title">
+            <header class="bm-sl-preview-head">
+              <h2 id="smartlink-preview-title">Page preview</h2>
+              <p class="bm-preview-path">/bio/{{ activeLink.slug }}</p>
+            </header>
             <DeviceStage3D
-              label="Live 3D Mobile Preview"
+              label="Mobile preview"
               :screen-bg="activeLink.theme.backgroundColor"
+              flat-by-default
             >
-              <div class="bm-phone-inner">
-                <div class="bm-phone-avatar" aria-hidden="true">
-                  {{ activeLink.title.slice(0, 2).toUpperCase() }}
-                </div>
-                <h3 class="bm-phone-title">{{ activeLink.title }}</h3>
-                <p class="bm-phone-desc">{{ activeLink.description }}</p>
-
-                <div class="bm-phone-buttons">
-                  <div
-                    v-for="btn in activeLink.buttons.filter((b) => b.active)"
-                    :key="btn.id"
-                    class="bm-phone-btn"
-                    :style="{
-                      backgroundColor: activeLink.theme.buttonColor,
-                      color: activeLink.theme.buttonTextColor
-                    }"
-                  >
-                    {{ btn.label }}
-                  </div>
-                </div>
-              </div>
+              <SmartLinkBio :link="activeLink" preview />
             </DeviceStage3D>
           </aside>
         </div>
 
-        <div v-else class="bm-card bm-sl-analytics">
-          <h2>How many views and link clicks has /bio/{{ activeLink.slug }} recorded?</h2>
-          <div class="bm-kpi-row">
-            <div class="bm-kpi-box">
-              <span>Profile Views</span>
-              <strong class="tabular-nums"><AnimatedNumber :value="activeLink.views" /></strong>
+        <section v-else class="bm-sl-analytics" aria-labelledby="smartlink-performance">
+          <h2 id="smartlink-performance">SmartLink performance</h2>
+          <dl class="bm-scorecard" aria-label="SmartLink traffic">
+            <div class="bm-kpi-card">
+              <dt class="bm-kpi-card__label">Profile Views</dt>
+              <dd class="bm-kpi-card__value tabular-nums"><AnimatedNumber :value="activeLink.views" /></dd>
             </div>
-            <div class="bm-kpi-box">
-              <span>Total Button Clicks</span>
-              <strong class="tabular-nums">
+            <div class="bm-kpi-card">
+              <dt class="bm-kpi-card__label">Total Button Clicks</dt>
+              <dd class="bm-kpi-card__value tabular-nums">
                 <AnimatedNumber :value="activeLink.buttons.reduce((s, b) => s + b.clicks, 0)" />
-              </strong>
+              </dd>
             </div>
-          </div>
+          </dl>
 
-          <div class="bm-table-scroll">
+          <div class="bm-card bm-table-scroll" role="region" aria-label="SmartLink button performance" tabindex="0">
             <table class="bm-table">
               <thead>
                 <tr>
@@ -169,7 +168,7 @@
               </tbody>
             </table>
           </div>
-        </div>
+        </section>
       </template>
     </div>
   </AppShell>
@@ -182,6 +181,7 @@ import BmBadge from '@/components/common/designSystem/atoms/BmBadge.vue';
 import BmButton from '@/components/common/designSystem/atoms/BmButton.vue';
 import BmStateView from '@/components/common/designSystem/atoms/BmStateView.vue';
 import BmTabs from '@/components/common/designSystem/atoms/BmTabs.vue';
+import SmartLinkBio from '@/components/common/SmartLinkBio.vue';
 import AnimatedNumber from '@/components/common/motion/AnimatedNumber.vue';
 import DeviceStage3D from '@/components/three/DeviceStage3D.vue';
 import { useAppStore } from '@/stores/appStore';
@@ -198,31 +198,48 @@ const tabs = [
 const loading = ref(true);
 const saving = ref(false);
 const savedBanner = ref('');
+const errorBanner = ref('');
 const activeLink = ref<SmartLink | null>(null);
+const publishedSlug = ref('');
 
 async function loadSmartLinks(): Promise<void> {
   loading.value = true;
   savedBanner.value = '';
+  errorBanner.value = '';
   try {
     const res = await apiRequest<{ data: SmartLink[] }>(
       `/api/v2/smart-links/links/lite?blogId=${store.activeBlogId}`
     );
     activeLink.value = res.data[0] ?? null;
+    publishedSlug.value = activeLink.value?.slug ?? '';
+  } catch (error) {
+    activeLink.value = null;
+    errorBanner.value = error instanceof Error ? error.message : 'Unable to load SmartLinks.';
   } finally {
     loading.value = false;
   }
 }
 
 async function createFirstSmartLink(): Promise<void> {
-  const res = await apiRequest<{ data: SmartLink }>('/api/v2/smart-links/links', {
-    method: 'POST',
-    body: JSON.stringify({
-      blogId: store.activeBlogId,
-      title: store.activeBrand?.name || 'My SmartLink',
-      slug: `brand-${store.activeBlogId}`
-    })
-  });
-  activeLink.value = res.data;
+  if (saving.value) return;
+  saving.value = true;
+  errorBanner.value = '';
+  try {
+    const res = await apiRequest<{ data: SmartLink }>('/api/v2/smart-links/links', {
+      method: 'POST',
+      body: JSON.stringify({
+        blogId: store.activeBlogId,
+        title: store.activeBrand?.name || 'My SmartLink',
+        slug: `brand-${store.activeBlogId}`
+      })
+    });
+    activeLink.value = res.data;
+    publishedSlug.value = res.data.slug;
+  } catch (error) {
+    errorBanner.value = error instanceof Error ? error.message : 'Unable to create the SmartLink.';
+  } finally {
+    saving.value = false;
+  }
 }
 
 function addButton(): void {
@@ -241,9 +258,10 @@ function removeButton(idx: number): void {
 }
 
 async function saveChanges(): Promise<void> {
-  if (!activeLink.value) return;
+  if (!activeLink.value || saving.value) return;
   saving.value = true;
   savedBanner.value = '';
+  errorBanner.value = '';
   try {
     const res = await apiRequest<{ data: SmartLink }>(
       `/api/v2/smart-links/links/${activeLink.value.id}`,
@@ -253,7 +271,10 @@ async function saveChanges(): Promise<void> {
       }
     );
     activeLink.value = res.data;
+    publishedSlug.value = res.data.slug;
     savedBanner.value = 'SmartLink changes saved to server.';
+  } catch (error) {
+    errorBanner.value = error instanceof Error ? error.message : 'Unable to save changes.';
   } finally {
     saving.value = false;
   }
@@ -264,220 +285,212 @@ onMounted(loadSmartLinks);
 </script>
 
 <style scoped>
-.bm-sl-page {
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-}
-
-.bm-page-head {
+.bm-head-actions,
+.bm-sl-toolbar,
+.bm-links-header,
+.bm-btn-edit-foot {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
   align-items: center;
-  gap: 1rem;
-}
-
-.bm-page-sub {
-  color: var(--bm-text-muted);
+  gap: 8px 12px;
 }
 
 .bm-head-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  align-items: center;
+  justify-content: flex-end;
 }
 
-.bm-open-public {
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px;
-  padding: 0 1rem;
-  border: 1px solid var(--bm-control-border);
-  border-radius: var(--bm-radius-md);
-  text-decoration: none;
-  font-weight: 700;
+.bm-sl-toolbar,
+.bm-links-header,
+.bm-btn-edit-foot {
+  justify-content: space-between;
+}
+
+.bm-sl-toolbar .bm-sl-preview-jump {
+  display: none;
+}
+
+.bm-saved-banner,
+.bm-error-banner {
+  padding: 12px 16px;
+  border: 1px solid;
+  border-radius: var(--radius-inputs);
+  font-size: 14px;
+  overflow-wrap: anywhere;
 }
 
 .bm-saved-banner {
-  padding: 0.75rem 1rem;
-  border-radius: var(--bm-radius-md);
   background: var(--bm-success-bg);
   color: var(--bm-success-text);
-  border: 1px solid var(--bm-success-border);
-  font-weight: 600;
+  border-color: var(--bm-success-border);
+}
+
+.bm-error-banner {
+  background: var(--bm-danger-bg);
+  color: var(--bm-danger-text);
+  border-color: var(--bm-danger-border);
 }
 
 .bm-sl-split {
   display: grid;
-  grid-template-columns: 1.2fr 0.8fr;
-  gap: 1.25rem;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
   align-items: start;
+  gap: 16px;
+}
+
+.bm-sl-fields,
+.bm-sl-analytics,
+.bm-sl-editor,
+.bm-sl-preview-wrap {
+  display: grid;
+  min-width: 0;
+  gap: 16px;
 }
 
 .bm-sl-editor,
-.bm-sl-preview-wrap,
-.bm-sl-analytics {
-  padding: 1.25rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+.bm-sl-preview-wrap {
+  padding: clamp(16px, 2.2vw, 30px);
+}
+
+.bm-sl-editor h2,
+.bm-sl-preview-head h2,
+.bm-sl-analytics h2 {
+  font-size: clamp(1.45rem, 2.4vw, 2rem);
+  font-weight: 300;
+  letter-spacing: -0.025em;
+}
+
+.bm-sl-preview-wrap {
+  position: sticky;
+  top: 88px;
+  scroll-margin-top: 132px;
+}
+
+.bm-sl-preview-head {
+  min-width: 0;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--bm-divider);
+}
+
+.bm-preview-path {
+  margin-top: 5px;
+  color: var(--bm-text-muted);
+  font-family: var(--font-data);
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+.bm-sl-preview-wrap :deep(.bm-device-stage__toggle) {
+  min-height: 44px;
+  white-space: normal;
 }
 
 .bm-color-row {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 114px), 1fr));
+  gap: 12px;
 }
 
 .bm-color-input {
   width: 100%;
   height: 44px;
+  padding: 4px;
   border: 1px solid var(--bm-control-border);
-  border-radius: var(--bm-radius-md);
-  background: var(--bm-surface);
-  padding: 0.25rem;
+  border-radius: var(--radius-inputs);
+  background: var(--bm-subtle);
 }
 
-.bm-links-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.bm-btn-editor-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
+.bm-btn-editor-list,
+.bm-btn-edit-card {
+  display: grid;
+  min-width: 0;
+  gap: 12px;
 }
 
 .bm-btn-edit-card {
-  padding: 0.875rem;
-  border-radius: var(--bm-radius-md);
+  padding: 14px;
   border: 1px solid var(--bm-divider);
+  border-radius: var(--radius-inputs);
   background: var(--bm-subtle);
-  display: flex;
-  flex-direction: column;
-  gap: 0.625rem;
 }
 
 .bm-two-col {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.75rem;
-}
-
-.bm-btn-edit-foot {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
 }
 
 .bm-check-inline {
   display: inline-flex;
+  min-height: 44px;
   align-items: center;
-  gap: 0.375rem;
-  font-size: 0.875rem;
-  font-weight: 600;
-  min-height: 36px;
+  gap: 6px;
+  font-size: 14px;
+}
+
+.bm-check-inline input {
+  accent-color: var(--bm-accent);
 }
 
 .bm-slot-del {
+  min-height: 44px;
+  padding: 0 4px;
   border: none;
   background: transparent;
   color: var(--bm-danger-text);
-  font-weight: 700;
-  min-height: 36px;
-}
-
-.bm-phone-inner {
-  padding: 0.75rem 0.25rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: 0.75rem;
-  color: #181615;
-}
-
-.bm-phone-avatar {
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  background: #17191c;
-  color: #ffffff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 500;
-}
-
-.bm-phone-title {
-  font-size: 1.125rem;
-}
-
-.bm-phone-desc {
-  font-size: 0.875rem;
-  color: #5f636d;
-}
-
-.bm-phone-buttons {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 0.625rem;
-  margin-top: 0.5rem;
-}
-
-.bm-phone-btn {
-  padding: 0.75rem 1.25rem;
-  border-radius: 9999px;
-  font-weight: 500;
-  border: 1px solid #17191c;
-}
-
-.bm-kpi-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-}
-
-.bm-kpi-box {
-  min-width: 200px;
-  padding: 1rem;
-  border-radius: var(--bm-radius-md);
-  background: var(--bm-subtle);
-  display: flex;
-  flex-direction: column;
-}
-
-.bm-kpi-box strong {
-  font-size: 1.5rem;
+  font-size: 14px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 .bm-table-scroll {
   overflow-x: auto;
+  scrollbar-color: var(--bm-control-border) var(--bm-subtle);
 }
 
 .bm-table {
   width: 100%;
-  border-collapse: collapse;
   min-width: 520px;
+  border-spacing: 0;
 }
 
 .bm-table th,
 .bm-table td {
-  padding: 0.75rem;
+  padding: 12px 14px;
   border-bottom: 1px solid var(--bm-divider);
   text-align: left;
-  font-size: 0.875rem;
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+
+.bm-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.bm-table :is(th, td):last-child {
+  text-align: right;
 }
 
 @media (max-width: 900px) {
-  .bm-sl-split,
+  .bm-head-actions {
+    justify-content: flex-start;
+  }
+
+  .bm-sl-split {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .bm-sl-preview-wrap {
+    position: static;
+  }
+
+  .bm-sl-toolbar .bm-sl-preview-jump {
+    display: inline-flex;
+  }
+}
+
+@media (max-width: 580px) {
   .bm-two-col {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 </style>

@@ -40,19 +40,21 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 
-withDefaults(
+const props = withDefaults(
   defineProps<{
     label?: string;
     screenBg?: string;
+    flatByDefault?: boolean;
   }>(),
   {
     label: '3D Device Preview',
-    screenBg: '#fcfaf7'
+    screenBg: '#fcfaf7',
+    flatByDefault: false
   }
 );
 
 const stageEl = ref<HTMLDivElement | null>(null);
-const flatMode = ref(false);
+const flatMode = ref(props.flatByDefault);
 const rotX = ref(4);
 const rotY = ref(-8);
 const glareX = ref(35);

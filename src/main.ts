@@ -4,6 +4,8 @@ import router from './router';
 import App from './App.vue';
 import './assets/styles/tokens.css';
 import './assets/styles/base.css';
+import './assets/styles/public.css';
+import './assets/styles/workspace.css';
 
 const app = createApp(App);
 app.use(createPinia());

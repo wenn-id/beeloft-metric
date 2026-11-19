@@ -12,14 +12,16 @@
     ></span>
 
     <button
-      v-for="tab in tabs"
+      v-for="(tab, index) in tabs"
       :key="tab.id"
       :ref="(el) => setBtnRef(tab.id, el)"
       type="button"
       role="tab"
       :aria-selected="modelValue === tab.id"
+      :tabindex="modelValue === tab.id ? 0 : -1"
       :class="['bm-tab', 'bm-transition', { 'bm-tab--active': modelValue === tab.id }]"
       @click="$emit('update:modelValue', tab.id)"
+      @keydown="onTabKeyDown($event, index)"
     >
       {{ tab.label }}
     </button>
@@ -45,7 +47,7 @@ const props = withDefaults(
   }
 );
 
-defineEmits<{
+const emit = defineEmits<{
   (e: 'update:modelValue', value: string): void;
 }>();
 
@@ -64,6 +66,22 @@ function setBtnRef(id: string, el: Element | ComponentPublicInstance | null): vo
   } else {
     btnMap.delete(id);
   }
+}
+
+function onTabKeyDown(event: KeyboardEvent, index: number): void {
+  const last = props.tabs.length - 1;
+  let target: number;
+  switch (event.key) {
+    case 'ArrowRight': target = index === last ? 0 : index + 1; break;
+    case 'ArrowLeft': target = index === 0 ? last : index - 1; break;
+    case 'Home': target = 0; break;
+    case 'End': target = last; break;
+    default: return;
+  }
+  event.preventDefault();
+  const tab = props.tabs[target];
+  emit('update:modelValue', tab.id);
+  btnMap.get(tab.id)?.focus();
 }
 
 function measureActivePill(): void {
@@ -106,9 +124,8 @@ onUnmounted(() => {
   gap: 6px;
   padding: 5px;
   border-radius: var(--radius-buttons);
-  background: var(--bm-surface);
+  background: var(--bm-subtle);
   border: 1px solid var(--bm-border-soft);
-  box-shadow: 0 1px 2px rgba(24, 22, 21, 0.05) inset;
   width: fit-content;
   max-width: 100%;
 }
@@ -119,7 +136,6 @@ onUnmounted(() => {
   top: 0;
   border-radius: var(--radius-buttons);
   background: var(--bm-brand);
-  box-shadow: 0 2px 8px rgba(24, 22, 21, 0.22);
   pointer-events: none;
   z-index: 0;
 }

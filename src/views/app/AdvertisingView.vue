@@ -1,13 +1,11 @@
 <template>
-  <AppShell>
-    <div class="bm-ads-page">
-      <div class="bm-page-head">
+  <AppShell class="bm-shell--editorial">
+    <div class="bm-workspace-page">
+      <header class="bm-workspace-head">
         <div>
+          <p v-if="store.activeBrand" class="bm-workspace-context">{{ store.activeBrand.name }}</p>
           <h1>Advertising</h1>
-          <p class="bm-page-sub">
-            Centralize Meta Ads, Google Ads, and TikTok Ads performance for
-            <strong>{{ store.activeBrand?.name }}</strong>.
-          </p>
+          <p class="bm-page-sub">Track spend, performance, and campaigns across Meta, Google, and TikTok Ads.</p>
         </div>
         <div v-if="connectedPlatforms.length > 0" class="bm-head-actions">
           <BmButton v-if="activeTab === 'campaigns'" variant="primary" @click="modalOpen = true">
@@ -20,9 +18,15 @@
             + Add keyword
           </BmButton>
         </div>
-      </div>
+      </header>
 
-      <BmTabs v-model="activeTab" :tabs="tabs" label="Advertising views" />
+      <div class="bm-ads-toolbar">
+        <BmTabs v-model="activeTab" :tabs="tabs" label="Advertising views" />
+        <div v-if="connectedPlatforms.length" class="bm-ads-platforms">
+          <span>Connected platforms</span>
+          <NetworkBadge v-for="platform in connectedPlatforms" :key="platform" :network="platform" />
+        </div>
+      </div>
 
       <BmStateView
         v-if="loading"
@@ -78,25 +82,24 @@
       </template>
 
       <template v-else>
-        <!-- Aggregate KPI Bar -->
-        <div class="bm-kpi-grid">
-          <article class="bm-card bm-kpi-card">
-            <span>Total Spend</span>
-            <strong class="tabular-nums">${{ totals.spend.toLocaleString() }}</strong>
-          </article>
-          <article class="bm-card bm-kpi-card">
-            <span>Impressions</span>
-            <strong class="tabular-nums">{{ totals.impressions.toLocaleString() }}</strong>
-          </article>
-          <article class="bm-card bm-kpi-card">
-            <span>Average CPC</span>
-            <strong class="tabular-nums">${{ avgCpc }}</strong>
-          </article>
-          <article class="bm-card bm-kpi-card">
-            <span>Blended ROAS</span>
-            <strong class="tabular-nums">{{ blendedRoas }}x</strong>
-          </article>
-        </div>
+        <dl class="bm-scorecard" aria-label="Advertising performance">
+          <div class="bm-kpi-card">
+            <dt class="bm-kpi-card__label">Total Spend</dt>
+            <dd class="bm-kpi-card__value tabular-nums">${{ totals.spend.toLocaleString() }}</dd>
+          </div>
+          <div class="bm-kpi-card">
+            <dt class="bm-kpi-card__label">Impressions</dt>
+            <dd class="bm-kpi-card__value tabular-nums">{{ totals.impressions.toLocaleString() }}</dd>
+          </div>
+          <div class="bm-kpi-card">
+            <dt class="bm-kpi-card__label">Average CPC</dt>
+            <dd class="bm-kpi-card__value tabular-nums">${{ avgCpc }}</dd>
+          </div>
+          <div class="bm-kpi-card">
+            <dt class="bm-kpi-card__label">Blended ROAS</dt>
+            <dd class="bm-kpi-card__value tabular-nums">{{ blendedRoas }}x</dd>
+          </div>
+        </dl>
 
         <!-- Tab 1: Campaigns -->
         <template v-if="activeTab === 'campaigns'">
@@ -110,12 +113,12 @@
             @action="modalOpen = true"
           />
 
-          <div v-else class="bm-card bm-table-scroll">
+          <div v-else class="bm-card bm-table-scroll" role="region" aria-label="Campaign performance" tabindex="0">
             <table class="bm-table">
               <thead>
                 <tr>
-                  <th>Platform</th>
                   <th>Campaign</th>
+                  <th>Platform</th>
                   <th>Status</th>
                   <th>Daily Budget</th>
                   <th>Spend</th>
@@ -127,11 +130,11 @@
               </thead>
               <tbody>
                 <tr v-for="c in campaigns" :key="c.id">
-                  <td><NetworkBadge :network="c.platform" /></td>
                   <td>
                     <strong>{{ c.name }}</strong>
                     <div class="bm-obj-text">{{ c.objective }}</div>
                   </td>
+                  <td><NetworkBadge :network="c.platform" /></td>
                   <td>
                     <BmBadge :tone="c.status === 'ACTIVE' ? 'success' : 'warning'">
                       {{ c.status }}
@@ -167,12 +170,12 @@
             @action="groupModalOpen = true"
           />
 
-          <div v-else class="bm-card bm-table-scroll">
+          <div v-else class="bm-card bm-table-scroll" role="region" aria-label="Ad group performance" tabindex="0">
             <table class="bm-table">
               <thead>
                 <tr>
-                  <th>Platform</th>
                   <th>Ad Group</th>
+                  <th>Platform</th>
                   <th>Parent Campaign</th>
                   <th>Bid Strategy</th>
                   <th>Status</th>
@@ -184,8 +187,8 @@
               </thead>
               <tbody>
                 <tr v-for="g in adGroups" :key="g.id">
-                  <td><NetworkBadge :network="g.platform" /></td>
                   <td><strong>{{ g.name }}</strong></td>
+                  <td><NetworkBadge :network="g.platform" /></td>
                   <td>{{ g.campaignName }}</td>
                   <td>{{ g.bidStrategy }}</td>
                   <td>
@@ -215,12 +218,12 @@
             description="Connect an active campaign with running creatives to inspect CTR and conversions."
           />
 
-          <div v-else class="bm-card bm-table-scroll">
+          <div v-else class="bm-card bm-table-scroll" role="region" aria-label="Advertisement performance" tabindex="0">
             <table class="bm-table">
               <thead>
                 <tr>
-                  <th>Platform</th>
                   <th>Creative Headline</th>
+                  <th>Platform</th>
                   <th>Ad Group</th>
                   <th>Format</th>
                   <th>Impressions</th>
@@ -232,8 +235,8 @@
               </thead>
               <tbody>
                 <tr v-for="ad in adCreatives" :key="ad.id">
-                  <td><NetworkBadge :network="ad.platform" /></td>
                   <td><strong>{{ ad.headline }}</strong></td>
+                  <td><NetworkBadge :network="ad.platform" /></td>
                   <td>{{ ad.adGroupName }}</td>
                   <td>{{ ad.format }}</td>
                   <td class="tabular-nums">{{ ad.impressions.toLocaleString() }}</td>
@@ -265,7 +268,7 @@
             @action="kwModalOpen = true"
           />
 
-          <div v-else class="bm-card bm-table-scroll">
+          <div v-else class="bm-card bm-table-scroll" role="region" aria-label="Keyword performance" tabindex="0">
             <table class="bm-table">
               <thead>
                 <tr>
@@ -459,7 +462,7 @@ const modalOpen = ref(false);
 const groupModalOpen = ref(false);
 const kwModalOpen = ref(false);
 
-const connectedPlatforms = ref<string[]>([]);
+const connectedPlatforms = ref<AdCampaign['platform'][]>([]);
 const campaigns = ref<AdCampaign[]>([]);
 const adGroups = ref<AdGroup[]>([]);
 const adCreatives = ref<AdCreative[]>([]);
@@ -510,7 +513,7 @@ async function loadAds(): Promise<void> {
   loading.value = true;
   try {
     const [cmpRes, grpRes, adRes, kwRes, recRes] = await Promise.all([
-      apiRequest<{ data: { connectedPlatforms: string[]; campaigns: AdCampaign[] } }>(
+      apiRequest<{ data: { connectedPlatforms: AdCampaign['platform'][]; campaigns: AdCampaign[] } }>(
         `/api/v2/advertising/campaigns?blogId=${store.activeBlogId}`
       ),
       apiRequest<{ data: AdGroup[] }>(`/api/v2/advertising/adgroups?blogId=${store.activeBlogId}`),
@@ -606,51 +609,53 @@ onMounted(loadAds);
 </script>
 
 <style scoped>
-.bm-ads-page {
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-}
-
-.bm-page-head {
+.bm-ads-toolbar {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
   align-items: center;
-  gap: 1rem;
+  justify-content: space-between;
+  gap: 12px 20px;
 }
 
-.bm-page-sub {
-  color: var(--bm-text-muted);
-}
-
-.bm-head-actions {
+.bm-ads-platforms {
   display: flex;
-  gap: 0.5rem;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 8px;
+}
+
+.bm-ads-platforms > span:first-child {
+  margin-right: 4px;
+  color: var(--bm-text-muted);
+  font-family: var(--font-data);
+  font-size: 11px;
+  text-transform: uppercase;
 }
 
 .bm-ads-intro {
-  padding: 1.25rem;
+  padding: clamp(18px, 2.6vw, 34px);
   background: var(--bm-subtle);
 }
 
 .bm-ads-intro h2 {
-  font-size: 1.125rem;
-  margin-bottom: 0.375rem;
+  margin-bottom: 8px;
+  font-size: clamp(1.5rem, 3vw, 2.25rem);
 }
 
 .bm-ads-intro p {
+  max-width: 66ch;
   color: var(--bm-text-muted);
 }
 
 .bm-connect-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
   gap: 1rem;
 }
 
 .bm-connect-card {
-  padding: 1.25rem;
+  min-width: 0;
+  padding: clamp(16px, 2vw, 26px);
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
@@ -658,8 +663,18 @@ onMounted(loadAds);
 
 .bm-connect-card__head {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
+  gap: 8px;
+}
+
+.bm-connect-card h3 {
+  margin: 0;
+  font-family: var(--font-signifier);
+  font-size: 1.5rem;
+  font-weight: 300;
+  line-height: 1.16;
 }
 
 .bm-connect-card p {
@@ -667,46 +682,39 @@ onMounted(loadAds);
   font-size: 0.875rem;
 }
 
-.bm-kpi-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-  gap: 0.875rem;
-}
-
-.bm-kpi-card {
-  padding: 1rem 1.125rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.bm-kpi-card span {
-  font-size: 0.8125rem;
-  color: var(--bm-text-muted);
-  font-weight: 600;
-}
-
-.bm-kpi-card strong {
-  font-size: 1.625rem;
+.bm-connect-card .bm-btn {
+  margin-top: auto;
+  align-self: flex-start;
+  white-space: normal;
 }
 
 .bm-table-scroll {
   overflow-x: auto;
-  padding: 0.5rem;
+  scrollbar-color: var(--bm-control-border) var(--bm-subtle);
 }
 
 .bm-table {
   width: 100%;
-  border-collapse: collapse;
+  border-spacing: 0;
   min-width: 760px;
 }
 
 .bm-table th,
 .bm-table td {
-  padding: 0.75rem;
+  padding: 12px 14px;
   border-bottom: 1px solid var(--bm-divider);
   text-align: left;
   font-size: 0.875rem;
+}
+
+.bm-table tbody tr:last-child > * {
+  border-bottom: 0;
+}
+
+.bm-table :is(th, td):first-child {
+  min-width: 150px;
+  max-width: 280px;
+  overflow-wrap: anywhere;
 }
 
 .bm-obj-text {
@@ -722,7 +730,7 @@ onMounted(loadAds);
 
 .bm-two-col {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.75rem;
 }
 
@@ -730,5 +738,23 @@ onMounted(loadAds);
   display: flex;
   justify-content: flex-end;
   gap: 0.625rem;
+}
+
+@media (max-width: 820px) {
+  .bm-table :is(th, td):first-child {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    min-width: 130px;
+    max-width: 156px;
+    border-right: 1px solid var(--bm-divider);
+    background: var(--bm-elevated);
+  }
+}
+
+@media (max-width: 560px) {
+  .bm-two-col {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 </style>

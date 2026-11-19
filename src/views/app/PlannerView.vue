@@ -1,16 +1,16 @@
 <template>
-  <AppShell>
-    <div class="bm-planner-page">
-      <div class="bm-page-head">
+  <AppShell class="bm-shell--editorial">
+    <div class="bm-workspace-page bm-planner-page">
+      <header class="bm-workspace-head">
         <div>
+          <p v-if="store.activeBrand" class="bm-workspace-context">{{ store.activeBrand.name }}</p>
           <h1>Planning, Flows & AI Scheduler</h1>
           <p class="bm-page-sub">
-            Schedule posts, automate DM flows, manage reusable templates, and review peak hours for
-            <strong>{{ store.activeBrand?.name }}</strong>.
+            Schedule posts, automate DM flows, manage reusable templates, and review peak hours.
           </p>
         </div>
         <BmButton variant="primary" @click="openComposer">+ Create post</BmButton>
-      </div>
+      </header>
 
       <BmTabs v-model="activeTab" :tabs="tabs" label="Planner views" />
 
@@ -24,11 +24,13 @@
       <!-- Calendar View -->
       <template v-else-if="activeTab === 'calendar'">
         <div class="bm-calendar-bar bm-card">
-          <div class="bm-row-actions">
-            <BmButton variant="secondary" size="sm" @click="weekOffset -= 1">Prev week</BmButton>
-            <BmButton variant="secondary" size="sm" @click="weekOffset = 0">This week</BmButton>
-            <BmButton variant="secondary" size="sm" @click="weekOffset += 1">Next week</BmButton>
-            <span class="bm-cal-range tabular-nums">{{ calendarRangeLabel }}</span>
+          <div>
+            <p class="bm-cal-range tabular-nums" aria-live="polite">{{ calendarRangeLabel }}</p>
+            <div class="bm-row-actions">
+              <BmButton variant="secondary" size="sm" @click="weekOffset -= 1">Prev week</BmButton>
+              <BmButton variant="secondary" size="sm" @click="weekOffset = 0">This week</BmButton>
+              <BmButton variant="secondary" size="sm" @click="weekOffset += 1">Next week</BmButton>
+            </div>
           </div>
           <div class="bm-row-actions">
             <BmButton variant="secondary" size="sm" @click="runDueQueueNow">
@@ -40,11 +42,17 @@
           </div>
         </div>
 
-        <div class="bm-calendar-grid">
-          <section v-for="day in calendarDays" :key="day.iso" class="bm-card bm-day-col">
-            <header class="bm-day-col__head">
+        <p class="bm-calendar-hint">Scroll across the calendar to see all seven days.</p>
+        <div class="bm-calendar-grid" role="region" aria-label="Weekly publishing calendar" tabindex="0">
+          <section
+            v-for="day in calendarDays"
+            :key="day.iso"
+            class="bm-card bm-day-col"
+            :class="{ 'bm-day-col--today': day.isToday }"
+          >
+            <header class="bm-day-col__head" :aria-current="day.isToday ? 'date' : undefined">
               <strong>{{ day.label }}</strong>
-              <span class="tabular-nums">{{ day.iso }}</span>
+              <time :datetime="day.iso" :aria-label="day.iso" class="tabular-nums">{{ day.iso.slice(-2) }}</time>
             </header>
 
             <div class="bm-day-col__list">
@@ -648,12 +656,15 @@ const dayNamesShort = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const calendarDays = computed(() => {
   const base = new Date();
   base.setUTCHours(0, 0, 0, 0);
+  const today = base.toISOString().slice(0, 10);
   const startOffset = weekOffset.value * 7 - 1;
   return Array.from({ length: 7 }, (_, i) => {
     const dt = new Date(base.getTime() + (startOffset + i) * 86400000);
+    const iso = dt.toISOString().slice(0, 10);
     return {
       label: dayNamesShort[dt.getUTCDay()],
-      iso: dt.toISOString().slice(0, 10)
+      iso,
+      isToday: iso === today
     };
   });
 });
@@ -938,26 +949,12 @@ onMounted(loadPlanner);
 </script>
 
 <style scoped>
-.bm-planner-page {
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-}
-
-.bm-page-head {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: center;
-  gap: 1rem;
-}
-
 .bm-page-sub {
   color: var(--bm-text-muted);
 }
 
 .bm-calendar-bar {
-  padding: 0.875rem 1.125rem;
+  padding: clamp(14px, 2vw, 24px);
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
@@ -966,23 +963,46 @@ onMounted(loadPlanner);
 }
 
 .bm-cal-range {
-  margin-left: 0.625rem;
-  color: var(--bm-text-muted);
-  font-size: 0.875rem;
+  margin-bottom: 10px;
+  font-family: var(--font-signifier);
+  font-size: clamp(1.2rem, 2.2vw, 1.7rem);
+  font-weight: 300;
+  letter-spacing: -0.025em;
 }
 
 .bm-calendar-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
-  gap: 0.75rem;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(165px, 1fr);
+  gap: 10px;
+  padding: 1px 1px 8px;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  scrollbar-color: var(--bm-control-border) var(--bm-subtle);
+}
+
+.bm-calendar-hint {
+  display: none;
+  color: var(--bm-text-muted);
+  font-size: 13px;
 }
 
 .bm-day-col {
-  padding: 0.75rem;
-  min-height: 220px;
+  min-width: 0;
+  min-height: 280px;
+  padding: 12px;
+  scroll-snap-align: start;
   display: flex;
   flex-direction: column;
   gap: 0.625rem;
+}
+
+.bm-day-col--today .bm-day-col__head {
+  padding: 7px 9px;
+  border: 0;
+  border-radius: var(--radius-inputs);
+  background: var(--bm-category-bg);
+  color: var(--bm-category-text);
 }
 
 .bm-day-col__head {
@@ -991,7 +1011,16 @@ onMounted(loadPlanner);
   align-items: center;
   padding-bottom: 0.5rem;
   border-bottom: 1px solid var(--bm-divider);
-  font-size: 0.875rem;
+  min-height: 42px;
+  font-family: var(--font-data);
+  font-size: 11px;
+  text-transform: uppercase;
+}
+
+.bm-day-col__head time {
+  font-family: var(--font-signifier);
+  font-size: 24px;
+  line-height: 1;
 }
 
 .bm-day-empty {
@@ -1001,10 +1030,10 @@ onMounted(loadPlanner);
 }
 
 .bm-post-slot {
-  padding: 12px;
-  background: var(--bm-elevated);
+  padding: 10px;
+  background: var(--bm-subtle);
   border: 1px solid var(--bm-divider);
-  border-radius: var(--radius-smallcards);
+  border-radius: var(--radius-inputs);
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -1012,6 +1041,8 @@ onMounted(loadPlanner);
 
 .bm-post-slot__top {
   display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
   justify-content: space-between;
   align-items: center;
   font-size: 0.75rem;
@@ -1027,10 +1058,12 @@ onMounted(loadPlanner);
 
 .bm-post-slot__copy {
   font-size: 0.8125rem;
+  overflow-wrap: anywhere;
 }
 
 .bm-post-slot__actions {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   gap: 0.5rem;
   margin-top: 0.25rem;
@@ -1041,8 +1074,9 @@ onMounted(loadPlanner);
   border: none;
   background: transparent;
   font-size: 0.75rem;
-  font-weight: 700;
+  font-weight: 500;
   padding: 0.25rem 0;
+  min-height: 44px;
 }
 
 .bm-slot-link {
@@ -1055,7 +1089,6 @@ onMounted(loadPlanner);
 
 .bm-table-scroll {
   overflow-x: auto;
-  padding: 0.5rem;
 }
 
 .bm-table {
@@ -1074,6 +1107,7 @@ onMounted(loadPlanner);
 
 .bm-row-actions {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.5rem;
 }
 
@@ -1092,7 +1126,7 @@ onMounted(loadPlanner);
 
 .bm-autolist-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 290px), 1fr));
   gap: 1rem;
 }
 
@@ -1154,18 +1188,18 @@ onMounted(loadPlanner);
 }
 
 .bm-heat--high {
-  background: var(--color-blush-peach);
-  color: var(--color-sienna-brown);
+  background: var(--bm-category-bg);
+  color: var(--bm-category-text);
   font-weight: 500;
 }
 
 .bm-heat--mid {
-  background: var(--color-mist-gray);
-  color: var(--color-ink-black);
+  background: var(--bm-surface);
+  color: var(--bm-text);
 }
 
 .bm-heat--low {
-  background: var(--color-paper-white);
+  background: var(--bm-subtle);
   color: var(--bm-text-muted);
 }
 
@@ -1199,6 +1233,7 @@ onMounted(loadPlanner);
 }
 
 .bm-net-fieldset {
+  min-width: 0;
   border: 1px solid var(--bm-divider);
   border-radius: var(--bm-radius-md);
   padding: 0.75rem;
@@ -1253,9 +1288,16 @@ onMounted(loadPlanner);
 
 .bm-composer-split {
   display: grid;
-  grid-template-columns: 1.2fr 0.8fr;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
   gap: 1.5rem;
   align-items: start;
+}
+
+@media (max-width: 1280px) {
+  .bm-calendar-hint {
+    display: block;
+    margin-bottom: -10px;
+  }
 }
 
 .bm-post-preview {
@@ -1336,6 +1378,14 @@ onMounted(loadPlanner);
 }
 
 @media (max-width: 760px) {
+  .bm-calendar-grid {
+    grid-auto-columns: minmax(min(235px, 80vw), 1fr);
+  }
+
+  .bm-ai-box__head {
+    flex-wrap: wrap;
+  }
+
   .bm-autolist-form,
   .bm-two-col,
   .bm-ai-box__controls {

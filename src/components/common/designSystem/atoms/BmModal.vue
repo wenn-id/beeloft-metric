@@ -58,7 +58,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKeyDown));
 .bm-modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(23, 25, 28, 0.42);
+  background: rgba(6, 8, 13, 0.7);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -71,8 +71,10 @@ onUnmounted(() => window.removeEventListener('keydown', onKeyDown));
   max-height: 90dvh;
   overflow-y: auto;
   border-radius: var(--radius-cards);
-  box-shadow: var(--shadow-subtle-2);
+  border: 1px solid var(--bm-divider);
+  box-shadow: var(--bm-shadow-lift);
   background: var(--bm-elevated);
+  color: var(--bm-text);
 }
 
 .bm-modal--wide {
@@ -84,18 +86,19 @@ onUnmounted(() => window.removeEventListener('keydown', onKeyDown));
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  padding: 1.25rem 1.5rem;
+  padding: 1rem clamp(14px, 3vw, 24px);
   border-bottom: 1px solid var(--bm-divider);
 }
 
 .bm-modal__title {
   font-family: var(--font-signifier);
-  font-size: 26px;
-  font-weight: 400;
-  letter-spacing: -0.23px;
+  font-size: clamp(1.5rem, 3.5vw, 2.25rem);
+  font-weight: 300;
+  letter-spacing: -0.035em;
 }
 
 .bm-modal__close {
+  flex: none;
   width: 44px;
   height: 44px;
   display: inline-flex;
@@ -107,6 +110,6 @@ onUnmounted(() => window.removeEventListener('keydown', onKeyDown));
 }
 
 .bm-modal__body {
-  padding: 1.5rem;
+  padding: clamp(14px, 3vw, 24px);
 }
 </style>

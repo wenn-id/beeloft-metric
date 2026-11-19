@@ -17,6 +17,7 @@
   --font-signifier: 'Signifier', 'Source Serif 4', Georgia, ui-serif, serif;
   --font-sohne: 'Sohne', 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
     'Segoe UI', Roboto, sans-serif;
+  --font-data: 'Roboto Mono', ui-monospace, Consolas, monospace;
 
   /* Fluid Scale */
   --text-caption: 15px;
@@ -177,4 +178,62 @@
     0 8px 20px -4px rgba(0, 0, 0, 0.5);
   --bm-shadow-btn-primary-active: 0 1px 0 rgba(255, 255, 255, 0.5) inset, 0 1px 0 #a39a8e,
     0 3px 8px -2px rgba(0, 0, 0, 0.4);
+}
+
+.bm-shell,
+.bm-public-page,
+.bm-modal {
+  --bm-bg: #f3f3f4;
+  --bm-surface: #e8e8eb;
+  --bm-elevated: #ffffff;
+  --bm-subtle: #f7f7f8;
+  --bm-divider: #d9d9dd;
+  --bm-border-soft: var(--bm-divider);
+  --bm-control-border: #757578;
+  --bm-text: #111112;
+  --bm-text-muted: #59595f;
+  --bm-chrome-bg: rgba(255, 255, 255, 0.94);
+  --bm-chrome-text: var(--bm-text);
+  --bm-chrome-muted: var(--bm-text-muted);
+  --bm-chrome-active-bg: var(--bm-surface);
+  --bm-brand: #111112;
+  --bm-brand-hover: #303032;
+  --bm-brand-text: #ffffff;
+  --bm-accent: #4b49aa;
+  --bm-accent-text: #ffffff;
+  --bm-accent-soft: #eeeaff;
+  --bm-accent-soft-text: #332e65;
+  --bm-category-bg: #d1c9ff;
+  --bm-category-text: #151220;
+  --bm-category-muted: #3b305b;
+  --radius-cards: 16px;
+  --radius-elevatedcards: 16px;
+  --radius-inputs: 8px;
+  --radius-buttons: 8px;
+  --bm-shadow-card: none;
+  --bm-shadow-lift: none;
+  --bm-shadow-btn-primary: none;
+  --bm-shadow-btn-primary-active: none;
+  color-scheme: light;
+}
+
+[data-theme='dark'] :is(.bm-shell, .bm-public-page, .bm-modal) {
+  --bm-bg: #0f1011;
+  --bm-surface: #252627;
+  --bm-elevated: #191a1b;
+  --bm-subtle: #121314;
+  --bm-divider: #343536;
+  --bm-control-border: #777879;
+  --bm-text: #f5f5f7;
+  --bm-text-muted: #adadae;
+  --bm-chrome-bg: rgba(15, 16, 17, 0.94);
+  --bm-chrome-active-bg: #2e2e2e;
+  --bm-brand: #ffffff;
+  --bm-brand-hover: #e3e3e5;
+  --bm-brand-text: #000000;
+  --bm-accent: #d1c9ff;
+  --bm-accent-text: #151220;
+  --bm-accent-soft: #2e2e2e;
+  --bm-accent-soft-text: #f5f5f7;
+  color-scheme: dark;
 }

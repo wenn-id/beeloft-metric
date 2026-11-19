@@ -1,18 +1,18 @@
 <template>
-  <AppShell>
-    <div class="bm-conn-page">
-      <div class="bm-page-head">
+  <AppShell class="bm-shell--editorial">
+    <div class="bm-workspace-page bm-conn-page">
+      <header class="bm-workspace-head">
         <div>
+          <p v-if="store.activeBrand" class="bm-workspace-context">{{ store.activeBrand.name }}</p>
           <h1>Brand Settings & Connections</h1>
           <p class="bm-page-sub">
-            Manage channels, timezone, tags, White Label, AI voice, and third-party apps for
-            <strong>{{ store.activeBrand?.name }}</strong>.
+            Manage channels, timezone, tags, White Label, AI voice, and third-party apps.
           </p>
         </div>
         <router-link :to="`/evolution/brandSummary?blogId=${store.activeBlogId}`" class="bm-back-link">
           View Brand Summary
         </router-link>
-      </div>
+      </header>
 
       <BmTabs v-model="activeTab" :tabs="tabs" label="Brand settings tabs" />
 
@@ -543,20 +543,6 @@ onMounted(loadDetails);
 </script>
 
 <style scoped>
-.bm-conn-page {
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-}
-
-.bm-page-head {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: center;
-  gap: 1rem;
-}
-
 .bm-page-sub {
   color: var(--bm-text-muted);
 }
@@ -567,9 +553,9 @@ onMounted(loadDetails);
   min-height: 44px;
   padding: 0 1rem;
   border: 1px solid var(--bm-control-border);
-  border-radius: var(--bm-radius-md);
+  border-radius: var(--radius-buttons);
   text-decoration: none;
-  font-weight: 700;
+  font-size: 14px;
 }
 
 .bm-saved-banner {
@@ -591,7 +577,7 @@ onMounted(loadDetails);
 }
 
 .bm-tracker-card {
-  padding: 1.25rem;
+  padding: clamp(16px, 2.3vw, 30px);
   display: flex;
   flex-direction: column;
   gap: 0.875rem;
@@ -617,13 +603,13 @@ onMounted(loadDetails);
 }
 
 .bm-conn-group h2 {
-  font-size: 1.0625rem;
+  font-size: clamp(1.4rem, 2.0vw, 1.75rem);
   margin-bottom: 0.75rem;
 }
 
 .bm-conn-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
   gap: 0.875rem;
 }
 
@@ -636,6 +622,7 @@ onMounted(loadDetails);
 
 .bm-conn-card__top {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
   gap: 0.5rem;
@@ -651,6 +638,7 @@ onMounted(loadDetails);
   font-size: 0.8125rem;
   color: var(--bm-text-muted);
   min-height: 2.5rem;
+  overflow-wrap: anywhere;
 }
 
 .bm-conn-card__actions {
@@ -659,7 +647,7 @@ onMounted(loadDetails);
 
 .bm-form-card {
   max-width: 680px;
-  padding: 1.25rem;
+  padding: clamp(16px, 2.3vw, 30px);
   display: flex;
   flex-direction: column;
   gap: 1rem;

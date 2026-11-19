@@ -1,0 +1,198 @@
+.bm-public-page {
+  min-height: 100dvh;
+  background: var(--bm-bg);
+  color: var(--bm-text);
+}
+
+.bm-public-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 44px;
+  padding: 8px 16px;
+  border: 1px solid var(--bm-control-border);
+  border-radius: var(--radius-buttons);
+  background: transparent;
+  color: var(--bm-text);
+  font-size: 14px;
+  text-align: center;
+  text-decoration: none;
+  transition: background-color 160ms ease;
+}
+
+.bm-public-button:hover {
+  background: var(--bm-surface);
+}
+
+.bm-public-button--primary {
+  border-color: var(--bm-brand);
+  background: var(--bm-brand);
+  color: var(--bm-brand-text);
+}
+
+.bm-public-button--primary:hover {
+  background: var(--bm-brand-hover);
+}
+
+.bm-auth-page {
+  display: flex;
+  flex-direction: column;
+}
+
+.bm-auth-main {
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  align-items: center;
+  gap: clamp(32px, 6vw, 80px);
+  width: 100%;
+  max-width: 1200px;
+  margin-inline: auto;
+  padding: clamp(24px, 4vw, 52px) clamp(18px, 3vw, 36px);
+}
+
+.bm-auth-main::before {
+  content: '';
+  align-self: stretch;
+  min-height: min(680px, 72svh);
+  border: 1px solid var(--bm-divider);
+  border-radius: 24px;
+  background: #101522 url('../images/landing-ocean.webp') 66% center / cover;
+}
+
+.bm-auth-card {
+  width: min(100%, 460px);
+  margin-inline: auto;
+}
+
+.bm-auth-card h1 {
+  font-size: clamp(2.5rem, 4.8vw, 4.25rem);
+  font-weight: 300;
+  line-height: 1.02;
+  letter-spacing: -0.05em;
+  overflow-wrap: anywhere;
+}
+
+.bm-auth-sub {
+  margin-top: 12px;
+  color: var(--bm-text-muted);
+  font-size: 15px;
+}
+
+.bm-auth-form {
+  display: grid;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.bm-auth-form .bm-input {
+  background: var(--bm-elevated);
+  box-shadow: none;
+}
+
+.bm-auth-card > .bm-btn,
+.bm-auth-form .bm-btn {
+  width: 100%;
+  min-height: 48px;
+  white-space: normal;
+}
+
+.bm-auth-card > .bm-btn {
+  margin-top: 24px;
+}
+
+.bm-auth-card .bm-btn:hover,
+.bm-auth-card .bm-btn:active {
+  transform: none;
+}
+
+.bm-auth-error,
+.bm-auth-ok,
+.bm-plan-note {
+  padding: 10px 12px;
+  border: 1px solid;
+  border-radius: var(--radius-inputs);
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+
+.bm-auth-error {
+  background: var(--bm-danger-bg);
+  color: var(--bm-danger-text);
+  border-color: var(--bm-danger-border);
+}
+
+.bm-auth-ok {
+  background: var(--bm-success-bg);
+  color: var(--bm-success-text);
+  border-color: var(--bm-success-border);
+}
+
+.bm-auth-card > .bm-auth-error {
+  margin-top: 16px;
+}
+
+.bm-plan-note {
+  background: var(--bm-accent-soft);
+  color: var(--bm-accent-soft-text);
+  border-color: var(--bm-divider);
+}
+
+.bm-plan-note strong {
+  text-transform: capitalize;
+}
+
+.bm-auth-foot {
+  margin-top: 16px;
+  color: var(--bm-text-muted);
+  font-size: 14px;
+}
+
+.bm-auth-foot a,
+.bm-auth-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--bm-text);
+  font-size: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.bm-auth-label-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px 8px;
+}
+
+.bm-auth-label-row .bm-label {
+  margin-bottom: 0;
+}
+
+.bm-auth-label-row .bm-auth-link {
+  font-size: 13px;
+}
+
+@media (max-width: 760px) {
+  .bm-auth-main {
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+    padding-block: 52px 36px;
+  }
+
+  .bm-auth-main::before {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bm-public-button {
+    transition: none;
+  }
+}

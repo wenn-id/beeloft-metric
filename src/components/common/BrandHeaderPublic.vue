@@ -169,6 +169,42 @@ const mobileOpen = ref(false);
   font-weight: 500;
 }
 
+.bm-pub-header--editorial .bm-pub-header__inner {
+  max-width: 1200px;
+  padding: 10px clamp(18px, 3vw, 36px);
+}
+
+.bm-pub-header--editorial .bm-pub-wordmark {
+  font-family: var(--font-sohne);
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.bm-pub-header--editorial .bm-pub-link {
+  color: var(--bm-text-muted);
+  font-size: 14px;
+}
+
+.bm-pub-header--editorial .bm-pub-theme,
+.bm-pub-header--editorial .bm-pub-menu-btn {
+  border-color: var(--bm-divider);
+  background: transparent;
+}
+
+.bm-pub-header--editorial .bm-pub-theme:hover,
+.bm-pub-header--editorial .bm-pub-menu-btn:hover {
+  background: var(--bm-surface);
+}
+
+.bm-pub-header--editorial .bm-pub-cta {
+  font-size: 14px;
+}
+
+.bm-pub-header--editorial .bm-pub-cta:hover,
+.bm-pub-header--editorial .bm-pub-cta:active {
+  transform: none;
+}
+
 @media (max-width: 820px) {
   .bm-pub-menu-btn {
     display: inline-flex;
